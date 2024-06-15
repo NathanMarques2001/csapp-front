@@ -3,7 +3,7 @@
   "name": "Sistema Gerenciamento de Contratos",
   "icons": [
     {
-      "src": "assets/images/logo.png",
+      "src": "../src/assets/images/logo.png",
       "sizes": "64x64 32x32",
       "type": "image/x-icon"
     }

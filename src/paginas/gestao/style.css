@@ -1,0 +1,18 @@
+.gestao-container {
+    padding: 20px;
+}
+
+.switch-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.switch-item {
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.switch-item.active {
+    border-bottom: 1px solid #007bff;
+}

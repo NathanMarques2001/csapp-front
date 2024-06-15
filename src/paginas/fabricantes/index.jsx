@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import "./style.css";
 import Api from "../../utils/api";
 
-export default function Solucoes() {
+export default function Fabricantes() {
     const api = new Api("http://localhost:8080");
     const [response, setResponse] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await api.get('/produtos');
+                const data = await api.get('/fabricantes');
                 setResponse(data);
             } catch (err) {
                 console.error("Error fetching data:", err);
@@ -21,7 +21,7 @@ export default function Solucoes() {
 
     return (
         <div>
-            <h1>SOLUÇÕES:</h1>
+            <h1>FABRICANTES:</h1>
             <pre>{JSON.stringify(response)}</pre>
         </div>
     );
