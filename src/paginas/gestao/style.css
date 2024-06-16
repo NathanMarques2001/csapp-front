@@ -1,15 +1,12 @@
-.gestao-container {
-    padding: 20px;
+#gestao-body {
+    display: flex;
 }
 
 .switch-container {
     display: flex;
-    margin-bottom: 20px;
 }
 
 .switch-item {
-    padding: 10px 20px;
-    margin-right: 10px;
     cursor: pointer;
 }
 

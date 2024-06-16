@@ -12,8 +12,8 @@ export default function Gestao() {
     };
 
     return (
-        <>
-
+        <body id="gestao-body">
+            <Navbar />
             <div className="gestao-container">
                 <h1>Central de Gestão</h1>
                 <div className="switch-container">
@@ -40,6 +40,6 @@ export default function Gestao() {
                     )}
                 </div>
             </div>
-        </>
+        </body>
     );
 }

@@ -16,7 +16,7 @@ export default function Usuarios() {
             }
         };
         fetchData();
-    }, [api]);
+    }, []);
 
     const totalUsuarios = response && response.usuarios ? response.usuarios.length : 0;
 
