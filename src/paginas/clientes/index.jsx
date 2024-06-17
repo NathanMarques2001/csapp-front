@@ -3,7 +3,7 @@ import Api from "../../utils/api";
 import Navbar from "../../componetes/navbar";
 
 export default function Clientes() {
-    const api = new Api("http://20.186.19.140/api");
+    const api = new Api("http://20.186.19.140:80/api");
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
     const [filter, setFilter] = useState("");

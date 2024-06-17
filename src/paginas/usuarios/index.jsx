@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 
 export default function Usuarios() {
-    const api = new Api("http://localhost:3000/api");
+    const api = new Api("http://20.186.19.140:80/api");
     const [response, setResponse] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
 
