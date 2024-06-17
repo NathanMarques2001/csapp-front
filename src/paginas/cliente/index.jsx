@@ -3,7 +3,7 @@ import "./style.css";
 import Api from "../../utils/api";
 
 export default function Cliente() {
-    const api = new Api("http://20.186.19.140:80/api");
+    const api = new Api();
     const [response, setResponse] = useState('');
 
     useEffect(() => {

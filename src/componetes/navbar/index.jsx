@@ -1,18 +1,26 @@
 import "./style.css"
-import { Link } from 'react-router-dom'
 import iconeContratos from "../../assets/icons/icon-contratos.png"
 import iconeUsuarios from "../../assets/icons/icon-usuarios.png"
 import iconeCentralGestao from "../../assets/icons/icon-central-gestao.png"
 import iconeSair from "../../assets/icons/icon-sair.png"
 import logo from "../../assets/images/logo.png"
+import { useCookies } from "react-cookie"
+import { Link } from "react-router-dom"
 
 export default function Navbar() {
+
+    const [cookies, setCookie, removeCookie] = useCookies(['jwtToken']);
+
+    function handleLogout() {
+    removeCookie('jwtToken');
+    }
+
     return (
         <nav id='navbar-container'>
             <img src={logo} alt="logo prolinx" id="logo-img" />
             <div id="navbar-links-client">
                 <div id='navbar-links'>
-                    <Link to="/" className="link">
+                    <Link to="/contratos" className="link">
                         <img className='navbar-icon' src={iconeContratos} alt="ícone contrato" />
                         <span className='navbar-span'>Contratos</span>
                     </Link>
@@ -30,7 +38,7 @@ export default function Navbar() {
                     <span className='navbar-span'>Fulano da Silva</span>
                 </div>
             </div>
-            <button id='navbar-btn'>
+            <button id='navbar-btn' onClick={ e=> handleLogout() }>
                 <img className='navbar-icon' src={iconeSair} alt="ícone sair" />
                 <span className='navbar-span'>Sair</span>
             </button>

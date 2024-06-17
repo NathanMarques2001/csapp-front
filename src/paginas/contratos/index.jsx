@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import Navbar from "../../componetes/navbar";
+import { useCookies } from 'react-cookie';
 
 export default function Contratos() {
-    const api = new Api("http://20.186.19.140:80/api");
+    const api = new Api();
     const [contratos, setContratos] = useState([]);
     const [clientes, setClientes] = useState({});
     const [produtos, setProdutos] = useState({});
     const [filter, setFilter] = useState("");
+    const [cookies, setCookie] = useCookies(['jwtToken']);
+    const jwt = cookies['jwtToken'];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,6 +27,8 @@ export default function Contratos() {
                     return map;
                 }, {});
                 setClientes(clientesMap);
+
+                console.log(jwt)
 
                 const produtosResponse = await api.get('/produtos');
                 const produtosMap = produtosResponse.produtos.reduce((map, produto) => {

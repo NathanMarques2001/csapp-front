@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 class Api {
-    constructor(baseURL) {
+    static baseUrl = "http://localhost:8080";
+    constructor() {
         this.api = axios.create({
-            baseURL,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -12,7 +12,7 @@ class Api {
 
     async get(url) {
         try {
-            const res = await this.api.get(url);
+            const res = await this.api.get(Api.baseUrl + url);
             return res.data;
         } catch (err) {
             console.error("Axios GET error:", err);
@@ -22,7 +22,7 @@ class Api {
 
     async post(url, data) {
         try {
-            const res = await this.api.post(url, data);
+            const res = await this.api.post(Api.baseUrl + url, data);
             return res.data;
         } catch (err) {
             console.error("Axios POST error:", err);
@@ -32,7 +32,7 @@ class Api {
 
     async put(url, data) {
         try {
-            const res = await this.api.put(url, data);
+            const res = await this.api.put(Api.baseUrl + url, data);
             return res.data;
         } catch (err) {
             console.error("Axios PUT error:", err);
@@ -42,7 +42,7 @@ class Api {
 
     async delete(url) {
         try {
-            const res = await this.api.delete(url);
+            const res = await this.api.delete(Api.baseUrl + url);
             return res.data;
         } catch (err) {
             console.error("Axios DELETE error:", err);
