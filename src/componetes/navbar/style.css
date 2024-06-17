@@ -1,10 +1,11 @@
 #navbar-container {
-    background-color: #000000;
+    background-color: var(--preto);
     width: 16%;
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 4%;
 }
 
 #logo-img {
@@ -19,7 +20,7 @@
 
 #navbar-links .link,
 #navbar-client {
-    color: white;
+    color: var(--branco);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -35,8 +36,8 @@
     flex-direction: column;
     justify-content: space-between;
     padding-bottom: 14%;
-    border-bottom: 1px solid white;
-    border-top: 1px solid white;
+    border-bottom: 1px solid var(--branco);
+    border-top: 1px solid var(--branco);
 }
 
 #navbar-links,
@@ -47,9 +48,9 @@
 
 #navbar-btn {
     border: none;
-    background-color: #000000;
+    background-color: var(--preto);
     width: 85%;
-    color: white;
+    color: var(--branco);
     height: 10%;
     display: flex;
     align-items: center;
@@ -58,6 +59,6 @@
 }
 
 #navbar-btn:hover {
-    background-color: #2e2e2e;
+    background-color: var(--preto-hover);
     cursor: pointer;
 }

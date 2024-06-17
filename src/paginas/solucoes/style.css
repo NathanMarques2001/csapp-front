@@ -1,0 +1,47 @@
+#solucoes-adicionar-usuario-btn {
+    background-color: var(--verde);
+    border: 1px solid var(--azul-borda);
+}
+
+#solucoes-adicionar-fornecedor-btn {
+    background-color: var(--azul-borda);
+    border: 1px solid var(--preto);
+    color: var(--branco);
+}
+
+#solucoes-adicionar-usuario-btn:hover,
+.solucoes-editar-btn:hover {
+    background-color: var(--verde-hover);
+}
+
+#solucoes-adicionar-fornecedor-btn:hover {
+    background-color: var(--azul-borda-hover);
+}
+
+.solucoes-editar-btn {
+    background-color: var(--verde);
+}
+
+.solucoes-excluir-btn {
+    background-color: var(--vermelho);
+}
+
+.solucoes-excluir-btn:hover {
+    background-color: var(--vermelho-hover);
+}
+
+.solucoes-item-btn {
+    border: 1px solid var(--preto);
+    height: 30px;
+    width: 60px;
+    border-radius: 3px;
+}
+
+.solucoes-item-btn:hover {
+    cursor: pointer;
+}
+
+.solucoes-container-btn {
+    display: flex;
+    gap: 4%;
+}

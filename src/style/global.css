@@ -4,4 +4,19 @@
 	border: 0;
 	box-sizing: border-box;
 	font-family: "Montserrat", sans-serif;
+	--preto: #000000;
+	--branco: #FFFFFF;
+	--preto-hover: #2e2e2e;
+	--verde: #97C93D;
+	--azul: #2046CB;
+	--cinza: #666666;
+	--vermelho: #FD3E3E;
+	--azul-borda: #3F759E;
+	--verde-hover: #73972f;
+	--azul-borda-hover: #2d5472;
+	--vermelho-hover: #cf3434;
+}
+
+#global-display {
+	display: flex;
 }
