@@ -3,7 +3,7 @@ import "./style.css";
 import Api from "../../utils/api";
 
 export default function Fabricantes() {
-    const api = new Api("http://http://20.186.19.140/api");
+    const api = new Api("http://localhost:3000/api");
     const [response, setResponse] = useState('');
 
     useEffect(() => {
