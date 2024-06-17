@@ -5,7 +5,7 @@ import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeExcluir from "../../assets/icons/icon-lixeira.png";
 
 export default function Solucoes() {
-    const api = new Api("http://localhost:8080");
+    const api = new Api("http://20.186.19.140/api");
     const [produtos, setProdutos] = useState([]);
     const [fabricantes, setFabricantes] = useState({});
     const [searchTerm, setSearchTerm] = useState("");

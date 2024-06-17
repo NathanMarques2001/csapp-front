@@ -3,7 +3,7 @@ import Api from "../../utils/api";
 import Navbar from "../../componetes/navbar";
 
 export default function Contratos() {
-    const api = new Api("http://localhost:8080");
+    const api = new Api("http://20.186.19.140/api");
     const [contratos, setContratos] = useState([]);
     const [clientes, setClientes] = useState({});
     const [produtos, setProdutos] = useState({});
