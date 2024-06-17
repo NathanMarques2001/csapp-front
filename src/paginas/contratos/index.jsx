@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./style.css";
 import Api from "../../utils/api";
 import Navbar from "../../componetes/navbar";
 
@@ -8,6 +7,7 @@ export default function Contratos() {
     const [contratos, setContratos] = useState([]);
     const [clientes, setClientes] = useState({});
     const [produtos, setProdutos] = useState({});
+    const [filter, setFilter] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -17,7 +17,10 @@ export default function Contratos() {
 
                 const clientesResponse = await api.get('/clientes');
                 const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
-                    map[cliente.id] = cliente.nome;
+                    map[cliente.id] = {
+                        nome: cliente.nome,
+                        cpf_cnpj: cliente.cpf_cnpj
+                    };
                     return map;
                 }, {});
                 setClientes(clientesMap);
@@ -36,47 +39,52 @@ export default function Contratos() {
         fetchData();
     }, []);
 
-    const handleEdit = (id) => {
-        // Lógica para editar o contrato
+    const handleRowClick = (id) => {
         console.log("Edit contract with ID:", id);
     };
 
-    const handleDelete = (id) => {
-        // Lógica para deletar o contrato
-        console.log("Delete contract with ID:", id);
+    const handleFilterChange = (e) => {
+        setFilter(e.target.value);
     };
 
-    const totalContratos = contratos ? contratos.length : 0;
+    const filteredContratos = contratos.filter(contrato => {
+        const clienteNome = clientes[contrato.id_cliente]?.nome || "";
+        return clienteNome.toLowerCase().includes(filter.toLowerCase());
+    });
 
     return (
-        <div id="global-display">
+        <div className="global-display">
             <Navbar />
-            <div id="gestao-container">
-                <h2>CONTRATOS ({totalContratos})</h2>
-                {contratos.length > 0 ? (
-                    <table>
+            <div className="global-container">
+                <h2 className="global-subtitulo">Contratos</h2>
+                <input
+                    type="text"
+                    placeholder="Procure pelo cliente"
+                    className="global-input"
+                    value={filter}
+                    onChange={handleFilterChange}
+                />
+                <button className="global-btn global-btn-verde">Adicionar Contrato</button>
+                <button className="global-btn global-btn-azul">Filtrar</button>
+                {filteredContratos.length > 0 ? (
+                    <table className="global-tabela">
                         <thead>
                             <tr>
-                                <th>Cliente</th>
-                                <th>Produto</th>
-                                <th>Valor Mensal</th>
-                                <th>Status</th>
-                                <th>Data Criação</th>
-                                <th>Ações</th>
+                                <th className="global-titulo-tabela">Cliente</th>
+                                <th className="global-titulo-tabela">CPF/CNPJ</th>
+                                <th className="global-titulo-tabela">Solução</th>
+                                <th className="global-titulo-tabela">Valor Contrato</th>
+                                <th className="global-titulo-tabela">Início Contrato</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {contratos.map(contrato => (
-                                <tr key={contrato.id}>
-                                    <td>{clientes[contrato.id_cliente] || "Carregando..."}</td>
-                                    <td>{produtos[contrato.id_produto] || "Carregando..."}</td>
-                                    <td>{contrato.valor_mensal}</td>
-                                    <td>{contrato.status}</td>
-                                    <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
-                                    <td>
-                                        <button onClick={() => handleEdit(contrato.id)}>Editar</button>
-                                        <button onClick={() => handleDelete(contrato.id)}>Excluir</button>
-                                    </td>
+                            {filteredContratos.map(contrato => (
+                                <tr key={contrato.id} onClick={() => handleRowClick(contrato.id)} className="clickable-row">
+                                    <td className="global-conteudo-tabela">{clientes[contrato.id_cliente]?.nome || "Carregando..."}</td>
+                                    <td className="global-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
+                                    <td className="global-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
+                                    <td className="global-conteudo-tabela">{contrato.valor_mensal}</td>
+                                    <td className="global-conteudo-tabela">{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                 </tr>
                             ))}
                         </tbody>

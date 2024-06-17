@@ -12,10 +12,10 @@ export default function Gestao() {
     };
 
     return (
-        <body id="global-display">
+        <body className="global-display">
             <Navbar />
-            <div id="gestao-container">
-                <h1>Central de Gestão</h1>
+            <div className="global-container">
+                <h2>Central de Gestão</h2>
                 <div id="switch-container">
                     <p
                         className={`switch-item ${selectedItem === 'usuarios' ? 'active' : ''}`}

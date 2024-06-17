@@ -1,8 +1,0 @@
-#usuarios-btn {
-    background-color: var(--verde);
-    border: 1px solid var(--azul-borda);
-}
-
-#usuarios-btn:hover {
-    background-color: var(--verde-hover);
-}

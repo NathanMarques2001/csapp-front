@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./style.css";
 import Api from "../../utils/api";
 
 export default function Usuarios() {
@@ -33,30 +32,30 @@ export default function Usuarios() {
 
     return (
         <div>
-            <h2 className="gestao-subtitulo">Usuários ({totalUsuarios})</h2>
+            <h3 className="global-subtitulo">Usuários ({totalUsuarios})</h3>
             <input
                 type="text"
                 placeholder="Procure pelo seu nome"
                 value={searchTerm}
                 onChange={handleSearch}
-                className="gestao-input"
+                className="global-input"
             />
-            <button className="gestao-btn" id="usuarios-btn">Adicionar Usuário</button>
+            <button className="global-btn global-btn-verde">Adicionar Usuário</button>
             {response && response.usuarios ? (
-                <table className="gestao-tabela">
+                <table className="global-tabela">
                     <thead>
                         <tr>
-                            <th className="gestao-titulo-tabela">Nome</th>
-                            <th className="gestao-titulo-tabela">Função</th>
-                            <th className="gestao-titulo-tabela">Email</th>
+                            <th className="global-titulo-tabela">Nome</th>
+                            <th className="global-titulo-tabela">Função</th>
+                            <th className="global-titulo-tabela">Email</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsuarios.map(usuario => (
                             <tr key={usuario.id}>
-                                <td className="gestao-conteudo-tabela">{usuario.nome}</td>
-                                <td className="gestao-conteudo-tabela">{usuario.tipo}</td>
-                                <td className="gestao-conteudo-tabela">{usuario.email}</td>
+                                <td className="global-conteudo-tabela">{usuario.nome}</td>
+                                <td className="global-conteudo-tabela">{usuario.tipo}</td>
+                                <td className="global-conteudo-tabela">{usuario.email}</td>
                             </tr>
                         ))}
                     </tbody>

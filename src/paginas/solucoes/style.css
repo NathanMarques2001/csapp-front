@@ -1,25 +1,9 @@
-#solucoes-adicionar-usuario-btn {
-    background-color: var(--verde);
-    border: 1px solid var(--azul-borda);
-}
-
-#solucoes-adicionar-fornecedor-btn {
-    background-color: var(--azul-borda);
-    border: 1px solid var(--preto);
-    color: var(--branco);
-}
-
-#solucoes-adicionar-usuario-btn:hover,
-.solucoes-editar-btn:hover {
-    background-color: var(--verde-hover);
-}
-
-#solucoes-adicionar-fornecedor-btn:hover {
-    background-color: var(--azul-borda-hover);
-}
-
 .solucoes-editar-btn {
     background-color: var(--verde);
+}
+
+.solucoes-editar-btn:hover {
+    background-color: var(--verde-hover);
 }
 
 .solucoes-excluir-btn {

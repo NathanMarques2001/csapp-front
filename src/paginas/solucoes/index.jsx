@@ -55,31 +55,31 @@ export default function Solucoes() {
 
     return (
         <div>
-            <h2 className="gestao-subtitulo">Soluções ({totalSolucoes})</h2>
+            <h3 className="global-subtitulo">Soluções ({totalSolucoes})</h3>
             <input
                 type="text"
                 placeholder="Procure pelo nome ou fornecedor"
                 value={searchTerm}
                 onChange={handleSearch}
-                className="gestao-input"
+                className="global-input"
             />
-            <button className="gestao-btn" id="solucoes-adicionar-usuario-btn">Adicionar Usuário</button>
-            <button className="gestao-btn" id="solucoes-adicionar-fornecedor-btn">Adicionar Fornecedor</button>
+            <button className="global-btn global-btn-verde">Adicionar Usuário</button>
+            <button className="global-btn global-btn-azul">Adicionar Fornecedor</button>
             {produtos.length > 0 ? (
-                <table className="gestao-tabela">
+                <table className="global-tabela">
                     <thead>
                         <tr>
-                            <th className="gestao-titulo-tabela">Nome</th>
-                            <th className="gestao-titulo-tabela">Fornecedor</th>
-                            <th className="gestao-titulo-tabela">Ações</th>
+                            <th className="global-titulo-tabela">Nome</th>
+                            <th className="global-titulo-tabela">Fornecedor</th>
+                            <th className="global-titulo-tabela">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredProdutos.map(produto => (
                             <tr key={produto.id}>
-                                <td className="gestao-conteudo-tabela">{produto.nome}</td>
-                                <td className="gestao-conteudo-tabela">{fabricantes[produto.id_fabricante] || "Carregando..."}</td>
-                                <td className="gestao-conteudo-tabela">
+                                <td className="global-conteudo-tabela">{produto.nome}</td>
+                                <td className="global-conteudo-tabela">{fabricantes[produto.id_fabricante] || "Carregando..."}</td>
+                                <td className="global-conteudo-tabela">
                                     <div className="solucoes-container-btn">
                                         <button className="solucoes-editar-btn solucoes-item-btn" onClick={() => handleEdit(produto.id)}>
                                             <img src={editIcon} alt="" />

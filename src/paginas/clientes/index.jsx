@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./style.css";
 import Api from "../../utils/api";
 import Navbar from "../../componetes/navbar";
 
@@ -7,6 +6,7 @@ export default function Clientes() {
     const api = new Api("http://localhost:8080");
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
+    const [filter, setFilter] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,33 +32,48 @@ export default function Clientes() {
 
     const handleRowClick = (id) => {
         console.log("Edit client with ID:", id);
-        // Aqui você pode redirecionar para a página de edição do cliente ou abrir um modal, etc.
     };
 
+    const handleFilterChange = (e) => {
+        setFilter(e.target.value);
+    };
+
+    const filteredClientes = clientes.filter(cliente =>
+        cliente.nome.toLowerCase().includes(filter.toLowerCase())
+    );
+
     return (
-        <div id="global-display">
+        <div className="global-display">
             <Navbar />
-            <div>
-                <h2>Clientes</h2>
-                {clientes.length > 0 ? (
-                    <table>
+            <div className="global-container">
+                <h2 className="global-subtitulo">Clientes</h2>
+                <input
+                    type="text"
+                    placeholder="Procure pelo nome"
+                    className="global-input"
+                    value={filter}
+                    onChange={handleFilterChange}
+                />
+                <button className="global-btn global-btn-verde">Adicionar Cliente</button>
+                {filteredClientes.length > 0 ? (
+                    <table className="global-tabela">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th>CPF/CNPJ</th>
-                                <th>NPS</th>
-                                <th>Valor Contratos</th>
-                                <th>Data Cadastro</th>
+                                <th className="global-titulo-tabela">Nome</th>
+                                <th className="global-titulo-tabela">CPF/CNPJ</th>
+                                <th className="global-titulo-tabela">NPS</th>
+                                <th className="global-titulo-tabela">Valor Contratos</th>
+                                <th className="global-titulo-tabela">Data Cadastro</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {clientes.map(cliente => (
+                            {filteredClientes.map(cliente => (
                                 <tr key={cliente.id} onClick={() => handleRowClick(cliente.id)} className="clickable-row">
-                                    <td>{cliente.nome}</td>
-                                    <td>{cliente.cpf_cnpj}</td>
-                                    <td>{cliente.nps}</td>
-                                    <td>{calculateTotalContractValue(cliente.id).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                    <td>{new Date(cliente.data_criacao).toLocaleDateString()}</td>
+                                    <td className="global-conteudo-tabela">{cliente.nome}</td>
+                                    <td className="global-conteudo-tabela">{cliente.cpf_cnpj}</td>
+                                    <td className="global-conteudo-tabela">{cliente.nps}</td>
+                                    <td className="global-conteudo-tabela">{calculateTotalContractValue(cliente.id).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                    <td className="global-conteudo-tabela">{new Date(cliente.data_criacao).toLocaleDateString()}</td>
                                 </tr>
                             ))}
                         </tbody>
