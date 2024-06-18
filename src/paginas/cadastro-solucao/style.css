@@ -51,5 +51,32 @@
 }
 
 #cadastro-solucao-img {
-    width: 60%;
+    width: 65%;
+}
+
+.cadastro-solucao-btn {
+    width: 50%;
+    padding: 2% 3%;
+    border: 1px solid var(--preto);
+    border-radius: 5px;
+}
+
+.cadastro-solucao-btn:hover {
+    cursor: pointer;
+}
+
+#cadastro-solucao-btn-cancelar {
+    background-color: var(--branco);
+}
+
+#cadastro-solucao-btn-cancelar:hover {
+    background-color: var(--branco-hover);
+}
+
+#cadastro-solucao-btn-cadastrar {
+    background-color: var(--verde);
+}
+
+#cadastro-solucao-btn-cadastrar:hover {
+    background-color: var(--verde-hover);
 }

@@ -37,30 +37,32 @@ export default function CadastroFabricante() {
     return (
         <div className="global-display">
             <Navbar />
-            <div>
-                <div>
-                    <h2>Cadastro de Solução</h2>
-                    <p>Campos com "*" são obrigatórios.</p>
-                </div>
-                <div>
-                    <form onSubmit={handleAddProduct}>
-                        <div>
-                            <label htmlFor="nome">Nome</label>
+            <div className="global-container">
+                <h2>Cadastro de Solução</h2>
+                <p id="cadastro-fabricante-descricao">Campos com "*" são obrigatórios.</p>
+                <div id="cadastro-fabricante-form-container">
+                    <form id="cadastro-fabricante-form" onSubmit={handleAddProduct}>
+                        <div id="cadastro-fabricante-input-labels">
+                            <label htmlFor="nome"><b>Nome *</b></label>
                             <input
                                 type="text"
-                                id="nome"
+                                id="cadastro-fabricante-input"
+                                className="cadastro-fabricante-input"
                                 name="nome"
+                                placeholder="Digite o nome do fabricante"
                                 value={nomeFabricante}
                                 onChange={(e) => setNomeFabricante(e.target.value)}
                                 required
                             />
                         </div>
-                        <div>
-                            <button type="button" onClick={handleCancel}>Cancelar</button>
-                            <button type="submit">Adicionar fabricante</button>
+                        <div className="cadastro-fabricante-container-btn">
+                            <button id="cadastro-fabricante-btn-cancelar" className="cadastro-fabricante-btn" onClick={handleCancel}>Cancelar</button>
+                            <button id="cadastro-fabricante-btn-cadastrar" className="cadastro-fabricante-btn">Adicionar fabricante</button>
                         </div>
                     </form>
-                    <img src={imgCadastroFabricante} alt="" />
+                    <div id="cadastro-fabricante-container-img">
+                        <img src={imgCadastroFabricante} alt="" id="cadastro-fabricante-img" />
+                    </div>
                 </div>
             </div>
         </div>
