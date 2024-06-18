@@ -9,15 +9,14 @@ export default function Login() {
   const auth = new Auth();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [cookies, setCookie] = useCookies(['jwtToken']);
-  const [token, setToken] = useState('')
+  const [cookies, setCookie] = useCookies(['jwtToken', 'nomeUsuario']);
 
   async function sendForm(event) {
     event.preventDefault()
     const response = await auth.login('/usuarios/login', { email: email, senha: password });
-    setToken(response.token)
-    if (token !== '') {
-      setCookie('jwtToken', token);
+    if (response.token !== '') {
+      setCookie('jwtToken', response.token);
+      setCookie('nomeUsuario', response.usuario.nome);
       window.location.href = "/contratos";
     }
   }

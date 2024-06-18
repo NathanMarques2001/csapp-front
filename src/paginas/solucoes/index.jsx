@@ -45,6 +45,10 @@ export default function Solucoes() {
         setSearchTerm(event.target.value);
     };
 
+    const handleRedirect = (url) => {
+        window.location.href = url;
+    }
+
     const filteredProdutos = produtos.filter(produto => {
         const fornecedorNome = fabricantes[produto.id_fabricante] || "";
         return produto.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,8 +67,8 @@ export default function Solucoes() {
                 onChange={handleSearch}
                 className="global-input"
             />
-            <button className="global-btn global-btn-verde">Adicionar Usuário</button>
-            <button className="global-btn global-btn-azul">Adicionar Fornecedor</button>
+            <button className="global-btn global-btn-verde" onClick={e => handleRedirect("/cadastro-solucao")}>Adicionar solução</button>
+            <button className="global-btn global-btn-azul" onClick={e => handleRedirect("/cadastro-fabricante")}>Adicionar fornecedor</button>
             {produtos.length > 0 ? (
                 <table className="global-tabela">
                     <thead>

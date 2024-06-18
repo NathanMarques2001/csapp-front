@@ -31,7 +31,7 @@ export default function Clientes() {
     };
 
     const handleRowClick = (id) => {
-        console.log("Edit client with ID:", id);
+        window.location.href = `/clientes/${id}`;
     };
 
     const handleFilterChange = (e) => {

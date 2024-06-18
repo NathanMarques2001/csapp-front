@@ -17,7 +17,7 @@ export default function Cliente() {
         };
 
         fetchData();
-    }, [api]);
+    }, []);
 
     return (
         <div>

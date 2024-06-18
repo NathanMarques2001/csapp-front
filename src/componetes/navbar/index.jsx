@@ -9,10 +9,11 @@ import { Link } from "react-router-dom"
 
 export default function Navbar() {
 
-    const [cookies, setCookie, removeCookie] = useCookies(['jwtToken']);
+    const [cookies, setCookie, removeCookie] = useCookies(['jwtToken', 'nomeUsuario']);
 
     function handleLogout() {
-    removeCookie('jwtToken');
+        removeCookie('jwtToken');
+        removeCookie('nomeUsuario');
     }
 
     return (
@@ -34,11 +35,10 @@ export default function Navbar() {
                     </Link>
                 </div>
                 <div id='navbar-client'>
-                    <img id='navbar-user-photo' src={iconeUsuarios} alt="foto do usuário" />
-                    <span className='navbar-span'>Fulano da Silva</span>
+                    <span className='navbar-span'>{cookies.nomeUsuario}</span>
                 </div>
             </div>
-            <button id='navbar-btn' onClick={ e=> handleLogout() }>
+            <button id='navbar-btn' onClick={e => handleLogout()}>
                 <img className='navbar-icon' src={iconeSair} alt="ícone sair" />
                 <span className='navbar-span'>Sair</span>
             </button>
