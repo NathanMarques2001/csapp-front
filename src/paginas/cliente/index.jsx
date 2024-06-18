@@ -8,6 +8,38 @@ import Navbar from "../../componetes/navbar";
 export default function Cliente() {
     const api = new Api();
     const [cliente, setCliente] = useState('');
+    const contatoComercial = [
+        {
+            id: 1,
+            conteudo: "Nome: João da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: blabla@gmail.com"
+        }
+    ];
+
+    const contatoTecnico = [
+        {
+            id: 1,
+            conteudo: "Nome: Maria da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: asdasdsa@yahoo.com"
+        }
+    ];
+
+    const fatosImportantes = [
+        {
+            id: 1,
+            conteudo: "Fato 1"
+        },
+        {
+            id: 2,
+            conteudo: "Fato 2"
+        }
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,12 +58,12 @@ export default function Cliente() {
         <body className="global-display">
             <Navbar />
             <div className="global-container">
-                <div>
+                <div id="cliente-cabecalho">
                     <h2>Cliente - {cliente.nome}</h2>
-                    <button><img src={botaoEditar} alt="" /></button>
+                    <button id="cliente-editar-btn"><img src={botaoEditar} alt="" /></button>
                 </div>
                 <h3>Contratos</h3>
-                <table>
+                <table id="cliente-tabela">
                     <thead>
                         <tr>
                             <th>Solução</th>
@@ -51,40 +83,55 @@ export default function Cliente() {
                         </tr>
                     </tbody>
                 </table>
-                <div>
-                    Faturamento mensal: R$ 5.763,71
+                <div id="cliente-faturamento-mensal">
+                    Faturamento mensal: <b>R$ 5.763,71</b>
                 </div>
                 <div>
-                    Gestor de Contratos
-                    <p>{cliente.gestor_contratos_nome}</p>
-                    <p>{cliente.gestor_contratos_email}</p>
-                    <p>{cliente.gestor_contratos_telefone_1}</p>
-                    <p>{cliente.gestor_contratos_telefone_2}</p>
+                    <div className="cliente-card-gestor">
+                        <h3>Gestor de Contratos</h3>
+                        <p>{cliente.gestor_contratos_nome}</p>
+                        <p>{cliente.gestor_contratos_email}</p>
+                        <p>{cliente.gestor_contratos_telefone_1}</p>
+                        <p>{cliente.gestor_contratos_telefone_2}</p>
+                    </div>
+                    <div className="cliente-card-gestor">
+                        <h3>Gestor de Chamados</h3>
+                        <p>{cliente.gestor_chamados_nome}</p>
+                        <p>{cliente.gestor_chamados_email}</p>
+                        <p>{cliente.gestor_chamados_telefone_1}</p>
+                        <p>{cliente.gestor_chamados_telefone_2}</p>
+                    </div>
+                    <div className="cliente-card-gestor">
+                        <h3>Gestor Financeiro</h3>
+                        <p>{cliente.gestor_financeiro_nome}</p>
+                        <p>{cliente.gestor_financeiro_email}</p>
+                        <p>{cliente.gestor_financeiro_telefone_1}</p>
+                        <p>{cliente.gestor_financeiro_telefone_2}</p>
+                    </div>
                 </div>
                 <div>
-                    Gestor de Chamados
-                    <p>{cliente.gestor_chamados_nome}</p>
-                    <p>{cliente.gestor_chamados_email}</p>
-                    <p>{cliente.gestor_chamados_telefone_1}</p>
-                    <p>{cliente.gestor_chamados_telefone_2}</p>
+                    <div>
+                        <h3>Contato Comercial</h3>
+                        {contatoComercial.map(contato => (
+                            <p key={contato.id}>{contato.conteudo}</p>
+                        ))}
+                    </div>
+                    <div>
+                        Contato Técnico
+                        {contatoTecnico.map(contato => (
+                            <p key={contato.id}>{contato.conteudo}</p>
+                        ))}
+                    </div>
                 </div>
                 <div>
-                    Gestor Financeiro
-                    <p>{cliente.gestor_financeiro_nome}</p>
-                    <p>{cliente.gestor_financeiro_email}</p>
-                    <p>{cliente.gestor_financeiro_telefone_1}</p>
-                    <p>{cliente.gestor_financeiro_telefone_2}</p>
+                    <div>
+                        Fatos Importantes
+                        {fatosImportantes.map(fato => (
+                            <p key={fato.id}>{fato.conteudo}</p>
+                        ))}
+                    </div>
+                    <img src={imgCliente} alt="" />
                 </div>
-                <div>
-                    Contato Comercial
-                </div>
-                <div>
-                    Contato Técnico
-                </div>
-                <div>
-                    Fatos Importantes
-                </div>
-                <img src={imgCliente} alt="" />
             </div>
         </body>
     );

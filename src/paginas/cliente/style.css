@@ -1,0 +1,34 @@
+#cliente-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cinza);
+  margin-bottom: 2rem;
+}
+
+#cliente-tabela {
+  margin-top: 1.5rem;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--preto);
+}
+
+#cliente-tabela th, #cliente-tabela td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--cinza);
+}
+
+#cliente-tabela th {
+  background-color: var(--azul-borda);
+  color: var(--branco);
+}
+
+#cliente-faturamento-mensal {
+  width: 100%;
+  background-color: var(--verde);
+  padding: 1%;
+  display: flex;
+  justify-content: end;
+  border: 1px solid var(--preto);
+}
