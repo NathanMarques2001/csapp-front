@@ -97,8 +97,8 @@ export default function CadastroSolucao() {
               </select>
             </div>
             <div className="cadastro-solucao-container-btn">
-              <button type="button" onClick={handleCancel}>Cancelar</button>
-              <button type="submit">Adicionar solução</button>
+              <button onClick={handleCancel}>Cancelar</button>
+              <button>Adicionar solução</button>
             </div>
           </form>
           <div id="cadastro-solucao-container-img">

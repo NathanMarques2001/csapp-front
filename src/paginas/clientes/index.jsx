@@ -42,6 +42,10 @@ export default function Clientes() {
         cliente.nome.toLowerCase().includes(filter.toLowerCase())
     );
 
+    const handleAddClient = () => {
+        window.location.href = '/cadastro-cliente';
+    }
+
     return (
         <div className="global-display">
             <Navbar />
@@ -54,7 +58,7 @@ export default function Clientes() {
                     value={filter}
                     onChange={handleFilterChange}
                 />
-                <button className="global-btn global-btn-verde">Adicionar Cliente</button>
+                <button onClick={e => handleAddClient()} className="global-btn global-btn-verde">Adicionar cliente</button>
                 {filteredClientes.length > 0 ? (
                     <table className="global-tabela">
                         <thead>

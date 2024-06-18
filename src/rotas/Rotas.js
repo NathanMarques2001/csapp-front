@@ -12,6 +12,7 @@ import Login from '../paginas/login';
 import { useCookies } from 'react-cookie';
 import CadastroSolucao from '../paginas/cadastro-solucao';
 import CadastroFabricante from '../paginas/cadastro-fabricante';
+import CadastroCliente from '../paginas/cadastro-cliente';
 
 export default function Rotas() {
 
@@ -27,6 +28,7 @@ export default function Rotas() {
                 <Route path="/gestao" element={!cookies['jwtToken'] ? <Login /> : <Gestao />} />
                 <Route path="/cadastro-solucao" element={!cookies['jwtToken'] ? <Login /> : <CadastroSolucao />} />
                 <Route path="/cadastro-fabricante" element={!cookies['jwtToken'] ? <Login /> : <CadastroFabricante />} />
+                <Route path="/cadastro-cliente" element={!cookies['jwtToken'] ? <Login /> : <CadastroCliente />} />
             </Routes>
         </Router>
     );
