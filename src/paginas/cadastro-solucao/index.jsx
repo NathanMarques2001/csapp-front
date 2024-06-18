@@ -64,42 +64,46 @@ export default function CadastroSolucao() {
   return (
     <div className="global-display">
       <Navbar />
-      <div>
-        <div>
-          <h2>Cadastro de Solução</h2>
-          <p>Campos com "*" são obrigatórios.</p>
-        </div>
-        <div>
-          <form onSubmit={handleAddProduct}>
-            <div>
-              <label htmlFor="nome">Nome</label>
+      <div className="global-container">
+        <h2>Cadastro de Solução</h2>
+        <p id="cadastro-solucao-descricao">Campos com "*" são obrigatórios.</p>
+        <div id="cadastro-solucao-form-container">
+          <form id="cadastro-solucao-form" onSubmit={handleAddProduct}>
+            <div id="cadastro-solucao-input-labels">
+              <label htmlFor="nome"><b>Nome *</b></label>
               <input
                 type="text"
-                id="nome"
+                id="cadastro-solucao-input"
                 name="nome"
                 value={nomeProduto}
                 onChange={(e) => setNomeProduto(e.target.value)}
                 required
+                placeholder="Digite o nome da solução"
+                className="cadastro-solucao-input"
               />
-              <label htmlFor="fabricante">Fornecedor</label>
+              <label htmlFor="fabricante"><b>Fornecedor *</b></label>
               <select
                 name="fabricante"
+                id="cadastro-solucao-select"
                 value={selectedFabricante.id}
                 onChange={handleFabricanteChange}
                 required
+                className="cadastro-solucao-input"
               >
-                <option value="s/ fabricante">Nenhum fabricante cadastrado</option>
+                <option value="s/ fabricante"></option>
                 {fabricantes.length > 0 && fabricantes.map(fabricante => (
                   <option key={fabricante.id} value={fabricante.id}>{fabricante.nome}</option>
                 ))}
               </select>
             </div>
-            <div>
+            <div className="cadastro-solucao-container-btn">
               <button type="button" onClick={handleCancel}>Cancelar</button>
               <button type="submit">Adicionar solução</button>
             </div>
           </form>
-          <img src={imgCadastroSolucao} alt="" />
+          <div id="cadastro-solucao-container-img">
+            <img src={imgCadastroSolucao} alt="" id="cadastro-solucao-img" />
+          </div>
         </div>
       </div>
     </div>
