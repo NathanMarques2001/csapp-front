@@ -4,6 +4,7 @@ import Api from "../../utils/api";
 import botaoEditar from "../../assets/icons/icon-lapis.png";
 import imgCliente from "../../assets/images/img-cliente.png";
 import Navbar from "../../componetes/navbar";
+import CardGestor from "../../componetes/card-gestor";
 
 export default function Cliente() {
     const api = new Api();
@@ -86,30 +87,36 @@ export default function Cliente() {
                 <div id="cliente-faturamento-mensal">
                     Faturamento mensal: <b>R$ 5.763,71</b>
                 </div>
-                <div>
+                <div id="cliente-card-container">
                     <div className="cliente-card-gestor">
                         <h3>Gestor de Contratos</h3>
-                        <p>{cliente.gestor_contratos_nome}</p>
-                        <p>{cliente.gestor_contratos_email}</p>
-                        <p>{cliente.gestor_contratos_telefone_1}</p>
-                        <p>{cliente.gestor_contratos_telefone_2}</p>
+                        <div>
+                            <p><img src={iconeGestor} alt="" />{cliente.gestor_contratos_nome}</p>
+                            <p><img src={iconeEmail} alt="" />{cliente.gestor_contratos_email}</p>
+                            <p><img src={iconeTelefone} alt="" />{cliente.gestor_contratos_telefone_1}</p>
+                            <p><img src={iconeTelefoneAdicional} alt="" />{cliente.gestor_contratos_telefone_2}</p>
+                        </div>
                     </div>
                     <div className="cliente-card-gestor">
                         <h3>Gestor de Chamados</h3>
-                        <p>{cliente.gestor_chamados_nome}</p>
-                        <p>{cliente.gestor_chamados_email}</p>
-                        <p>{cliente.gestor_chamados_telefone_1}</p>
-                        <p>{cliente.gestor_chamados_telefone_2}</p>
+                        <div>
+                            <p><img src={iconeGestor} alt="" />{cliente.gestor_chamados_nome}</p>
+                            <p><img src={iconeEmail} alt="" />{cliente.gestor_chamados_email}</p>
+                            <p><img src={iconeTelefone} alt="" />{cliente.gestor_chamados_telefone_1}</p>
+                            <p><img src={iconeTelefoneAdicional} alt="" />{cliente.gestor_chamados_telefone_2}</p>
+                        </div>
                     </div>
                     <div className="cliente-card-gestor">
                         <h3>Gestor Financeiro</h3>
-                        <p>{cliente.gestor_financeiro_nome}</p>
-                        <p>{cliente.gestor_financeiro_email}</p>
-                        <p>{cliente.gestor_financeiro_telefone_1}</p>
-                        <p>{cliente.gestor_financeiro_telefone_2}</p>
+                        <div>
+                            <p><img src={iconeGestor} alt="" />{cliente.gestor_financeiro_nome}</p>
+                            <p><img src={iconeEmail} alt="" />{cliente.gestor_financeiro_email}</p>
+                            <p><img src={iconeTelefone} alt="" />{cliente.gestor_financeiro_telefone_1}</p>
+                            <p><img src={iconeTelefoneAdicional} alt="" />{cliente.gestor_financeiro_telefone_2}</p>
+                        </div>
                     </div>
                 </div>
-                <div>
+                <div className="cliente-contatos-container">
                     <div>
                         <h3>Contato Comercial</h3>
                         {contatoComercial.map(contato => (
@@ -117,20 +124,20 @@ export default function Cliente() {
                         ))}
                     </div>
                     <div>
-                        Contato Técnico
+                        <h3>Contato Técnico</h3>
                         {contatoTecnico.map(contato => (
                             <p key={contato.id}>{contato.conteudo}</p>
                         ))}
                     </div>
                 </div>
-                <div>
+                <div className="cliente-contatos-container" id="cliente-contatos-container-img">
                     <div>
-                        Fatos Importantes
+                        <h3>Fatos Importantes</h3>
                         {fatosImportantes.map(fato => (
                             <p key={fato.id}>{fato.conteudo}</p>
                         ))}
                     </div>
-                    <img src={imgCliente} alt="" />
+                    <img src={imgCliente} alt="" id="cliente-img" />
                 </div>
             </div>
         </body>
