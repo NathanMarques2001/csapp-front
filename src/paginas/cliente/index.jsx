@@ -5,10 +5,14 @@ import botaoEditar from "../../assets/icons/icon-lapis.png";
 import imgCliente from "../../assets/images/img-cliente.png";
 import Navbar from "../../componetes/navbar";
 import CardGestor from "../../componetes/card-gestor";
+import CardContato from "../../componetes/card-contato";
 
 export default function Cliente() {
     const api = new Api();
-    const [cliente, setCliente] = useState('');
+    const [cliente, setCliente] = useState({});
+    const [contratos, setContratos] = useState([]);
+    const [produtos, setProdutos] = useState([]);
+    const [fabricantes, setFabricantes] = useState([]);
     const contatoComercial = [
         {
             id: 1,
@@ -17,7 +21,47 @@ export default function Cliente() {
         {
             id: 2,
             conteudo: "Email: blabla@gmail.com"
-        }
+        },
+        {
+            id: 1,
+            conteudo: "Nome: João da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: blabla@gmail.com"
+        },
+        {
+            id: 1,
+            conteudo: "Nome: João da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: blabla@gmail.com"
+        },
+        {
+            id: 1,
+            conteudo: "Nome: João da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: blabla@gmail.com"
+        },
+        {
+            id: 1,
+            conteudo: "Nome: João da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: blabla@gmail.com"
+        },
+        {
+            id: 1,
+            conteudo: "Nome: João da Silva"
+        },
+        {
+            id: 2,
+            conteudo: "Email: blabla@gmail.com"
+        },
     ];
 
     const contatoTecnico = [
@@ -45,8 +89,16 @@ export default function Cliente() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await api.get('/clientes/1');
-                setCliente(data.cliente);
+                const clienteData = await api.get('/clientes/1');
+                setCliente(clienteData.cliente);
+                const contratosData = await api.get('/contratos/usuario/1');
+                setContratos(contratosData.contratos);
+
+                const produtosData = await api.get('/produtos');
+                setProdutos(produtosData.produtos);
+
+                const fabricantesData = await api.get('/fabricantes');
+                setFabricantes(fabricantesData.fabricantes);
             } catch (err) {
                 console.error("Error fetching data:", err);
             }
@@ -55,13 +107,31 @@ export default function Cliente() {
         fetchData();
     }, []);
 
+    const getProdutoNome = (produtoId) => {
+        const produto = produtos.find(p => p.id === produtoId);
+        return produto ? produto.nome : "Desconhecido";
+    };
+
+    const getFabricanteNome = (produtoId) => {
+        const produto = produtos.find(p => p.id === produtoId);
+        if (produto) {
+            const fabricante = fabricantes.find(f => f.id === produto.id_fabricante);
+            return fabricante ? fabricante.nome : "Desconhecido";
+        }
+        return "Desconhecido";
+    };
+
+    const calculateTotalContractValue = () => {
+        return contratos.reduce((total, contrato) => total + parseFloat(contrato.valor_mensal), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
     return (
-        <body className="global-display">
+        <div className="global-display">
             <Navbar />
             <div className="global-container">
                 <div id="cliente-cabecalho">
                     <h2>Cliente - {cliente.nome}</h2>
-                    <button id="cliente-editar-btn"><img src={botaoEditar} alt="" /></button>
+                    <button className="solucoes-editar-btn solucoes-item-btn" id="cliente-editar-btn"><img src={botaoEditar} alt="" /></button>
                 </div>
                 <h3>Contratos</h3>
                 <table id="cliente-tabela">
@@ -71,75 +141,38 @@ export default function Cliente() {
                             <th>Contratação</th>
                             <th>Valor</th>
                             <th>Recorrência</th>
-                            <th>Faturamento</th>
+                            <th>Fabricante</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Antivirus Mensal</td>
-                            <td>01/01/2024</td>
-                            <td>R$ 5.763,71</td>
-                            <td>12 MESES</td>
-                            <td>Kaspersky</td>
-                        </tr>
+                        {contratos.map(contrato => (
+                            <tr key={contrato.id}>
+                                <td>{getProdutoNome(contrato.id_produto)}</td>
+                                <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
+                                <td>{parseFloat(contrato.valor_mensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                <td>{contrato.duracao} MESES</td>
+                                <td>{getFabricanteNome(contrato.id_produto)}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 <div id="cliente-faturamento-mensal">
-                    Faturamento mensal: <b>R$ 5.763,71</b>
+                    Faturamento mensal: <b>{calculateTotalContractValue()}</b>
                 </div>
                 <div id="cliente-card-container">
-                    <div className="cliente-card-gestor">
-                        <h3>Gestor de Contratos</h3>
-                        <div>
-                            <p><img src={iconeGestor} alt="" />{cliente.gestor_contratos_nome}</p>
-                            <p><img src={iconeEmail} alt="" />{cliente.gestor_contratos_email}</p>
-                            <p><img src={iconeTelefone} alt="" />{cliente.gestor_contratos_telefone_1}</p>
-                            <p><img src={iconeTelefoneAdicional} alt="" />{cliente.gestor_contratos_telefone_2}</p>
-                        </div>
-                    </div>
-                    <div className="cliente-card-gestor">
-                        <h3>Gestor de Chamados</h3>
-                        <div>
-                            <p><img src={iconeGestor} alt="" />{cliente.gestor_chamados_nome}</p>
-                            <p><img src={iconeEmail} alt="" />{cliente.gestor_chamados_email}</p>
-                            <p><img src={iconeTelefone} alt="" />{cliente.gestor_chamados_telefone_1}</p>
-                            <p><img src={iconeTelefoneAdicional} alt="" />{cliente.gestor_chamados_telefone_2}</p>
-                        </div>
-                    </div>
-                    <div className="cliente-card-gestor">
-                        <h3>Gestor Financeiro</h3>
-                        <div>
-                            <p><img src={iconeGestor} alt="" />{cliente.gestor_financeiro_nome}</p>
-                            <p><img src={iconeEmail} alt="" />{cliente.gestor_financeiro_email}</p>
-                            <p><img src={iconeTelefone} alt="" />{cliente.gestor_financeiro_telefone_1}</p>
-                            <p><img src={iconeTelefoneAdicional} alt="" />{cliente.gestor_financeiro_telefone_2}</p>
-                        </div>
-                    </div>
+                    <CardGestor titulo={"Gestor de Contratos"} nome={cliente.gestor_contratos_nome} email={cliente.gestor_contratos_email} telefone1={cliente.gestor_contratos_telefone_1} telefone2={cliente.gestor_contratos_telefone_2} />
+                    <CardGestor titulo={"Gestor de Chamados"} nome={cliente.gestor_chamados_nome} email={cliente.gestor_chamados_email} telefone1={cliente.gestor_chamados_telefone_1} telefone2={cliente.gestor_chamados_telefone_2} />
+                    <CardGestor titulo={"Gestor Financeiro"} nome={cliente.gestor_financeiro_nome} email={cliente.gestor_financeiro_email} telefone1={cliente.gestor_financeiro_telefone_1} telefone2={cliente.gestor_financeiro_telefone_2} />
                 </div>
                 <div className="cliente-contatos-container">
-                    <div>
-                        <h3>Contato Comercial</h3>
-                        {contatoComercial.map(contato => (
-                            <p key={contato.id}>{contato.conteudo}</p>
-                        ))}
-                    </div>
-                    <div>
-                        <h3>Contato Técnico</h3>
-                        {contatoTecnico.map(contato => (
-                            <p key={contato.id}>{contato.conteudo}</p>
-                        ))}
-                    </div>
+                    <CardContato titulo={"Contato Comercial"} contatos={contatoComercial} />
+                    <CardContato titulo={"Contato Técnico"} contatos={contatoTecnico} />
                 </div>
                 <div className="cliente-contatos-container" id="cliente-contatos-container-img">
-                    <div>
-                        <h3>Fatos Importantes</h3>
-                        {fatosImportantes.map(fato => (
-                            <p key={fato.id}>{fato.conteudo}</p>
-                        ))}
-                    </div>
+                    <CardContato titulo={"Fatos Importantes"} contatos={fatosImportantes} />
                     <img src={imgCliente} alt="" id="cliente-img" />
                 </div>
             </div>
-        </body>
+        </div>
     );
 }

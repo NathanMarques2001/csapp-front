@@ -1,0 +1,25 @@
+.cliente-contatos {
+    width: 47.5%;
+    border: 1px solid var(--preto);
+    border-radius: 7px;
+}
+
+.cliente-contatos div {
+    height: 16rem;
+    overflow-y: scroll;
+}
+
+.cliente-contatos h3 {
+    text-align: center;
+    background-color: var(--azul-borda);
+    color: var(--branco);
+    border-radius: 7px 7px 0 0;
+    border-bottom: 1px solid var(--preto);
+    padding: 1.5%;
+}
+
+.cliente-contatos p {
+    border-bottom: 1px solid var(--preto);
+    padding: 1%;
+    font-size: 0.8rem;
+}

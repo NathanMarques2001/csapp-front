@@ -11,18 +11,24 @@
   width: 100%;
   border-collapse: collapse;
   border: 1px solid var(--preto);
+  overflow: hidden;
 }
 
 #cliente-tabela th,
 #cliente-tabela td {
   padding: 8px;
   text-align: left;
-  border-bottom: 1px solid var(--cinza);
+  border-bottom: 1px solid var(--preto);
 }
 
 #cliente-tabela th {
   background-color: var(--azul-borda);
   color: var(--branco);
+}
+
+#cliente-tabela tbody {
+  max-height: 20rem;
+  overflow-y: scroll;
 }
 
 #cliente-faturamento-mensal {
@@ -32,6 +38,7 @@
   display: flex;
   justify-content: end;
   border: 1px solid var(--preto);
+  border-radius: 0 0 7px 7px;
 }
 
 #cliente-card-container {
@@ -39,36 +46,6 @@
   width: 100%;
   justify-content: space-between;
   margin: 2rem 0;
-}
-
-.cliente-card-gestor {
-  width: 30%;
-}
-
-.cliente-card-gestor h3 {
-  text-align: center;
-  background-color: var(--azul-borda);
-  color: var(--branco);
-  border: 1px solid var(--preto);
-  border-radius: 7px 7px 0 0;
-  padding: 2.5%;
-}
-
-.cliente-card-gestor div {
-  border: 1px solid var(--preto);
-  border-radius: 0 0 7px 7px;
-  padding: 2%;
-}
-
-.cliente-card-gestor div p {
-  padding: 2% 1%;
-  font-size: 0.8rem;
-  display: flex;
-  align-items: center;
-}
-
-.cliente-card-gestor div img {
-  padding-right: 3%;
 }
 
 .cliente-contatos-container {

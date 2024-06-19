@@ -1,0 +1,29 @@
+.cliente-card-gestor {
+    width: 30%;
+}
+
+.cliente-card-gestor h3 {
+    text-align: center;
+    background-color: var(--azul-borda);
+    color: var(--branco);
+    border: 1px solid var(--preto);
+    border-radius: 7px 7px 0 0;
+    padding: 2.5%;
+}
+
+.cliente-card-gestor div {
+    border: 1px solid var(--preto);
+    border-radius: 0 0 7px 7px;
+    padding: 2%;
+}
+
+.cliente-card-gestor div p {
+    padding: 2% 1%;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+.cliente-card-gestor div img {
+    padding-right: 3%;
+}
