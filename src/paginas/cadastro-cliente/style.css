@@ -26,8 +26,11 @@
   color: red;
 }
 
+
 .form-group {
   margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
@@ -35,25 +38,24 @@
   margin-bottom: 5px;
 }
 
-
+.date-container{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
 
 .form-group input,
 .form-group select {
-  width: calc(50% - 10px);
+  width: 80%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-right: 10px;
 }
 
-.form-group input[type="date"] {
-  width: calc(50% - 10px);
-}
-
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group select {
-  width: calc(50% - 10px);
+  width: 80%;
 }
 
 .form-group input:first-child,
@@ -101,5 +103,5 @@
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
-  /* Adiciona negrito aos labels */
 }
+
