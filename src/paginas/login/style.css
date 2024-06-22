@@ -1,7 +1,6 @@
 #login-container {
   min-height: 100vh;
   background-color: var(--preto);
-  margin-bottom: 3%;
 }
 
 .login-container {
@@ -9,6 +8,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-bottom: 3%;
 }
 
 .logo {
