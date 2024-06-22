@@ -1,6 +1,7 @@
 #login-container {
   min-height: 100vh;
   background-color: var(--preto);
+  margin-bottom: 3%;
 }
 
 .login-container {
