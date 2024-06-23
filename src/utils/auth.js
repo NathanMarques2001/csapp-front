@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 class Auth {
-  static baseUrl = "http://localhost:8080";
+  static baseUrl = "http://localhost:8080/api";
 
   constructor() {
     this.auth = axios.create({
