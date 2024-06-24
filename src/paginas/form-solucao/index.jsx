@@ -5,6 +5,7 @@ import Api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../componetes/loading";
+import Popup from "../../componetes/pop-up";
 
 export default function FormSolucao({ mode = 'cadastro' }) {
   const api = new Api();
@@ -12,6 +13,8 @@ export default function FormSolucao({ mode = 'cadastro' }) {
   const [selectedFabricante, setSelectedFabricante] = useState("");
   const [nomeProduto, setNomeProduto] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupAction, setPopupAction] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -46,8 +49,14 @@ export default function FormSolucao({ mode = 'cadastro' }) {
 
   const handleCancel = (e) => {
     e.preventDefault();
+    setPopupAction(() => confirmCancel);
+    setShowPopup(true);
+  };
+
+  const confirmCancel = () => {
+    setShowPopup(false);
     navigate("/gestao");
-  }
+  };
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -55,11 +64,18 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       alert("Favor cadastrar um fabricante.");
       return;
     }
+    setPopupAction(() => confirmAddProduct);
+    setShowPopup(true);
+  };
+
+  const confirmAddProduct = async () => {
+    setShowPopup(false);
     const data = {
       nome: nomeProduto,
       id_fabricante: selectedFabricante
     };
     try {
+      setLoading(true);
       let req;
       if (mode === 'cadastro') {
         req = await api.post('/produtos', data);
@@ -73,19 +89,31 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       } else {
         alert("Erro ao cadastrar solução.");
       }
+      setLoading(false);
     } catch (err) {
       console.error("Error posting data:", err);
       alert("Erro ao cadastrar solução.");
     }
-  }
+  };
 
   const handleFabricanteChange = (e) => {
     setSelectedFabricante(e.target.value);
-  }
+  };
+
+  const cancelPopup = () => {
+    setShowPopup(false);
+  };
 
   return (
     <>
       {loading && <Loading />}
+      {showPopup && (
+        <Popup
+          message="Tem certeza que deseja continuar com esta ação?"
+          onConfirm={popupAction}
+          onCancel={cancelPopup}
+        />
+      )}
       <div className="global-display">
         <Navbar />
         <div className="global-container">

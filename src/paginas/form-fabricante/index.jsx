@@ -5,11 +5,14 @@ import Api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../componetes/loading";
+import Popup from "../../componetes/pop-up";
 
 export default function FormFabricante({ mode = 'cadastro' }) {
     const api = new Api();
     const [nomeFabricante, setNomeFabricante] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const [popupAction, setPopupAction] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -34,17 +37,29 @@ export default function FormFabricante({ mode = 'cadastro' }) {
 
     const handleCancel = (e) => {
         e.preventDefault();
+        setPopupAction(() => confirmCancel);
+        setShowPopup(true);
+    };
+
+    const confirmCancel = () => {
+        setShowPopup(false);
         navigate("/gestao");
     };
 
-    const handleSaveFabricante = async (e) => {
+    const handleSaveFabricante = (e) => {
         e.preventDefault();
+        setPopupAction(() => confirmSaveFabricante);
+        setShowPopup(true);
+    };
 
+    const confirmSaveFabricante = async () => {
+        setShowPopup(false);
         const data = {
             nome: nomeFabricante,
         };
 
         try {
+            setLoading(true);
             let req;
             if (mode === 'cadastro') {
                 req = await api.post('/fabricantes', data);
@@ -57,15 +72,27 @@ export default function FormFabricante({ mode = 'cadastro' }) {
             } else {
                 alert("Erro ao salvar fabricante.");
             }
+            setLoading(false);
         } catch (err) {
             console.error("Error saving data:", err);
             alert("Erro ao salvar fabricante.");
         }
     };
 
+    const cancelPopup = () => {
+        setShowPopup(false);
+    };
+
     return (
         <>
             {loading && <Loading />}
+            {showPopup && (
+                <Popup
+                    message="Tem certeza que deseja continuar com esta ação?"
+                    onConfirm={popupAction}
+                    onCancel={cancelPopup}
+                />
+            )}
             <div className="global-display">
                 <Navbar />
                 <div className="global-container">
