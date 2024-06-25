@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import Loading from "../../componetes/loading";
+import { useNavigate } from "react-router-dom";
 
 export default function Usuarios() {
     const api = new Api();
     const [response, setResponse] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,6 +36,10 @@ export default function Usuarios() {
 
     const totalUsuarios = filteredUsuarios.length;
 
+    const handleAddUser = () => {
+        navigate("/cadastro-usuario");
+    }
+
     return (
         <>
             {loading && <Loading />}
@@ -46,7 +52,7 @@ export default function Usuarios() {
                     onChange={handleSearch}
                     className="global-input"
                 />
-                <button className="global-btn global-btn-verde">Adicionar Usuário</button>
+                <button onClick={e => handleAddUser()} className="global-btn global-btn-verde">Adicionar Usuário</button>
                 {response && response.usuarios ? (
                     <table className="global-tabela">
                         <thead>

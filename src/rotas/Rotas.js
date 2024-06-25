@@ -13,6 +13,8 @@ import { useCookies } from 'react-cookie';
 import FormSolucao from '../paginas/form-solucao';
 import FormFabricante from '../paginas/form-fabricante';
 import FormCliente from '../paginas/form-cliente';
+import FormUsuario from '../paginas/form-usuario';
+import FormContrato from '../paginas/form-contrato';
 
 export default function Rotas() {
 
@@ -32,6 +34,10 @@ export default function Rotas() {
                 <Route path="/edicao-fabricante/:id" element={!cookies['jwtToken'] ? <Login /> : <FormFabricante mode="edicao" />} />
                 <Route path="/cadastro-cliente" element={!cookies['jwtToken'] ? <Login /> : <FormCliente mode="cadastro" />} />
                 <Route path="/edicao-cliente/:id" element={!cookies['jwtToken'] ? <Login /> : <FormCliente mode="edicao" />} />
+                <Route path="/cadastro-usuario" element={!cookies['jwtToken'] ? <Login /> : <FormUsuario mode="cadastro" />} />
+                <Route path="/edicao-usuario/:id" element={!cookies['jwtToken'] ? <Login /> : <FormUsuario mode="edicao" />} />
+                <Route path="/cadastro-contrato" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="cadastro" />} />
+                <Route path="/edicao-contrato/:id" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="edicao" />} />
             </Routes>
         </Router>
     );
