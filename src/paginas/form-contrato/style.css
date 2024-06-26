@@ -1,14 +1,63 @@
+#cadastro-contrato-descricao {
+  margin-top: 1rem;
+  padding-bottom: 1.5rem;
+  color: var(--cinza);
+  border-bottom: 1px solid var(--cinza);
+}
+
+#form-contrato-container {
+  margin-top: 2.5rem;
+}
+
+#form-contrato-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#form-contrato-cliente-cpf-cnpj-container {
+  border-bottom: 1px solid var(--cinza);
+  padding-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-contrato-label-input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.dois-inputs {
+  width: 47.5%;
+}
+
+#input-desabilitado {
+  background-color: var(--input-desabilitado);
+}
+
+.form-contrato-input {
+  padding: 2%;
+  border-radius: 5px;
+  border: 1px solid var(--cinza);
+  margin-top: 1.25rem;
+}
+
+.form-contrato-cliente-tres-inputs-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tres-inputs {
+  width: 30%;
+}
+
 .dropdown-list {
   list-style-type: none;
-  padding: 0;
-  margin: 0;
   max-height: 150px;
   overflow-y: auto;
   border: 1px solid #ccc;
-  position: absolute;
   background: white;
-  width: calc(100% - 20px); /* ajuste conforme necessário */
-  z-index: 1000;
 }
 
 .dropdown-list li {
@@ -18,4 +67,8 @@
 
 .dropdown-list li:hover {
   background-color: #f0f0f0;
+}
+
+#form-contrato-img {
+  width: 25%;
 }

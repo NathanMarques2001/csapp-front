@@ -46,8 +46,12 @@ export default function Contratos() {
     }, []);
 
     const handleRowClick = (id) => {
-        navigate(`/contratos/${id}`);
+        navigate(`/edicao-contrato/${id}`);
     };
+
+    const handleAddContract = () => {
+        navigate("/cadastro-contrato");
+    }
 
     const handleFilterChange = (e) => {
         setFilter(e.target.value);
@@ -72,7 +76,7 @@ export default function Contratos() {
                         value={filter}
                         onChange={handleFilterChange}
                     />
-                    <button className="global-btn global-btn-verde">Adicionar Contrato</button>
+                    <button onClick={e => handleAddContract()} className="global-btn global-btn-verde">Adicionar Contrato</button>
                     <button className="global-btn global-btn-azul">Filtrar</button>
                     {filteredContratos.length > 0 ? (
                         <table className="global-tabela">
