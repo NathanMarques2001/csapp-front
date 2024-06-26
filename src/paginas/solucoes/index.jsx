@@ -27,9 +27,11 @@ export default function Solucoes() {
                     return map;
                 }, {});
                 setFabricantes(fabricantesMap);
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
+            }
+            finally {
+                setLoading(false);
             }
         };
 

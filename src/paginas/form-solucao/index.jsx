@@ -21,10 +21,14 @@ export default function FormSolucao({ mode = 'cadastro' }) {
   useEffect(() => {
     const fetchFabricantes = async () => {
       try {
+        setLoading(true);
         const data = await api.get('/fabricantes');
         setFabricantes(data.fabricantes);
       } catch (err) {
         console.error("Error fetching data:", err);
+      }
+      finally {
+        setLoading(false);
       }
     };
 
@@ -36,9 +40,11 @@ export default function FormSolucao({ mode = 'cadastro' }) {
           const produto = response.produto;
           setNomeProduto(produto.nome);
           setSelectedFabricante(produto.id_fabricante);
-          setLoading(false);
         } catch (err) {
           console.error("Error fetching product:", err);
+        }
+        finally {
+          setLoading(false);
         }
       }
     };
@@ -89,10 +95,12 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       } else {
         alert("Erro ao cadastrar solução.");
       }
-      setLoading(false);
     } catch (err) {
       console.error("Error posting data:", err);
       alert("Erro ao cadastrar solução.");
+    }
+    finally {
+      setLoading(false);
     }
   };
 

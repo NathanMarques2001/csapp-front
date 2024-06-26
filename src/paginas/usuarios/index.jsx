@@ -16,9 +16,11 @@ export default function Usuarios() {
                 setLoading(true);
                 const data = await api.get('/usuarios');
                 setResponse(data);
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
+            }
+            finally {
+                setLoading(false);
             }
         };
         fetchData();

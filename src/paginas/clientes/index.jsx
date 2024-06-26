@@ -21,9 +21,11 @@ export default function Clientes() {
 
                 const contratosResponse = await api.get('/contratos');
                 setContratos(contratosResponse.contratos);
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
+            }
+            finally {
+                setLoading(false);
             }
         };
 

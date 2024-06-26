@@ -104,9 +104,11 @@ export default function Cliente() {
 
                 const fabricantesData = await api.get('/fabricantes');
                 setFabricantes(fabricantesData.fabricantes);
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
+            }
+            finally {
+                setLoading(false);
             }
         };
 

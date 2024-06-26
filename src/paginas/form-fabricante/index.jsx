@@ -24,9 +24,10 @@ export default function FormFabricante({ mode = 'cadastro' }) {
                     const response = await api.get(`/fabricantes/${id}`);
                     const fabricante = response.fabricante;
                     setNomeFabricante(fabricante.nome);
-                    setLoading(false);
                 } catch (err) {
                     console.error("Error fetching fabricante:", err);
+                }
+                finally {
                     setLoading(false);
                 }
             }
@@ -72,10 +73,12 @@ export default function FormFabricante({ mode = 'cadastro' }) {
             } else {
                 alert("Erro ao salvar fabricante.");
             }
-            setLoading(false);
         } catch (err) {
             console.error("Error saving data:", err);
             alert("Erro ao salvar fabricante.");
+        }
+        finally {
+            setLoading(false);
         }
     };
 

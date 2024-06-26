@@ -46,10 +46,12 @@ export default function FormCliente({ mode }) {
           setLoading(true);
           const response = await api.get(`/clientes/${id}`);
           setCliente(response.cliente);
-          setLoading(false);
         } catch (error) {
           console.error("Error fetching client data:", error);
         }
+        finally {
+          setLoading(false);
+      }
       };
       fetchCliente();
     }
@@ -84,11 +86,13 @@ export default function FormCliente({ mode }) {
         await api.put(`/clientes/${id}`, cliente);
       }
       navigate(`/clientes/${cliente.id}`);
-      setLoading(false);
     } catch (error) {
       console.error("Error submitting client data:", error);
       alert("Erro ao salvar cliente.");
     }
+    finally {
+      setLoading(false);
+  }
   };
 
   const confirmCancel = () => {

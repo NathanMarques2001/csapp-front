@@ -36,9 +36,11 @@ export default function Contratos() {
                     return map;
                 }, {});
                 setProdutos(produtosMap);
-                setLoading(false);
             } catch (err) {
                 console.error("Error fetching data:", err);
+            }
+            finally {
+                setLoading(false);
             }
         };
 
