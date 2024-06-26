@@ -147,11 +147,11 @@ export default function FormContrato({ mode = "cadastro" }) {
             <div className='form-contrato-cliente-tres-inputs-container'>
               <div className='form-contrato-label-input-container tres-inputs'>
                 <label htmlFor="valor-mensal" className='label-form-contrato'><b>Valor mensal <span className='required'>*</span></b></label>
-                <input type="text" name="valor-mensal" id="" className='form-contrato-input' />
+                <input type="text" name="valor-mensal" id="" className='form-contrato-input' placeholder='Valor do contrato mensalmente' />
               </div>
               <div className='form-contrato-label-input-container tres-inputs'>
                 <label htmlFor="quantidade" className='label-form-contrato'><b>Quantidade <span className='required'>*</span></b></label>
-                <input type="text" name="quantidade" id="" className='form-contrato-input' />
+                <input type="text" name="quantidade" id="" className='form-contrato-input' placeholder='Quantidade da solução' />
               </div>
               <div className='form-contrato-label-input-container tres-inputs'>
                 <label htmlFor="data-inicio" className='label-form-contrato'><b>Data ínicio <span className='required'>*</span></b></label>
@@ -163,11 +163,11 @@ export default function FormContrato({ mode = "cadastro" }) {
               <div>
                 <div className='form-contrato-label-input-container'>
                   <label htmlFor="email" className='label-form-contrato'><b>Email de envio <span className='required'>*</span></b></label>
-                  <input type="email" name="email" id="" className='form-contrato-input' />
+                  <input type="email" name="email" id="" className='form-contrato-input' placeholder='Email que receberá o contrato' />
                 </div>
                 <div className='form-contrato-label-input-container'>
                   <label htmlFor="descricao" className='label-form-contrato'><b>Descrição breve <span className='required'>*</span></b></label>
-                  <textarea name="descricao" id="" className='form-contrato-input'></textarea>
+                  <textarea name="descricao" id="" className='form-contrato-input' placeholder='Algo a mais que deveria ser descrito aqui...'></textarea>
                 </div>
                 <div>
                   <button type="button">Cancelar</button>
