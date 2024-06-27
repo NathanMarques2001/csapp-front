@@ -61,7 +61,7 @@ export default function FormSolucao({ mode = 'cadastro' }) {
 
   const confirmCancel = () => {
     setShowPopup(false);
-    navigate("/gestao");
+    navigate("/gestao?aba=solucoes");
   };
 
   const handleAddProduct = async (e) => {
@@ -91,7 +91,7 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       if (req.message === "Produto criado com sucesso!" || req.message === "Produto atualizado com sucesso!") {
         setNomeProduto("");
         setSelectedFabricante("");
-        navigate("/gestao");
+        navigate("/gestao?aba=solucoes");
       } else {
         alert("Erro ao cadastrar solução.");
       }

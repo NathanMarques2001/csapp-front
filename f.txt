@@ -1,0 +1,12 @@
+- Finalizar estilização form de cadastro de contratos
+ - Form de cadastro de contratos enviar dados para o banco
+ - Form de cadastro de contratos aceitar edição de contratos
+ - Adicionar funcionalizade ao botão filtrar na aba de contratos
+ - Sempre que o usuário logar verificar se o cookie JWT salvo no navegador ainda é válido
+ - Aba de visualizar contratos e dados do cliente deve puxar do banco de dados (está estático)
+ - Pegar requisitos dos drop downs pendentes
+ - Atrelar contatos técnicos, contatos comerciais e fatos importantes ao cliente não ao contrato
+ - Ajustar valor do contrato com base no índice do reajuste
+ - Colorir contrato quando estiver próximo de vencer
+ - Contrato deve ficar inativo ou expirar duração
+ - Edição de usuário ao clicar no nome de quem está logado

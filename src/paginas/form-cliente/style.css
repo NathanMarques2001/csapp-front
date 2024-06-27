@@ -1,106 +1,103 @@
+.required {
+  color: red;
+}
+
 .form {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  width: 100%;
+}
+
+.form-cliente-container {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 4.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  padding: 2%;
+  border: 1px solid var(--cinza);
+  margin-bottom: 1.25rem;
+}
+
+.form-group input {
+  border-radius: 5px;
+}
+
+.form-group select {
+  background-color: var(--branco);
+}
+
+#form-cliente-container-1 {
+  width: 100%;
+  border-bottom: 1px solid var(--cinza);
+}
+
+#form-cliente-container-2 {
+  margin-top: 1rem;
+  width: 46.5%;
+}
+
+#form-cliente-container-2 h2 {
+  margin-bottom: 1.5rem;
 }
 
 #cadastro-cliente-img {
   width: 80%;
 }
 
-#cadastro-cliente-img-div {
-  display: flex;
-  align-items: end;
-  padding-bottom: 1.25rem;
-}
-
-.form h1,
-.form h2 {
-  margin-bottom: 1.25rem;
-}
-
-.form p {
-  margin-bottom: 1.25rem;
-}
-
-.required {
-  color: red;
-}
-
-
-.form-group {
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-
 .date-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  justify-content: space-between;
 }
 
-.form-group input,
-.form-group select {
-  width: 80%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-right: 10px;
+.form-group-3 {
+  width: 30%;
 }
 
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group select {
-  width: 80%;
+.form-group-3 input {
+  padding: 6%;
 }
 
-.form-group input:first-child,
-.form-group select:first-child {
-  margin-right: 10px;
+.form-cliente-container-border {
+  border-bottom: 1px solid var(--cinza);
 }
 
 .form-buttons {
+  width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: end;
+  gap: 2.5%
 }
 
-.cancel-button {
-  color: var(--preto);
-  padding: 10px 1.25rem;
-  border: 1px solid var(--preto);
-  border-radius: 5px;
+.form-cliente-btn-cancelar {
   cursor: pointer;
-  margin-right: 10px;
-  font-weight: bold;
-}
-
-.cancel-button:hover {
-  background-color: var(--vermelho-hover);
-  color: white;
-
-}
-
-.submit-button {
-  background-color: var(--verde);
-  color: white;
-  padding: 10px 1.25rem;
   border: 1px solid var(--preto);
+  padding: 1.5% 0;
   border-radius: 5px;
+  width: 240px;
+  margin-bottom: 5%;
+}
+
+.form-cliente-btn-cancelar:hover {
+  background-color: var(--branco-hover);
+}
+
+.form-cliente-btn-enviar {
   cursor: pointer;
-  font-weight: bold;
-}
-
-.submit-button:hover {
-  background-color: var(--verde-hover);
-  color: var(--preto);
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  border: 1px solid var(--azul);
+  padding: 1.5% 0;
+  border-radius: 5px;
+  width: 240px;
+  margin-bottom: 5%;
 }

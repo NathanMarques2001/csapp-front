@@ -6,7 +6,7 @@ import imgCliente from "../../assets/images/img-cliente.png";
 import Navbar from "../../componetes/navbar";
 import CardGestor from "../../componetes/card-gestor";
 import CardContato from "../../componetes/card-contato";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../componetes/loading";
 
 export default function Cliente() {
@@ -17,6 +17,7 @@ export default function Cliente() {
     const [fabricantes, setFabricantes] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { id } = useParams();
     const contatoComercial = [
         {
             id: 1,
@@ -94,9 +95,9 @@ export default function Cliente() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const clienteData = await api.get('/clientes/1');
+                const clienteData = await api.get(`/clientes/${id}`);
                 setCliente(clienteData.cliente);
-                const contratosData = await api.get('/contratos/usuario/1');
+                const contratosData = await api.get(`/contratos/usuario/${id}`);
                 setContratos(contratosData.contratos);
 
                 const produtosData = await api.get('/produtos');

@@ -1,3 +1,9 @@
+#navbar-preenchimento {
+    width: 16%;
+    height: 100vh;
+    margin-right: 4%;
+}
+
 #navbar-container {
     background-color: var(--preto);
     width: 16%;
@@ -5,7 +11,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-right: 4%;
+    position: fixed;
 }
 
 #logo-img {

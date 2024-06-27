@@ -44,7 +44,7 @@ export default function FormFabricante({ mode = 'cadastro' }) {
 
     const confirmCancel = () => {
         setShowPopup(false);
-        navigate("/gestao");
+        navigate("/gestao?aba=fabricantes");
     };
 
     const handleSaveFabricante = (e) => {
@@ -69,7 +69,7 @@ export default function FormFabricante({ mode = 'cadastro' }) {
             }
             if (req.message === "Fabricante criado com sucesso!" || req.message === "Fabricante atualizado com sucesso!") {
                 setNomeFabricante("");
-                navigate("/gestao");
+                navigate("/gestao?aba=fabricantes");
             } else {
                 alert("Erro ao salvar fabricante.");
             }

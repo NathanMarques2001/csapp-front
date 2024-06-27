@@ -17,31 +17,34 @@ export default function Navbar() {
     }
 
     return (
-        <nav id='navbar-container'>
-            <img src={logo} alt="logo prolinx" id="logo-img" />
-            <div id="navbar-links-client">
-                <div id='navbar-links'>
-                    <Link to="/contratos" className="link">
-                        <img className='navbar-icon' src={iconeContratos} alt="ícone contrato" />
-                        <span className='navbar-span'>Contratos</span>
-                    </Link>
-                    <Link to="/clientes" className="link">
-                        <img className='navbar-icon' src={iconeUsuarios} alt="ícone cliente" />
-                        <span className='navbar-span'>Clientes</span>
-                    </Link>
-                    <Link to="/gestao" className="link">
-                        <img className='navbar-icon' src={iconeCentralGestao} alt="ícone gestão" />
-                        <span className='navbar-span'>Gestão</span>
-                    </Link>
+        <>
+        <div id="navbar-preenchimento"></div>
+            <nav id='navbar-container'>
+                <img src={logo} alt="logo prolinx" id="logo-img" />
+                <div id="navbar-links-client">
+                    <div id='navbar-links'>
+                        <Link to="/contratos" className="link">
+                            <img className='navbar-icon' src={iconeContratos} alt="ícone contrato" />
+                            <span className='navbar-span'>Contratos</span>
+                        </Link>
+                        <Link to="/clientes" className="link">
+                            <img className='navbar-icon' src={iconeUsuarios} alt="ícone cliente" />
+                            <span className='navbar-span'>Clientes</span>
+                        </Link>
+                        <Link to="/gestao" className="link">
+                            <img className='navbar-icon' src={iconeCentralGestao} alt="ícone gestão" />
+                            <span className='navbar-span'>Gestão</span>
+                        </Link>
+                    </div>
+                    <div id='navbar-client'>
+                        <span className='navbar-span'>{cookies.nomeUsuario}</span>
+                    </div>
                 </div>
-                <div id='navbar-client'>
-                    <span className='navbar-span'>{cookies.nomeUsuario}</span>
-                </div>
-            </div>
-            <button id='navbar-btn' onClick={e => handleLogout()}>
-                <img className='navbar-icon' src={iconeSair} alt="ícone sair" />
-                <span className='navbar-span'>Sair</span>
-            </button>
-        </nav>
+                <button id='navbar-btn' onClick={e => handleLogout()}>
+                    <img className='navbar-icon' src={iconeSair} alt="ícone sair" />
+                    <span className='navbar-span'>Sair</span>
+                </button>
+            </nav>
+        </>
     );
 }
