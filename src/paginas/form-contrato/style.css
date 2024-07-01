@@ -37,15 +37,36 @@
 }
 
 .form-contrato-input {
-  padding: 2%;
+  padding: 3%;
   border-radius: 5px;
   border: 1px solid var(--cinza);
   margin-top: 1.25rem;
 }
 
+.form-contrato-input-padding-menor {
+  padding: 2%;
+}
+
+#form-cliente-input-email,
+#form-cliente-input-descricao {
+  padding: 1.5%;
+}
+
+.form-contrato-select {
+  border-radius: 0;
+}
+
 .form-contrato-cliente-tres-inputs-container {
   display: flex;
   justify-content: space-between;
+}
+
+#form-cliente-container-input-descricao {
+  height: 60%;
+}
+
+#form-cliente-input-descricao {
+  height: 100%;
 }
 
 .tres-inputs {
@@ -70,5 +91,20 @@
 }
 
 #form-contrato-img {
-  width: 25%;
+  width: 30%;
+  margin-right: 5%;
+}
+
+#form-contrato-container-email-descricao {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#form-contrato-container-btn {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+  gap: 3%;
 }

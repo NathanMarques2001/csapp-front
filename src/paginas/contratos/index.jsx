@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import Navbar from "../../componetes/navbar";
 import Loading from "../../componetes/loading";
+import PopUpFiltro from "../../componetes/pop-up-filtro";
 import { useNavigate } from "react-router-dom";
 
 export default function Contratos() {
@@ -10,7 +11,9 @@ export default function Contratos() {
     const [clientes, setClientes] = useState({});
     const [produtos, setProdutos] = useState({});
     const [filter, setFilter] = useState("");
+    const [filters, setFilters] = useState({});
     const [loading, setLoading] = useState(false);
+    const [showFilterPopup, setShowFilterPopup] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -59,9 +62,31 @@ export default function Contratos() {
         setFilter(e.target.value);
     };
 
+    const handleFilterApply = (filters) => {
+        setFilters(filters);
+        setShowFilterPopup(false);
+    };
+
     const filteredContratos = contratos.filter(contrato => {
         const clienteNome = clientes[contrato.id_cliente]?.nome || "";
-        return clienteNome.toLowerCase().includes(filter.toLowerCase());
+
+        const filterConditions = [
+            filters.id_cliente ? contrato.id_cliente.toString().includes(filters.id_cliente) : true,
+            filters.id_produto ? contrato.id_produto.toString().includes(filters.id_produto) : true,
+            filters.faturado ? contrato.faturado.toString().includes(filters.faturado) : true,
+            filters.dia_vencimento ? contrato.dia_vencimento.toString().includes(filters.dia_vencimento) : true,
+            filters.indice_reajuste ? contrato.indice_reajuste.toString().includes(filters.indice_reajuste) : true,
+            filters.proximo_reajuste ? contrato.proximo_reajuste.toString().includes(filters.proximo_reajuste) : true,
+            filters.status ? contrato.status.toString().includes(filters.status) : true,
+            filters.duracao ? contrato.duracao.toString().includes(filters.duracao) : true,
+            filters.valor_mensal ? contrato.valor_mensal.toString().includes(filters.valor_mensal) : true,
+            filters.quantidade ? contrato.quantidade.toString().includes(filters.quantidade) : true,
+            filters.email_envio ? contrato.email_envio.toString().includes(filters.email_envio) : true,
+            filters.descricao ? contrato.descricao.toLowerCase().includes(filters.descricao.toLowerCase()) : true,
+            clienteNome.toLowerCase().includes(filter.toLowerCase()),
+        ];
+
+        return filterConditions.every(condition => condition);
     });
 
     return (
@@ -78,8 +103,14 @@ export default function Contratos() {
                         value={filter}
                         onChange={handleFilterChange}
                     />
-                    <button onClick={e => handleAddContract()} className="global-btn global-btn-verde">Adicionar Contrato</button>
-                    <button className="global-btn global-btn-azul">Filtrar</button>
+                    <button onClick={handleAddContract} className="global-btn global-btn-verde">Adicionar Contrato</button>
+                    <button onClick={() => setShowFilterPopup(true)} className="global-btn global-btn-azul">Filtrar</button>
+                    {showFilterPopup && (
+                        <div className="filter-popup">
+                            <PopUpFiltro onFilter={handleFilterApply} />
+                            <button onClick={() => setShowFilterPopup(false)} className="close-popup-btn">Fechar</button>
+                        </div>
+                    )}
                     {filteredContratos.length > 0 ? (
                         <table className="global-tabela">
                             <thead>
