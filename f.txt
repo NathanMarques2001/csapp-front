@@ -1,6 +1,4 @@
- - Sempre que o usuário logar verificar se o cookie JWT salvo no navegador ainda é válido
  - Pegar requisitos dos drop downs pendentes
- - Atrelar contatos técnicos, contatos comerciais e fatos importantes ao cliente não ao contrato
  - Ajustar valor do contrato com base no índice do reajuste
  - Colorir contrato quando estiver próximo de vencer
  - Contrato deve ficar inativo ou expirar duração
