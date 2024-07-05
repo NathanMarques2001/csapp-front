@@ -18,7 +18,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [popupAction, setPopupAction] = useState(null);
 
   const [clientes, setClientes] = useState([]);
-  const [cliente, setCliente] = useState(null)
+  const [cliente, setCliente] = useState(null);
   const [filteredClientes, setFilteredClientes] = useState([]);
   const [clienteInput, setClienteInput] = useState("");
   const [selectedClienteId, setSelectedClienteId] = useState(null);
@@ -38,6 +38,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [dataInicio, setDataInicio] = useState("");
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [indiceReajusteValor, setIndiceReajusteValor] = useState(null); // Novo estado para armazenar o valor do índice de reajuste
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -95,6 +96,24 @@ export default function FormContrato({ mode = "cadastro" }) {
     fetchContrato();
   }, [mode, id]);
 
+  const fetchIndice = async (indice) => {
+    let url = '';
+    if (indice === 'igpm') {
+      url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.189/dados?formato=json';
+    } else if (indice === 'ipca') {
+      url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json';
+    }
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data[data.length - 1].valor;
+    } catch (err) {
+      console.error(`Erro ao buscar ${indice}:`, err);
+      return null;
+    }
+  };
+
   const handleClienteInputChange = (e) => {
     const input = e.target.value;
     setClienteInput(input);
@@ -126,6 +145,16 @@ export default function FormContrato({ mode = "cadastro" }) {
     setShowDropdown(false);
   };
 
+  const handleReajusteChange = async (e) => {
+    const indice = e.target.value;
+    setReajuste(indice);
+    const valor = await fetchIndice(indice);
+    if (valor) {
+      setIndiceReajusteValor(valor);
+      console.log(`Valor do índice ${indice}: ${valor}`);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedClienteId) {
@@ -147,7 +176,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         faturado: false,
         faturado_por: faturadoPor,
         dia_vencimento: Number(vencimento),
-        indice_reajuste: Number(reajuste),
+        indice_reajuste: Number(indiceReajusteValor), // Usando o valor do índice de reajuste armazenado
         proximo_reajuste: formatDate(proximoReajuste),
         status: "ativo",
         duracao: Number(duracao),
@@ -181,6 +210,11 @@ export default function FormContrato({ mode = "cadastro" }) {
   const cancelPopup = () => {
     setShowPopup(false);
   };
+
+  const options = [];
+  for (let i = 6; i <= 60; i++) {
+    options.push(i);
+  }
 
   return (
     <>
@@ -249,8 +283,11 @@ export default function FormContrato({ mode = "cadastro" }) {
                   <label htmlFor="duracao" className='label-form-contrato'><b>Duração do contrato <span className='required'>*</span></b></label>
                   <select name="duracao" className='form-contrato-input form-contrato-select' value={duracao} onChange={(e) => setDuracao(e.target.value)}>
                     <option value="">Selecione</option>
-                    <option value="1">1 MÊS</option>
-                    <option value="2">2 MESES</option>
+                    {options.map((i) => (
+                      <option key={i} value={i}>
+                        {i} MESES
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -264,9 +301,10 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="reajuste" className='label-form-contrato'><b>Índice reajuste <span className='required'>*</span></b></label>
-                  <select name="reajuste" className='form-contrato-input form-contrato-select' value={reajuste} onChange={(e) => setReajuste(e.target.value)}>
-                    <option value="">Selecione</option>
-                    <option value="1">1</option>
+                  <select name="reajuste" value={reajuste} onChange={handleReajusteChange} className='form-contrato-input form-contrato-select'>
+                    <option value="">Selecione um índice</option>
+                    <option value="igpm">IGPM</option>
+                    <option value="ipca">IPCA</option>
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>

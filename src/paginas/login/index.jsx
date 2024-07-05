@@ -16,26 +16,31 @@ export default function Login() {
   const navigate = useNavigate();
 
   async function sendForm(event) {
-    setLoading(true);
-    event.preventDefault();
+    try {
+      setLoading(true);
+      event.preventDefault();
 
-    const now = new Date();
-    const expireAt = new Date(now);
-    expireAt.setHours(6, 0, 0, 0); // Define a expiração para as 6h da manhã
+      const now = new Date();
+      const expireAt = new Date(now);
+      expireAt.setHours(6, 0, 0, 0); // Define a expiração para as 6h da manhã
 
-    if (now > expireAt) {
-      expireAt.setDate(expireAt.getDate() + 1); // Se já passou das 6h, define para o próximo dia
+      if (now > expireAt) {
+        expireAt.setDate(expireAt.getDate() + 1); // Se já passou das 6h, define para o próximo dia
+      }
+
+      const expirationTime = expireAt.getTime() - now.getTime(); // Calcula o tempo restante em milissegundos
+
+      const response = await auth.login('/usuarios/login', { email: email, senha: password });
+      if (response.token !== '') {
+        setCookie('jwtToken', response.token, { maxAge: expirationTime / 1000 }); // Define o token com 6 horas de expiração
+        setCookie('nomeUsuario', response.usuario.nome, { maxAge: expirationTime / 1000 }); // Define o nome do usuário com 6 horas de expiração
+        navigate("/contratos");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    const expirationTime = expireAt.getTime() - now.getTime(); // Calcula o tempo restante em milissegundos
-
-    const response = await auth.login('/usuarios/login', { email: email, senha: password });
-    if (response.token !== '') {
-      setCookie('jwtToken', response.token, { maxAge: expirationTime / 1000 }); // Define o token com 6 horas de expiração
-      setCookie('nomeUsuario', response.usuario.nome, { maxAge: expirationTime / 1000 }); // Define o nome do usuário com 6 horas de expiração
-      navigate("/contratos");
-    }
-    setLoading(false);
   }
 
   return (

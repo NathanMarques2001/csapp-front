@@ -1,4 +1,3 @@
-// src/pages/FormCliente/index.js
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../componetes/navbar";
@@ -39,6 +38,8 @@ export default function FormCliente({ mode }) {
     gestor_financeiro_telefone_2: "",
   });
 
+  const [usuarios, setUsuarios] = useState([]);
+
   useEffect(() => {
     if (mode === "edicao" && id) {
       const fetchCliente = async () => {
@@ -72,6 +73,18 @@ export default function FormCliente({ mode }) {
     }
   }, [mode, id]);
 
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const response = await api.get("/usuarios");
+        setUsuarios(response.usuarios);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsuarios();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -172,7 +185,9 @@ export default function FormCliente({ mode }) {
                     <label htmlFor="relacionamento">Relacionamento</label>
                     <select id="relacionamento" name="relacionamento" value={cliente.relacionamento} onChange={handleChange}>
                       <option value="">Selecione...</option>
-                      {/* Valores a serem inseridos posteriormente */}
+                      {usuarios.map((usuario) => (
+                        <option key={usuario.id} value={usuario.id}>{usuario.nome}</option>
+                      ))}
                     </select>
                   </div>
                   <div>

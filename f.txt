@@ -1,4 +1,3 @@
- - Pegar requisitos dos drop downs pendentes
  - Ajustar valor do contrato com base no índice do reajuste
  - Colorir contrato quando estiver próximo de vencer
  - Contrato deve ficar inativo ou expirar duração
