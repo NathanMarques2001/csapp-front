@@ -1,3 +1,4 @@
+// Estilos, funcoes, classes, imagens e etc
 import './style.css';
 
 export default function Loading() {

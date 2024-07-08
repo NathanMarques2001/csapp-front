@@ -1,12 +1,13 @@
-import "./style.css"
+// Estilos, funcoes, classes, imagens e etc
+import "./style.css";
 
 export default function CardContato({ titulo, contatos }) {
     return (
-        <div className="cliente-contatos">
-            <h3>{titulo}</h3>
-            <div>
+        <div className="card-cliente-contatos">
+            <p className="card-cliente-contatos-titulo">{titulo}</p>
+            <div className="card-cliente-contatos-container-conteudos">
                 {contatos.map(contato => (
-                    <p key={contato.id}>{contato.conteudo}</p>
+                    <p className="card-cliente-contatos-conteudo" key={contato.id}>{contato.conteudo}</p>
                 ))}
             </div>
         </div>

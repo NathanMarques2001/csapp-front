@@ -4,6 +4,10 @@ import Loading from "../../componetes/loading";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeExcluir from "../../assets/icons/icon-lixeira.png";
 import { useNavigate } from "react-router-dom";
+import formataTipoUsuario from "../../utils/formatUserType";
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function Usuarios() {
     const api = new Api();
@@ -68,36 +72,36 @@ export default function Usuarios() {
         <>
             {loading && <Loading />}
             <div>
-                <h3 className="global-subtitulo">Usuários ({totalUsuarios})</h3>
+                <h3 className="gestao-section-subtitulo">Usuários ({totalUsuarios})</h3>
                 <input
                     type="text"
                     placeholder="Procure pelo seu nome"
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="global-input"
+                    className="gestao-section-input"
                 />
-                <button onClick={handleAddUser} className="global-btn global-btn-verde">Adicionar Usuário</button>
+                <button onClick={handleAddUser} className="gestao-section-btn gestao-section-btn-verde">Adicionar Usuário</button>
                 {response && response.usuarios ? (
-                    <table className="global-tabela">
+                    <table className="gestao-section-tabela">
                         <thead>
                             <tr>
-                                <th className="global-titulo-tabela">Nome</th>
-                                <th className="global-titulo-tabela">Função</th>
-                                <th className="global-titulo-tabela">Email</th>
-                                <th className="global-titulo-tabela">Ações</th>
+                                <th className="gestao-section-titulo-tabela">Nome</th>
+                                <th className="gestao-section-titulo-tabela">Função</th>
+                                <th className="gestao-section-titulo-tabela">Email</th>
+                                <th className="gestao-section-titulo-tabela">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredUsuarios.map(usuario => (
                                 <tr key={usuario.id}>
-                                    <td className="global-conteudo-tabela">{usuario.nome}</td>
-                                    <td className="global-conteudo-tabela">{usuario.tipo}</td>
-                                    <td className="global-conteudo-tabela">{usuario.email}</td>
-                                    <td className="global-conteudo-tabela solucoes-container-btn">
-                                        <button className="solucoes-editar-btn solucoes-item-btn" onClick={() => handleEditUser(usuario.id)}>
+                                    <td className="gestao-section-conteudo-tabela">{usuario.nome}</td>
+                                    <td className="gestao-section-conteudo-tabela">{formataTipoUsuario(usuario.tipo)}</td>
+                                    <td className="gestao-section-conteudo-tabela">{usuario.email}</td>
+                                    <td className="gestao-section-conteudo-tabela gestao-section-container-btn">
+                                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEditUser(usuario.id)} disabled={usuario.tipo == "Dev"}>
                                             <img src={editIcon} alt="" />
                                         </button>
-                                        <button className="solucoes-excluir-btn solucoes-item-btn" onClick={() => handleDelete(usuario.id)}>
+                                        <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(usuario.id)} disabled={usuario.tipo == "Dev"}>
                                             <img src={iconeExcluir} alt="" />
                                         </button>
                                     </td>
@@ -106,7 +110,7 @@ export default function Usuarios() {
                         </tbody>
                     </table>
                 ) : (
-                    <p>Ainda não foram cadastrados usuários!</p>
+                    <p className="gestao-section-sem-registros">Ainda não foram cadastrados usuários!</p>
                 )}
             </div>
         </>

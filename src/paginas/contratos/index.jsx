@@ -1,9 +1,13 @@
+// Bibliotecas
 import { useEffect, useState } from "react";
-import Api from "../../utils/api";
+import { useNavigate } from "react-router-dom";
+// Componentes
 import Navbar from "../../componetes/navbar";
 import Loading from "../../componetes/loading";
 import PopUpFiltro from "../../componetes/pop-up-filtro";
-import { useNavigate } from "react-router-dom";
+// Estilos, funcoes, classes, imagens e etc
+import Api from "../../utils/api";
+import './style.css';
 
 export default function Contratos() {
     const api = new Api();
@@ -26,7 +30,7 @@ export default function Contratos() {
                 const clientesResponse = await api.get('/clientes');
                 const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
                     map[cliente.id] = {
-                        nome: cliente.nome,
+                        nome_fantasia: cliente.nome_fantasia,
                         cpf_cnpj: cliente.cpf_cnpj
                     };
                     return map;
@@ -50,39 +54,33 @@ export default function Contratos() {
         fetchData();
     }, []);
 
-    const handleRowClick = (id) => {
+    const detalhesContrato = (id) => {
         navigate(`/edicao-contrato/${id}`);
     };
 
-    const handleAddContract = () => {
+    const addContrato = () => {
         navigate("/cadastro-contrato");
     }
 
-    const handleFilterChange = (e) => {
+    const filtratContratos = (e) => {
         setFilter(e.target.value);
     };
 
-    const handleFilterApply = (filters) => {
+    const aplicarFiltroPopUp = (filters) => {
         setFilters(filters);
         setShowFilterPopup(false);
     };
 
     const filteredContratos = contratos.filter(contrato => {
-        const clienteNome = clientes[contrato.id_cliente]?.nome || "";
+        const clienteNome = clientes[contrato.id_cliente]?.nome_fantasia || "";
 
         const filterConditions = [
             filters.id_cliente ? contrato.id_cliente.toString().includes(filters.id_cliente) : true,
             filters.id_produto ? contrato.id_produto.toString().includes(filters.id_produto) : true,
             filters.faturado ? contrato.faturado.toString().includes(filters.faturado) : true,
-            filters.dia_vencimento ? contrato.dia_vencimento.toString().includes(filters.dia_vencimento) : true,
-            filters.indice_reajuste ? contrato.indice_reajuste.toString().includes(filters.indice_reajuste) : true,
-            filters.proximo_reajuste ? contrato.proximo_reajuste.toString().includes(filters.proximo_reajuste) : true,
             filters.status ? contrato.status.toString().includes(filters.status) : true,
             filters.duracao ? contrato.duracao.toString().includes(filters.duracao) : true,
             filters.valor_mensal ? contrato.valor_mensal.toString().includes(filters.valor_mensal) : true,
-            filters.quantidade ? contrato.quantidade.toString().includes(filters.quantidade) : true,
-            filters.email_envio ? contrato.email_envio.toString().includes(filters.email_envio) : true,
-            filters.descricao ? contrato.descricao.toLowerCase().includes(filters.descricao.toLowerCase()) : true,
             clienteNome.toLowerCase().includes(filter.toLowerCase()),
         ];
 
@@ -92,50 +90,50 @@ export default function Contratos() {
     return (
         <>
             {loading && <Loading />}
-            <div className="global-display">
+            <div id="contratos-display">
                 <Navbar />
-                <div className="global-container">
-                    <h2 className="global-subtitulo">Contratos</h2>
+                <div id="contratos-container">
+                    <h1 id="contratos-titulo">Contratos</h1>
                     <input
                         type="text"
                         placeholder="Procure pelo cliente"
-                        className="global-input"
+                        id="contratos-input"
                         value={filter}
-                        onChange={handleFilterChange}
+                        onChange={filtratContratos}
                     />
-                    <button onClick={handleAddContract} className="global-btn global-btn-verde">Adicionar Contrato</button>
-                    <button onClick={() => setShowFilterPopup(true)} className="global-btn global-btn-azul">Filtrar</button>
+                    <button onClick={addContrato} className="contratos-botao" id="contratos-botao-add">Adicionar Contrato</button>
+                    <button onClick={() => setShowFilterPopup(true)} className="contratos-botao" id="contratos-botao-filtro" disabled>Filtrar</button>
                     {showFilterPopup && (
                         <div className="filter-popup">
-                            <PopUpFiltro onFilter={handleFilterApply} />
+                            <PopUpFiltro onFilter={aplicarFiltroPopUp} />
                             <button onClick={() => setShowFilterPopup(false)} className="close-popup-btn">Fechar</button>
                         </div>
                     )}
                     {filteredContratos.length > 0 ? (
-                        <table className="global-tabela">
+                        <table id="contratos-tabela">
                             <thead>
                                 <tr>
-                                    <th className="global-titulo-tabela">Cliente</th>
-                                    <th className="global-titulo-tabela">CPF/CNPJ</th>
-                                    <th className="global-titulo-tabela">Solução</th>
-                                    <th className="global-titulo-tabela">Valor Contrato</th>
-                                    <th className="global-titulo-tabela">Início Contrato</th>
+                                    <th className="contratos-titulo-tabela">Cliente</th>
+                                    <th className="contratos-titulo-tabela">CPF/CNPJ</th>
+                                    <th className="contratos-titulo-tabela">Solução</th>
+                                    <th className="contratos-titulo-tabela">Valor Contrato</th>
+                                    <th className="contratos-titulo-tabela">Início Contrato</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredContratos.map(contrato => (
-                                    <tr key={contrato.id} onClick={() => handleRowClick(contrato.id)} className="clickable-row">
-                                        <td className="global-conteudo-tabela">{clientes[contrato.id_cliente]?.nome || "Carregando..."}</td>
-                                        <td className="global-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
-                                        <td className="global-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
-                                        <td className="global-conteudo-tabela">{contrato.valor_mensal}</td>
-                                        <td className="global-conteudo-tabela">{new Date(contrato.createdAt).toLocaleDateString()}</td>
+                                    <tr key={contrato.id} onClick={() => detalhesContrato(contrato.id)} className="clickable-row">
+                                        <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.nome_fantasia || "Carregando..."}</td>
+                                        <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
+                                        <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
+                                        <td className="contratos-conteudo-tabela">{contrato.valor_mensal}</td>
+                                        <td className="contratos-conteudo-tabela">{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     ) : (
-                        <p>Ainda não foram cadastrados contratos!</p>
+                        <p id="contratos-sem-contratos">Ainda não foram cadastrados contratos!</p>
                     )}
                 </div>
             </div>

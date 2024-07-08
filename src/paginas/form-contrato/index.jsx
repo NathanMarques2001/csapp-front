@@ -69,7 +69,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           const selectedCliente = clienteResponse.cliente;
 
           setSelectedClienteId(contrato.id_cliente);
-          setClienteInput(selectedCliente ? selectedCliente.nome : "");
+          setClienteInput(selectedCliente ? `${selectedCliente.razao_social} - ${selectedCliente.nome_fantasia}` : "");
           setSelectedClienteCpfCnpj(selectedCliente ? selectedCliente.cpf_cnpj : "");
 
           setSolucao(contrato.id_produto);
@@ -122,8 +122,8 @@ export default function FormContrato({ mode = "cadastro" }) {
       setFilteredClientes(clientes);
     } else {
       const filtered = clientes.filter(cliente =>
-        (cliente.nome && cliente.nome.toLowerCase().includes(input.toLowerCase())) ||
-        (cliente.cpf_cnpj && cliente.cpf_cnpj.includes(input))
+        (cliente.razao_social && cliente.razao_social.toLowerCase().includes(input.toLowerCase())) ||
+        (cliente.nome_fantasia && cliente.nome_fantasia.toLowerCase().includes(input.toLowerCase()))
       );
       setFilteredClientes(filtered);
     }
@@ -139,7 +139,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   };
 
   const handleClienteItemClick = (cliente) => {
-    setClienteInput(cliente.nome);
+    setClienteInput(`${cliente.razao_social} - ${cliente.nome_fantasia}`);
     setSelectedClienteId(cliente.id);
     setSelectedClienteCpfCnpj(cliente.cpf_cnpj);
     setShowDropdown(false);
@@ -251,7 +251,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                     <ul className="dropdown-list">
                       {filteredClientes.map(cliente => (
                         <li key={cliente.id} onMouseDown={() => handleClienteItemClick(cliente)}>
-                          {cliente.nome} - {cliente.cpf_cnpj}
+                          {cliente.razao_social} - {cliente.nome_fantasia}
                         </li>
                       ))}
                     </ul>

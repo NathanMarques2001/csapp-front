@@ -1,13 +1,16 @@
+// Bibliotecas
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+// Componentes
+import Navbar from "../../componetes/navbar";
+import CardGestor from "../../componetes/card-gestor";
+import CardContato from "../../componetes/card-contato";
+import Loading from "../../componetes/loading";
+// Estilos, funcoes, classes, imagens e etc
 import "./style.css";
 import Api from "../../utils/api";
 import botaoEditar from "../../assets/icons/icon-lapis.png";
 import imgCliente from "../../assets/images/img-cliente.png";
-import Navbar from "../../componetes/navbar";
-import CardGestor from "../../componetes/card-gestor";
-import CardContato from "../../componetes/card-contato";
-import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../componetes/loading";
 
 export default function Cliente() {
     const api = new Api();
@@ -101,7 +104,10 @@ export default function Cliente() {
                 setContratos(contratosData.contratos);
 
                 const produtosData = await api.get('/produtos');
-                setProdutos(produtosData.produtos);
+                setProdutos(produtosData.produtos)
+
+                const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
+                setContratos(contratosAtivos);
 
                 const fabricantesData = await api.get('/fabricantes');
                 setFabricantes(fabricantesData.fabricantes);
@@ -130,25 +136,30 @@ export default function Cliente() {
         return "Desconhecido";
     };
 
-    const handleEdit = (id) => {
+    const editar = (id) => {
         navigate(`/edicao-cliente/${id}`)
     };
 
-    const calculateTotalContractValue = () => {
-        return contratos.reduce((total, contrato) => total + parseFloat(contrato.valor_mensal), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
+
+    const calculaValorTotalContratos = () => {
+        return contratos.reduce((total, contrato) => total + calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
     return (
         <>
             {loading && <Loading />}
-            <div className="global-display">
+            <div id="cliente-display">
                 <Navbar />
-                <div className="global-container">
+                <div id="cliente-container">
                     <div id="cliente-cabecalho">
-                        <h2>Cliente - {cliente.nome}</h2>
-                        <button onClick={e => handleEdit(cliente.id)} className="solucoes-editar-btn solucoes-item-btn" id="cliente-editar-btn"><img src={botaoEditar} alt="" /></button>
+                        <div>
+                            <h1 id="cliente-titulo-nome">Cliente - {cliente.nome_fantasia}</h1>
+                            <p id="cliente-titulo-razao">{cliente.razao_social} - {cliente.cpf_cnpj}</p>
+                        </div>
+                        <button onClick={e => editar(cliente.id)} id="cliente-botao-editar"><img src={botaoEditar} alt="ícone editar" /></button>
                     </div>
-                    <h3>Contratos</h3>
+                    <h2 id="cliente-subtitulo-contratos">Contratos</h2>
                     <table id="cliente-tabela">
                         <thead>
                             <tr>
@@ -164,7 +175,7 @@ export default function Cliente() {
                                 <tr key={contrato.id}>
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
-                                    <td>{parseFloat(contrato.valor_mensal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                    <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                     <td>{contrato.duracao} MESES</td>
                                     <td>{getFabricanteNome(contrato.id_produto)}</td>
                                 </tr>
@@ -172,7 +183,7 @@ export default function Cliente() {
                         </tbody>
                     </table>
                     <div id="cliente-faturamento-mensal">
-                        Faturamento mensal: <b>{calculateTotalContractValue()}</b>
+                        Faturamento mensal: <b>{calculaValorTotalContratos()}</b>
                     </div>
                     <div id="cliente-card-container">
                         <CardGestor titulo={"Gestor de Contratos"} nome={cliente.gestor_contratos_nome} email={cliente.gestor_contratos_email} telefone1={cliente.gestor_contratos_telefone_1} telefone2={cliente.gestor_contratos_telefone_2} />

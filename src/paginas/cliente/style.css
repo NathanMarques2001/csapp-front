@@ -1,9 +1,46 @@
+#cliente-display {
+  display: flex;
+}
+
+#cliente-container {
+  margin: 2% 4% 0 0;
+  width: 75%;
+}
+
 #cliente-cabecalho {
   display: flex;
   justify-content: space-between;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--cinza);
   margin-bottom: 2rem;
+}
+
+#cliente-titulo-nome {
+  font-size: 1.75rem;
+  text-transform: capitalize;
+}
+
+#cliente-titulo-razao {
+  font-size: 1.25rem;
+  color: var(--cinza);
+  text-transform: capitalize;
+}
+
+#cliente-botao-editar {
+  border: 1px solid var(--preto);
+  height: 30px;
+  width: 60px;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: var(--verde);
+}
+
+#cliente-botao-editar:hover {
+  background-color: var(--verde-hover);
+}
+
+#cliente-subtitulo-contratos {
+  font-size: 1.25rem;
 }
 
 #cliente-tabela {

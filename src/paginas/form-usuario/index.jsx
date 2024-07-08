@@ -6,6 +6,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Loading from '../../componetes/loading';
 import Popup from '../../componetes/pop-up';
 import Navbar from '../../componetes/navbar';
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function FormUsuario({ mode = "cadastro" }) {
   const { id } = useParams();
@@ -124,7 +127,8 @@ export default function FormUsuario({ mode = "cadastro" }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          message="Tem certeza que deseja continuar com esta ação?"
+        title={mode == "cadastro" ? "Adicionar Novo Usuário" : "Editar Usuário"}
+        message={mode == "cadastro" ? "Você está prestes a adicionar um novo usuário. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste usuário. Deseja continuar?"}
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />
@@ -139,17 +143,17 @@ export default function FormUsuario({ mode = "cadastro" }) {
               <label htmlFor="nome">Nome <span className='required'>*</span></label>
               <input type="text" name='nome' value={usuario.nome} onChange={handleChange} required />
               <label htmlFor="email">Email <span className='required'>*</span></label>
-              <input type="email" name='email' value={usuario.email} onChange={handleChange} required />
+              <input type="email" name='email' value={usuario.email} onChange={handleChange} required disabled={mode == 'edicao'} />
               <label htmlFor="tipo">Tipo de usuário <span className='required'>*</span></label>
               <select name="tipo" value={usuario.tipo} onChange={handleChange} required>
                 <option value="">Selecione...</option>
-                <option value="Admin">Administrador</option>
-                <option value="Usuario">Usuário comum</option>
+                <option value="admin">Administrador</option>
+                <option value="usuario">Usuário comum</option>
               </select>
               <label htmlFor="senha">Senha <span className='required'>*</span></label>
-              <input type="password" name='senha' value={usuario.senha} onChange={handleChange} required />
+              <input type="password" name='senha' value={usuario.senha} onChange={handleChange} required disabled={mode == 'edicao'} />
               <label htmlFor="confirmarSenha">Confirmar senha <span className='required'>*</span></label>
-              <input type="password" name='confirmarSenha' value={usuario.confirmarSenha} onChange={handleChange} required />
+              <input type="password" name='confirmarSenha' value={usuario.confirmarSenha} onChange={handleChange} required disabled={mode == 'edicao'} />
               <p>A senha do usuário será redefinida em seu primeiro acesso.</p>
               <div id='form-usuario-div-btn'>
                 <button className='form-usuario-btn' id='form-usuario-btn-cancelar' onClick={() => navigate('/gestao?aba=usuarios')}>

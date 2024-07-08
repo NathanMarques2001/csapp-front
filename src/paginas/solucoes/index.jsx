@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import "./style.css";
 import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeExcluir from "../../assets/icons/icon-lixeira.png";
 import Loading from "../../componetes/loading";
 import { useNavigate } from "react-router-dom";
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function Solucoes() {
     const api = new Api();
@@ -66,36 +68,35 @@ export default function Solucoes() {
         <>
             {loading && <Loading />}
             <div>
-                <h3 className="global-subtitulo">Soluções ({totalSolucoes})</h3>
+                <h3 className="gestao-section-subtitulo">Soluções ({totalSolucoes})</h3>
                 <input
                     type="text"
                     placeholder="Procure pelo nome ou fornecedor"
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="global-input"
+                    className="gestao-section-input"
                 />
-                <button className="global-btn global-btn-verde" onClick={e => handleRedirect("/cadastro-solucao")}>Adicionar solução</button>
-                <button className="global-btn global-btn-azul" onClick={e => handleRedirect("/cadastro-fabricante")}>Adicionar fornecedor</button>
+                <button className="gestao-section-btn gestao-section-btn-verde" onClick={e => handleRedirect("/cadastro-solucao")}>Adicionar solução</button>
                 {produtos.length > 0 ? (
-                    <table className="global-tabela">
+                    <table className="gestao-section-tabela">
                         <thead>
                             <tr>
-                                <th className="global-titulo-tabela">Nome</th>
-                                <th className="global-titulo-tabela">Fornecedor</th>
-                                <th className="global-titulo-tabela">Ações</th>
+                                <th className="gestao-section-titulo-tabela">Nome</th>
+                                <th className="gestao-section-titulo-tabela">Fornecedor</th>
+                                <th className="gestao-section-titulo-tabela">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredProdutos.map(produto => (
                                 <tr key={produto.id}>
-                                    <td className="global-conteudo-tabela">{produto.nome}</td>
-                                    <td className="global-conteudo-tabela">{fabricantes[produto.id_fabricante] || "Carregando..."}</td>
-                                    <td className="global-conteudo-tabela">
-                                        <div className="solucoes-container-btn">
-                                            <button className="solucoes-editar-btn solucoes-item-btn" onClick={() => handleEdit(produto.id)}>
+                                    <td className="gestao-section-conteudo-tabela">{produto.nome}</td>
+                                    <td className="gestao-section-conteudo-tabela">{fabricantes[produto.id_fabricante] || "Carregando..."}</td>
+                                    <td className="gestao-section-conteudo-tabela">
+                                        <div className="gestao-section-container-btn">
+                                            <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(produto.id)}>
                                                 <img src={editIcon} alt="" />
                                             </button>
-                                            <button className="solucoes-excluir-btn solucoes-item-btn" onClick={() => handleDelete(produto.id)}>
+                                            <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(produto.id)}>
                                                 <img src={iconeExcluir} alt="" />
                                             </button>
                                         </div>
@@ -105,7 +106,7 @@ export default function Solucoes() {
                         </tbody>
                     </table>
                 ) : (
-                    <p>Ainda não foram cadastrados soluções!</p>
+                    <p className="gestao-section-sem-registros">Ainda não foram cadastrados soluções!</p>
                 )}
             </div>
         </>

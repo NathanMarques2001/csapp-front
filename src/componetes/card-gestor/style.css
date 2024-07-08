@@ -2,7 +2,7 @@
     width: 30%;
 }
 
-.cliente-card-gestor h3 {
+.cliente-card-gestor-titulo {
     text-align: center;
     background-color: var(--azul-borda);
     color: var(--branco);
@@ -11,19 +11,19 @@
     padding: 2.5%;
 }
 
-.cliente-card-gestor div {
+.card-cliente-gestor-container-conteudos {
     border: 1px solid var(--preto);
     border-radius: 0 0 7px 7px;
     padding: 2%;
 }
 
-.cliente-card-gestor div p {
+.card-cliente-gestor-informacoes-gestor {
     padding: 2% 1%;
     font-size: 0.8rem;
     display: flex;
     align-items: center;
 }
 
-.cliente-card-gestor div img {
+.card-cliente-gestor-icone {
     padding-right: 3%;
 }

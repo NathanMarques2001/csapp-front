@@ -6,6 +6,9 @@ import imgCadastroCliente from "../../assets/images/img-cadastro-cliente.png";
 import "./style.css";
 import Loading from "../../componetes/loading";
 import Popup from "../../componetes/pop-up";
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function FormCliente({ mode }) {
   const api = new Api();
@@ -16,10 +19,11 @@ export default function FormCliente({ mode }) {
   const [popupAction, setPopupAction] = useState(null);
 
   const [cliente, setCliente] = useState({
-    nome: "",
+    razao_social: "",
+    nome_fantasia: "",
     cpf_cnpj: "",
-    relacionamento: "",
-    seguimento: "",
+    id_usuario: "",
+    segmento: "",
     nps: "",
     gestor_contratos_nome: "",
     gestor_contratos_email: "",
@@ -139,7 +143,8 @@ export default function FormCliente({ mode }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          message="Tem certeza que deseja continuar com esta ação?"
+          title={mode == "cadastro" ? "Adicionar Novo Cliente" : "Editar Cliente"}
+          message={mode == "cadastro" ? "Você está prestes a adicionar um novo Cliente. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste Cliente. Deseja continuar?"}
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />
@@ -154,16 +159,30 @@ export default function FormCliente({ mode }) {
               <div className="form-cliente-container">
                 <div id="form-cliente-container-1">
                   <div className="form-group">
-                    <label htmlFor="nome">
-                      Nome <span className="required">*</span>
+                    <label htmlFor="razao_social">
+                      Razão Social <span className="required">*</span>
                     </label>
                     <input
                       type="text"
-                      id="nome"
-                      name="nome"
+                      id="razao_social"
+                      name="razao_social"
                       required
-                      placeholder="Digite o nome completo"
-                      value={cliente.nome}
+                      placeholder="Digite a razão social"
+                      value={cliente.razao_social}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="nome_fantasia">
+                      Nome Fantasia <span className="required">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="nome_fantasia"
+                      name="nome_fantasia"
+                      required
+                      placeholder="Digite o nome fantasia"
+                      value={cliente.nome_fantasia}
                       onChange={handleChange}
                     />
                   </div>
@@ -182,8 +201,8 @@ export default function FormCliente({ mode }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="relacionamento">Relacionamento</label>
-                    <select id="relacionamento" name="relacionamento" value={cliente.relacionamento} onChange={handleChange}>
+                    <label htmlFor="id_usuario">Relacionamento</label>
+                    <select id="id_usuario" name="id_usuario" value={cliente.id_usuario} onChange={handleChange}>
                       <option value="">Selecione...</option>
                       {usuarios.map((usuario) => (
                         <option key={usuario.id} value={usuario.id}>{usuario.nome}</option>
@@ -192,16 +211,16 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div>
                     <div className="form-group">
-                      <label htmlFor="seguimento">
+                      <label htmlFor="segmento">
                         Segmento <span className="required">*</span>
                       </label>
                       <input
                         type="text"
-                        id="seguimento"
-                        name="seguimento"
+                        id="segmento"
+                        name="segmento"
                         required
                         placeholder="Digite o ramo do cliente"
-                        value={cliente.seguimento}
+                        value={cliente.segmento}
                         onChange={handleChange}
                       />
                     </div>
@@ -422,7 +441,7 @@ export default function FormCliente({ mode }) {
                 </div>
               </div>
               <div className="form-buttons">
-                <button type="button" className="form-cliente-btn-cancelar" onClick={handleCancel}>
+                <button type="button" className="form-cliente-btn-cancelar" onClick={() => navigate('/clientes')}>
                   Cancelar
                 </button>
                 <button type="submit" className="global-btn-verde form-cliente-btn-enviar">

@@ -4,6 +4,9 @@ import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeExcluir from "../../assets/icons/icon-lixeira.png";
 import Loading from "../../componetes/loading";
 import { useNavigate } from "react-router-dom";
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function Fabricantes() {
     const api = new Api();
@@ -56,33 +59,33 @@ export default function Fabricantes() {
         <>
             {loading && <Loading />}
             <div>
-                <h3 className="global-subtitulo">Soluções ({totalFabricantes})</h3>
+                <h3 className="gestao-section-subtitulo">Fornecedores ({totalFabricantes})</h3>
                 <input
                     type="text"
                     placeholder="Procure pelo nome"
                     value={searchTerm}
                     onChange={handleSearch}
-                    className="global-input"
+                    className="gestao-section-input"
                 />
-                <button className="global-btn global-btn-verde" onClick={e => handleRedirect("/cadastro-fabricante")}>Adicionar fornecedor</button>
+                <button className="gestao-section-btn" onClick={e => handleRedirect("/cadastro-fabricante")}>Adicionar fornecedor</button>
                 {fabricantes.length > 0 ? (
-                    <table className="global-tabela">
+                    <table className="gestao-section-tabela">
                         <thead>
                             <tr>
-                                <th className="global-titulo-tabela">Nome</th>
-                                <th className="global-titulo-tabela">Ações</th>
+                                <th className="gestao-section-titulo-tabela">Nome</th>
+                                <th className="gestao-section-titulo-tabela">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredFabricantes.map(fabricante => (
                                 <tr key={fabricante.id}>
-                                    <td className="global-conteudo-tabela">{fabricante.nome}</td>
-                                    <td className="global-conteudo-tabela">
-                                        <div className="solucoes-container-btn">
-                                            <button className="solucoes-editar-btn solucoes-item-btn" onClick={() => handleEdit(fabricante.id)}>
+                                    <td className="gestao-section-conteudo-tabela">{fabricante.nome}</td>
+                                    <td className="gestao-section-conteudo-tabela">
+                                        <div className="gestao-section-container-btn">
+                                            <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(fabricante.id)}>
                                                 <img src={editIcon} alt="" />
                                             </button>
-                                            <button className="solucoes-excluir-btn solucoes-item-btn" onClick={() => handleDelete(fabricante.id)}>
+                                            <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(fabricante.id)}>
                                                 <img src={iconeExcluir} alt="" />
                                             </button>
                                         </div>
@@ -92,7 +95,7 @@ export default function Fabricantes() {
                         </tbody>
                     </table>
                 ) : (
-                    <p>Ainda não foram cadastrados fabricantes!</p>
+                    <p className="gestao-section-sem-registros">Ainda não foram cadastrados fornecedores!</p>
                 )}
             </div>
         </>

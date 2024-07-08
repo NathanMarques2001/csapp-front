@@ -1,15 +1,10 @@
-.cliente-contatos {
+.card-cliente-contatos {
     width: 47.5%;
     border: 1px solid var(--preto);
     border-radius: 7px;
 }
 
-.cliente-contatos div {
-    height: 16rem;
-    overflow-y: scroll;
-}
-
-.cliente-contatos h3 {
+.card-cliente-contatos-titulo {
     text-align: center;
     background-color: var(--azul-borda);
     color: var(--branco);
@@ -18,7 +13,12 @@
     padding: 1.5%;
 }
 
-.cliente-contatos p {
+.card-cliente-contatos-container-conteudos {
+    height: 16rem;
+    overflow-y: scroll;
+}
+
+.card-cliente-contatos-conteudo {
     border-bottom: 1px solid var(--preto);
     padding: 1%;
     font-size: 0.8rem;

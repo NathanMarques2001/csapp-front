@@ -68,3 +68,7 @@
     background-color: var(--preto-hover);
     cursor: pointer;
 }
+
+#navbar-nomeUsuario {
+    font-size: 1rem;
+}

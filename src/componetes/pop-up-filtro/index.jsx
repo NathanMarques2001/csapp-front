@@ -1,20 +1,17 @@
 import { useState } from 'react';
 import './style.css';
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function PopUpFiltro({ onFilter }) {
   const [filters, setFilters] = useState({
     id_cliente: '',
     id_produto: '',
     faturado: '',
-    dia_vencimento: '',
-    indice_reajuste: '',
-    proximo_reajuste: '',
     status: '',
     duracao: '',
     valor_mensal: '',
-    quantidade: '',
-    email_envio: '',
-    descricao: '',
   });
 
   const handleChange = (e) => {

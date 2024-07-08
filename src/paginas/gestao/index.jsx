@@ -5,6 +5,9 @@ import './style.css';
 import Solucoes from '../solucoes';
 import Usuarios from '../usuarios';
 import Fabricantes from '../fabricantes';
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function Gestao() {
     const location = useLocation();
@@ -22,11 +25,11 @@ export default function Gestao() {
     }, [aba]);
 
     return (
-        <body className="global-display">
+        <body id="gestao-display">
             <Navbar />
-            <div className="global-container">
-                <h2>Central de Gestão</h2>
-                <div id="switch-container">
+            <div id="gestao-container">
+                <h1 id='central-gestao-titulo'>Central de Gestão</h1>
+                <div id="central-gestao-switch-container">
                     <p
                         className={`switch-item ${selectedItem === 'usuarios' ? 'active' : ''}`}
                         onClick={() => handleClick('usuarios')}

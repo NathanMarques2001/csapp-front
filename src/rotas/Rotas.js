@@ -2,7 +2,8 @@ import React from 'react';
 import {
     BrowserRouter as Router,
     Routes,
-    Route
+    Route,
+    Navigate
 } from 'react-router-dom'
 import Contratos from '../paginas/contratos';
 import Cliente from '../paginas/cliente';
@@ -15,10 +16,13 @@ import FormFabricante from '../paginas/form-fabricante';
 import FormCliente from '../paginas/form-cliente';
 import FormUsuario from '../paginas/form-usuario';
 import FormContrato from '../paginas/form-contrato';
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function Rotas() {
 
-    const [cookies] = useCookies(['jwtToken']);
+    const [cookies] = useCookies(['jwtToken', 'tipo']);
 
     return (
         <Router>
@@ -27,7 +31,7 @@ export default function Rotas() {
                 <Route path="/contratos" element={!cookies['jwtToken'] ? <Login /> : <Contratos />} />
                 <Route path="/clientes/:id" element={!cookies['jwtToken'] ? <Login /> : <Cliente />} />
                 <Route path="/clientes" element={!cookies['jwtToken'] ? <Login /> : <Clientes />} />
-                <Route path="/gestao" element={!cookies['jwtToken'] ? <Login /> : <Gestao />} />
+                <Route path="/gestao" element={!cookies['jwtToken'] ? <Login /> : cookies['tipo'] === "admin" || cookies['tipo'] === "dev" ? <Gestao /> : <Navigate to="/contratos" />} />
                 <Route path="/cadastro-solucao" element={!cookies['jwtToken'] ? <Login /> : <FormSolucao mode="cadastro" />} />
                 <Route path="/edicao-solucao/:id" element={!cookies['jwtToken'] ? <Login /> : <FormSolucao mode="edicao" />} />
                 <Route path="/cadastro-fabricante" element={!cookies['jwtToken'] ? <Login /> : <FormFabricante mode="cadastro" />} />

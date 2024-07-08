@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../componetes/loading";
 import Popup from "../../componetes/pop-up";
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function FormFabricante({ mode = 'cadastro' }) {
     const api = new Api();
@@ -91,7 +94,8 @@ export default function FormFabricante({ mode = 'cadastro' }) {
             {loading && <Loading />}
             {showPopup && (
                 <Popup
-                    message="Tem certeza que deseja continuar com esta ação?"
+                    title={mode == "cadastro" ? "Adicionar Novo Fornecedor" : "Editar Fornecedor"}
+                    message={mode == "cadastro" ? "Você está prestes a adicionar um novo fornecedor. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste fornecedor. Deseja continuar?"}
                     onConfirm={popupAction}
                     onCancel={cancelPopup}
                 />
@@ -117,7 +121,7 @@ export default function FormFabricante({ mode = 'cadastro' }) {
                                 />
                             </div>
                             <div className="cadastro-fabricante-container-btn">
-                                <button id="cadastro-fabricante-btn-cancelar" className="cadastro-fabricante-btn" onClick={handleCancel}>Cancelar</button>
+                                <button id="cadastro-fabricante-btn-cancelar" className="cadastro-fabricante-btn" onClick={() => navigate('/gestao?aba=fabricantes')}>Cancelar</button>
                                 <button id="cadastro-fabricante-btn-cadastrar" className="cadastro-fabricante-btn">
                                     {mode === 'cadastro' ? 'Adicionar fabricante' : 'Salvar alterações'}
                                 </button>

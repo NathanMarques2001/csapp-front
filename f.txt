@@ -1,5 +1,7 @@
- - Ajustar valor do contrato com base no índice do reajuste
+ - Refatorar codigo (forms)
  - Colorir contrato quando estiver próximo de vencer
  - Contrato deve ficar inativo ou expirar duração
- - Edição de usuário ao clicar no nome de quem está logado 
- - Pop up de confirmação
+ - Alterar usuario salva a senha literal nao criptografada
+ - Estilo Pop Up filtro
+ - Limpar input de cpf e cnpj
+ - Mostrar cpf e cnpj formatado

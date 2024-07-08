@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../componetes/loading";
 import Popup from "../../componetes/pop-up";
+// Bibliotecas
+// Componentes
+// Estilos, funcoes, classes, imagens e etc
 
 export default function FormSolucao({ mode = 'cadastro' }) {
   const api = new Api();
@@ -117,7 +120,8 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          message="Tem certeza que deseja continuar com esta ação?"
+          title={mode == "cadastro" ? "Adicionar Nova Solução" : "Editar Solução"}
+          message={mode == "cadastro" ? "Você está prestes a adicionar uma nova solução. Deseja continuar?" : "Você está prestes a salvar as alterações feitas nesta solução. Deseja continuar?"}
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />
@@ -157,7 +161,7 @@ export default function FormSolucao({ mode = 'cadastro' }) {
                 </select>
               </div>
               <div className="cadastro-solucao-container-btn">
-                <button id="cadastro-solucao-btn-cancelar" className="cadastro-solucao-btn" onClick={handleCancel}>Cancelar</button>
+                <button id="cadastro-solucao-btn-cancelar" className="cadastro-solucao-btn" onClick={() => navigate('/gestao?aba=solucoes')}>Cancelar</button>
                 <button id="cadastro-solucao-btn-cadastrar" className="cadastro-solucao-btn">
                   {mode === 'cadastro' ? 'Adicionar solução' : 'Salvar alterações'}
                 </button>
