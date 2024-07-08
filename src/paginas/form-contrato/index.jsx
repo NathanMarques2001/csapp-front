@@ -123,7 +123,8 @@ export default function FormContrato({ mode = "cadastro" }) {
     } else {
       const filtered = clientes.filter(cliente =>
         (cliente.razao_social && cliente.razao_social.toLowerCase().includes(input.toLowerCase())) ||
-        (cliente.nome_fantasia && cliente.nome_fantasia.toLowerCase().includes(input.toLowerCase()))
+        (cliente.nome_fantasia && cliente.nome_fantasia.toLowerCase().includes(input.toLowerCase())) ||
+        (cliente.cpf_cnpj.includes(input))
       );
       setFilteredClientes(filtered);
     }

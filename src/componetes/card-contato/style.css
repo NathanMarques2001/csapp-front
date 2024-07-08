@@ -4,13 +4,33 @@
     border-radius: 7px;
 }
 
-.card-cliente-contatos-titulo {
-    text-align: center;
+.card-cliente-contatos-titulo-btn {
+    display: flex;
+    width: 100%;
     background-color: var(--azul-borda);
-    color: var(--branco);
     border-radius: 7px 7px 0 0;
     border-bottom: 1px solid var(--preto);
+}
+
+.card-cliente-contatos-titulo {
+    text-align: end;
+    color: var(--branco);
     padding: 1.5%;
+    width: 65%;
+}
+
+.card-cliente-contatos-btn {
+    width: 12.5%;
+    margin-left: 15%;
+    font-weight: bold;
+    font-size: 2rem;
+    background-color: var(--preto);
+    color: var(--verde);
+    cursor: pointer;
+}
+
+.card-cliente-contatos-btn:hover {
+    background-color: var(--preto-hover);
 }
 
 .card-cliente-contatos-container-conteudos {

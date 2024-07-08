@@ -87,6 +87,15 @@ export default function Contratos() {
         return filterConditions.every(condition => condition);
     });
 
+    const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
+
+    const calculaValorTotalContratos = (contrato) => {
+
+        const total = calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * contrato.quantidade) * contrato.duracao), contrato.indice_reajuste);
+
+        return total;
+    };
+
     return (
         <>
             {loading && <Loading />}
@@ -126,7 +135,7 @@ export default function Contratos() {
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.nome_fantasia || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
-                                        <td className="contratos-conteudo-tabela">{contrato.valor_mensal}</td>
+                                        <td className="contratos-conteudo-tabela">{calculaValorTotalContratos(contrato).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                         <td className="contratos-conteudo-tabela">{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                     </tr>
                                 ))}

@@ -1,10 +1,13 @@
 // Estilos, funcoes, classes, imagens e etc
 import "./style.css";
 
-export default function CardContato({ titulo, contatos }) {
+export default function CardContato({ titulo, contatos, abrirPopUp }) {
     return (
         <div className="card-cliente-contatos">
-            <p className="card-cliente-contatos-titulo">{titulo}</p>
+            <div className="card-cliente-contatos-titulo-btn">
+                <p className="card-cliente-contatos-titulo">{titulo}</p>
+                <button className="card-cliente-contatos-btn" onClick={abrirPopUp}>+</button>
+            </div>
             <div className="card-cliente-contatos-container-conteudos">
                 {contatos.map(contato => (
                     <p className="card-cliente-contatos-conteudo" key={contato.id}>{contato.conteudo}</p>
