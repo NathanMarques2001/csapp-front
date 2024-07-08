@@ -217,6 +217,11 @@ export default function FormContrato({ mode = "cadastro" }) {
     options.push(i);
   }
 
+  const days = [];
+  for (let i = 1; i <= 31; i++) {
+    days.push(i);
+  }
+
   return (
     <>
       {loading && <Loading />}
@@ -268,7 +273,9 @@ export default function FormContrato({ mode = "cadastro" }) {
                   <label htmlFor="faturado" className='label-form-contrato'><b>Faturado por <span className='required'>*</span></b></label>
                   <select name="faturado" className='form-contrato-input form-contrato-select' value={faturadoPor} onChange={(e) => setFaturadoPor(e.target.value)}>
                     <option value="">Selecione</option>
-                    <option value="teste01">teste01</option>
+                    <option value="Braga & Fontes">Braga & Fontes</option>
+                    <option value="Prolinx">Prolinx</option>
+                    <option value="Infour">Infour</option>
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
@@ -297,7 +304,11 @@ export default function FormContrato({ mode = "cadastro" }) {
                   <label htmlFor="vencimento" className='label-form-contrato'><b>Dia vencimento <span className='required'>*</span></b></label>
                   <select name="vencimento" className='form-contrato-input form-contrato-select' value={vencimento} onChange={(e) => setVencimento(e.target.value)}>
                     <option value="">Selecione</option>
-                    <option value="1">1</option>
+                    {days.map((i) => (
+                      <option key={i} value={i}>
+                        DIA {i}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
