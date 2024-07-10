@@ -8,10 +8,21 @@ import iconeUsuarios from "../../assets/icons/icon-usuarios.png";
 import iconeCentralGestao from "../../assets/icons/icon-central-gestao.png";
 import iconeSair from "../../assets/icons/icon-sair.png";
 import logo from "../../assets/images/logo.png";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
 
     const [cookies, setCookie, removeCookie] = useCookies(['jwtToken', 'nomeUsuario', 'id', 'tipo']);
+    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+
+    useEffect(() => {
+        // Verifica o tipo de usuário e atualiza o estado
+        if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+            setIsAdminOrDev(true);
+        } else {
+            setIsAdminOrDev(false);
+        }
+    }, [cookies.tipo]);
 
     function deslogar() {
         removeCookie('jwtToken', { path: '/' });
@@ -35,7 +46,7 @@ export default function Navbar() {
                             <img className='navbar-icon' src={iconeUsuarios} alt="ícone cliente" />
                             <span className='navbar-span'>Clientes</span>
                         </Link>
-                        {(cookies.tipo === "dev" || cookies.tipo === "admin") && (
+                        {isAdminOrDev && (
                             <Link to="/gestao" className="link">
                                 <img className='navbar-icon' src={iconeCentralGestao} alt="ícone gestão" />
                                 <span className='navbar-span'>Gestão</span>
