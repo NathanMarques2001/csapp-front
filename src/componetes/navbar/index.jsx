@@ -1,7 +1,7 @@
 // Bibliotecas
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
-// Estilos, funcoes, classes, imagens e etc
+// Estilos, funções, classes, imagens e etc.
 import "./style.css";
 import iconeContratos from "../../assets/icons/icon-contratos.png";
 import iconeUsuarios from "../../assets/icons/icon-usuarios.png";
@@ -14,10 +14,10 @@ export default function Navbar() {
     const [cookies, setCookie, removeCookie] = useCookies(['jwtToken', 'nomeUsuario', 'id', 'tipo']);
 
     function deslogar() {
-        removeCookie('jwtToken');
-        removeCookie('nomeUsuario');
-        removeCookie('id');
-        removeCookie('tipo');
+        removeCookie('jwtToken', { path: '/' });
+        removeCookie('nomeUsuario', { path: '/' });
+        removeCookie('id', { path: '/' });
+        removeCookie('tipo', { path: '/' });
     }
 
     return (
@@ -35,21 +35,18 @@ export default function Navbar() {
                             <img className='navbar-icon' src={iconeUsuarios} alt="ícone cliente" />
                             <span className='navbar-span'>Clientes</span>
                         </Link>
-                        {
-                            cookies['tipo'] === "dev" || cookies['tipo'] === "admin" ? <Link to="/gestao" className="link">
+                        {(cookies.tipo === "dev" || cookies.tipo === "admin") && (
+                            <Link to="/gestao" className="link">
                                 <img className='navbar-icon' src={iconeCentralGestao} alt="ícone gestão" />
                                 <span className='navbar-span'>Gestão</span>
                             </Link>
-                                :
-                                <></>
-                        }
-
+                        )}
                     </div>
                     <div id='navbar-client'>
                         <span id="navbar-nomeUsuario" className='navbar-span'>{cookies.nomeUsuario}</span>
                     </div>
                 </div>
-                <button id='navbar-btn' onClick={e => deslogar()}>
+                <button id='navbar-btn' onClick={deslogar}>
                     <img className='navbar-icon' src={iconeSair} alt="ícone sair" />
                     <span className='navbar-span'>Sair</span>
                 </button>
