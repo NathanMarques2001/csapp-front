@@ -36,10 +36,12 @@ export default function Navbar() {
                             <span className='navbar-span'>Clientes</span>
                         </Link>
                         {
-                            cookies['tipo'] === "dev" || cookies['tipo'] === "admin" && <Link to="/gestao" className="link">
+                            cookies['tipo'] === "dev" || cookies['tipo'] === "admin" ? <Link to="/gestao" className="link">
                                 <img className='navbar-icon' src={iconeCentralGestao} alt="ícone gestão" />
                                 <span className='navbar-span'>Gestão</span>
                             </Link>
+                                :
+                                <></>
                         }
 
                     </div>
