@@ -1,6 +1,7 @@
 // Bibliotecas
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 // Estilos, funções, classes, imagens e etc.
 import "./style.css";
 import iconeContratos from "../../assets/icons/icon-contratos.png";
@@ -8,7 +9,6 @@ import iconeUsuarios from "../../assets/icons/icon-usuarios.png";
 import iconeCentralGestao from "../../assets/icons/icon-central-gestao.png";
 import iconeSair from "../../assets/icons/icon-sair.png";
 import logo from "../../assets/images/logo.png";
-import { useState, useEffect } from "react";
 
 export default function Navbar() {
 
@@ -38,13 +38,13 @@ export default function Navbar() {
                 <img src={logo} alt="logo prolinx" id="logo-img" />
                 <div id="navbar-links-client">
                     <div id='navbar-links'>
-                        <Link to="/contratos" className="link">
-                            <img className='navbar-icon' src={iconeContratos} alt="ícone contrato" />
-                            <span className='navbar-span'>Contratos</span>
-                        </Link>
                         <Link to="/clientes" className="link">
                             <img className='navbar-icon' src={iconeUsuarios} alt="ícone cliente" />
                             <span className='navbar-span'>Clientes</span>
+                        </Link>
+                        <Link to="/contratos" className="link">
+                            <img className='navbar-icon' src={iconeContratos} alt="ícone contrato" />
+                            <span className='navbar-span'>Contratos</span>
                         </Link>
                         {isAdminOrDev && (
                             <Link to="/gestao" className="link">

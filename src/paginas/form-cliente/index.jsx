@@ -201,7 +201,7 @@ export default function FormCliente({ mode }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="id_usuario">Relacionamento</label>
+                    <label htmlFor="id_usuario">Relacionamento <span className="required">*</span></label>
                     <select id="id_usuario" name="id_usuario" value={cliente.id_usuario} onChange={handleChange}>
                       <option value="">Selecione...</option>
                       {usuarios.map((usuario) => (
@@ -445,7 +445,7 @@ export default function FormCliente({ mode }) {
                   Cancelar
                 </button>
                 <button type="submit" className="global-btn-verde form-cliente-btn-enviar">
-                  {mode === "cadastro" ? "Adicionar usuário" : "Salvar alterações"}
+                  {mode === "cadastro" ? "Adicionar cliente" : "Salvar alterações"}
                 </button>
               </div>
             </form>

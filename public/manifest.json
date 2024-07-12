@@ -1,6 +1,6 @@
 {
-  "short_name": "SGC",
-  "name": "Sistema Gerenciamento de Contratos",
+  "short_name": "CSApp",
+  "name": "Client Success App",
   "icons": [
     {
       "src": "../src/assets/images/logo.png",
