@@ -27,17 +27,17 @@ export default function FormCliente({ mode }) {
     nps: "",
     gestor_contratos_nome: "",
     gestor_contratos_email: "",
-    gestor_contratos_nascimento: "",
+    gestor_contratos_nascimento: null,
     gestor_contratos_telefone_1: "",
     gestor_contratos_telefone_2: "",
     gestor_chamados_nome: "",
     gestor_chamados_email: "",
-    gestor_chamados_nascimento: "",
+    gestor_chamados_nascimento: null,
     gestor_chamados_telefone_1: "",
     gestor_chamados_telefone_2: "",
     gestor_financeiro_nome: "",
     gestor_financeiro_email: "",
-    gestor_financeiro_nascimento: "",
+    gestor_financeiro_nascimento: null,
     gestor_financeiro_telefone_1: "",
     gestor_financeiro_telefone_2: "",
   });
@@ -51,15 +51,16 @@ export default function FormCliente({ mode }) {
           setLoading(true);
           const response = await api.get(`/clientes/${id}`);
 
-          // Formatar a data para o formato 'YYYY-MM-DD'
           const formatDate = (dateString) => {
-            if (!dateString) return "";
+            if (!dateString || dateString === "" || dateString === "Invalid date") return null;
             const date = new Date(dateString);
+            if (isNaN(date.getTime())) return null; // Verifica se é uma data válida
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
           };
+          
 
           const clienteData = response.cliente;
           clienteData.gestor_contratos_nascimento = formatDate(clienteData.gestor_contratos_nascimento);
@@ -76,6 +77,7 @@ export default function FormCliente({ mode }) {
       fetchCliente();
     }
   }, [mode, id]);
+
 
   useEffect(() => {
     const fetchUsuarios = async () => {
@@ -113,6 +115,7 @@ export default function FormCliente({ mode }) {
     setShowPopup(false);
     try {
       setLoading(true);
+      console.log(cliente);
       if (mode === "cadastro") {
         await api.post("/clientes", cliente);
         navigate(`/clientes`);
@@ -202,7 +205,7 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div className="form-group">
                     <label htmlFor="id_usuario">Relacionamento <span className="required">*</span></label>
-                    <select id="id_usuario" name="id_usuario" value={cliente.id_usuario} onChange={handleChange}>
+                    <select required id="id_usuario" name="id_usuario" value={cliente.id_usuario} onChange={handleChange}>
                       <option value="">Selecione...</option>
                       {usuarios.map((usuario) => (
                         <option key={usuario.id} value={usuario.id}>{usuario.nome}</option>
@@ -292,6 +295,7 @@ export default function FormCliente({ mode }) {
                         placeholder="Primeiro contato"
                         value={cliente.gestor_contratos_telefone_1}
                         onChange={handleChange}
+                        required
                       />
                     </div>
                     <div className="form-group form-group-3">
@@ -311,13 +315,12 @@ export default function FormCliente({ mode }) {
                   <h2>Gestor de Chamados</h2>
                   <div className="form-group">
                     <label htmlFor="gestor_chamados_nome">
-                      Nome <span className="required">*</span>
+                      Nome
                     </label>
                     <input
                       type="text"
                       id="gestor_chamados_nome"
                       name="gestor_chamados_nome"
-                      required
                       placeholder="Digite o nome completo"
                       value={cliente.gestor_chamados_nome}
                       onChange={handleChange}
@@ -325,13 +328,12 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div className="form-group">
                     <label htmlFor="gestor_chamados_email">
-                      Email <span className="required">*</span>
+                      Email
                     </label>
                     <input
                       type="email"
                       id="gestor_chamados_email"
                       name="gestor_chamados_email"
-                      required
                       placeholder="Digite seu endereço de email"
                       value={cliente.gestor_chamados_email}
                       onChange={handleChange}
@@ -349,7 +351,9 @@ export default function FormCliente({ mode }) {
                       />
                     </div>
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_chamados_telefone_1">Telefone 1 <span className="required">*</span></label>
+                      <label htmlFor="gestor_chamados_telefone_1">
+                        Telefone 1
+                      </label>
                       <input
                         type="text"
                         id="gestor_chamados_telefone_1"
@@ -378,13 +382,12 @@ export default function FormCliente({ mode }) {
                   <h2>Gestor Financeiro</h2>
                   <div className="form-group">
                     <label htmlFor="gestor_financeiro_nome">
-                      Nome <span className="required">*</span>
+                      Nome
                     </label>
                     <input
                       type="text"
                       id="gestor_financeiro_nome"
                       name="gestor_financeiro_nome"
-                      required
                       placeholder="Digite o nome completo"
                       value={cliente.gestor_financeiro_nome}
                       onChange={handleChange}
@@ -392,13 +395,12 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div className="form-group">
                     <label htmlFor="gestor_financeiro_email">
-                      Email <span className="required">*</span>
+                      Email
                     </label>
                     <input
                       type="email"
                       id="gestor_financeiro_email"
                       name="gestor_financeiro_email"
-                      required
                       placeholder="Digite seu endereço de email"
                       value={cliente.gestor_financeiro_email}
                       onChange={handleChange}
@@ -416,7 +418,9 @@ export default function FormCliente({ mode }) {
                       />
                     </div>
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_financeiro_telefone_1">Telefone 1 <span className="required">*</span></label>
+                      <label htmlFor="gestor_financeiro_telefone_1">
+                        Telefone 1
+                      </label>
                       <input
                         type="text"
                         id="gestor_financeiro_telefone_1"

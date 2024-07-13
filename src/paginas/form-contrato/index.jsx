@@ -212,10 +212,7 @@ export default function FormContrato({ mode = "cadastro" }) {
     setShowPopup(false);
   };
 
-  const options = [];
-  for (let i = 6; i <= 60; i++) {
-    options.push(i);
-  }
+  const options = [6, 12, 24, 36, 48, 60];
 
   const days = [];
   for (let i = 1; i <= 31; i++) {
@@ -296,6 +293,9 @@ export default function FormContrato({ mode = "cadastro" }) {
                         {i} MESES
                       </option>
                     ))}
+                    <option value={12000}>
+                      INDETERMINADO
+                    </option>
                   </select>
                 </div>
               </div>
@@ -346,7 +346,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                     <input type="email" name="email" id="form-cliente-input-email" className='form-contrato-input form-contrato-input-padding-menor' placeholder='Email que receberá o contrato' value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                   <div className='form-contrato-label-input-container' id='form-cliente-container-input-descricao'>
-                    <label htmlFor="descricao" className='label-form-contrato'><b>Descrição breve <span className='required'>*</span></b></label>
+                    <label htmlFor="descricao" className='label-form-contrato'><b>Descrição breve</b></label>
                     <textarea name="descricao" id="form-cliente-input-descricao" className='form-contrato-input' placeholder='Algo a mais que deveria ser descrito aqui...' value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
                   </div>
                 </div>
