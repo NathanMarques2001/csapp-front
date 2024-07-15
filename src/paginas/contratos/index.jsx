@@ -8,6 +8,7 @@ import PopUpFiltro from "../../componetes/pop-up-filtro";
 // Estilos, funcoes, classes, imagens e etc
 import Api from "../../utils/api";
 import './style.css';
+import { useCookies } from "react-cookie";
 
 export default function Contratos() {
     const api = new Api();
@@ -19,6 +20,18 @@ export default function Contratos() {
     const [loading, setLoading] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const navigate = useNavigate();
+
+    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+
+    useEffect(() => {
+        // Verifica o tipo de usuário e atualiza o estado
+        if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+            setIsAdminOrDev(true);
+        } else {
+            setIsAdminOrDev(false);
+        }
+    }, [cookies.tipo]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -110,7 +123,7 @@ export default function Contratos() {
                         value={filter}
                         onChange={filtratContratos}
                     />
-                    <button onClick={addContrato} className="contratos-botao" id="contratos-botao-add">Adicionar Contrato</button>
+                    <button onClick={addContrato} disabled={!isAdminOrDev} className={`contratos-botao ${!isAdminOrDev ? 'disabled' : ''}`} id="contratos-botao-add">Adicionar Contrato</button>
                     <button onClick={() => setShowFilterPopup(true)} className="contratos-botao" id="contratos-botao-filtro" disabled>Filtrar</button>
                     {showFilterPopup && (
                         <div className="filter-popup">

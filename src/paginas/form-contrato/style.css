@@ -32,10 +32,6 @@
   width: 47.5%;
 }
 
-#input-desabilitado {
-  background-color: var(--input-desabilitado);
-}
-
 .form-contrato-input {
   padding: 3%;
   border-radius: 5px;
@@ -54,6 +50,7 @@
 
 .form-contrato-select {
   border-radius: 0;
+  background-color: var(--branco);
 }
 
 .form-contrato-cliente-tres-inputs-container {
@@ -62,7 +59,7 @@
 }
 
 #form-cliente-container-input-descricao {
-  height: 60%;
+  width: 65%;
 }
 
 #form-cliente-input-descricao {
@@ -93,13 +90,6 @@
 #form-contrato-img {
   width: 30%;
   margin-right: 5%;
-}
-
-#form-contrato-container-email-descricao {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 }
 
 #form-contrato-container-btn {

@@ -29,6 +29,13 @@
     cursor: pointer;
 }
 
+.card-cliente-contatos-btn.disabled,
+.card-cliente-contatos-btn.disabled:hover {
+    cursor: not-allowed;
+    background-color: #ccc;
+    color: #666;
+}
+
 .card-cliente-contatos-btn:hover {
     background-color: var(--preto-hover);
 }

@@ -7,6 +7,7 @@ import Loading from "../../componetes/loading";
 // Estilos, funcoes, classes, imagens e etc
 import Api from "../../utils/api";
 import './style.css';
+import { useCookies } from "react-cookie";
 
 export default function Clientes() {
     const api = new Api();
@@ -15,6 +16,18 @@ export default function Clientes() {
     const [filter, setFilter] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+  
+    useEffect(() => {
+      // Verifica o tipo de usuário e atualiza o estado
+      if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+        setIsAdminOrDev(true);
+      } else {
+        setIsAdminOrDev(false);
+      }
+    }, [cookies.tipo]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,7 +88,7 @@ export default function Clientes() {
                         value={filter}
                         onChange={filtraClientes}
                     />
-                    <button onClick={e => addCliente()} id="clientes-botao">Adicionar cliente</button>
+                    <button disabled={!isAdminOrDev} className={!isAdminOrDev ? 'disabled' : ''} onClick={e => addCliente()} id="clientes-botao">Adicionar cliente</button>
                     {clientesFiltrados.length > 0 ? (
                         <table id="clientes-tabela">
                             <thead>

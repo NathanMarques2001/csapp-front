@@ -34,6 +34,13 @@
   border: 1px solid var(--azul-borda);
 }
 
+#clientes-botao.disabled,
+#clientes-botao.disabled:hover {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+}
+
 #clientes-botao:hover {
   background-color: var(--verde-hover);
 }

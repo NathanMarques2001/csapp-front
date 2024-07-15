@@ -39,6 +39,12 @@
   background-color: var(--verde-hover);
 }
 
+#cliente-botao-editar.disabled {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+}
+
 #cliente-subtitulo-contratos {
   font-size: 1.25rem;
 }

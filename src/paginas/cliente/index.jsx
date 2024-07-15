@@ -12,6 +12,7 @@ import Api from "../../utils/api";
 import botaoEditar from "../../assets/icons/icon-lapis.png";
 import imgCliente from "../../assets/images/img-cliente.png";
 import PopupInformacoes from "../../componetes/pop-up-informacoes-adicionais";
+import { useCookies } from "react-cookie";
 
 export default function Cliente() {
     const api = new Api();
@@ -27,13 +28,25 @@ export default function Cliente() {
     const [contatoComercial, setContatoComercial] = useState([]);
     const [contatoTecnico, setContatoTecnico] = useState([]);
     const [fatosImportantes, setFatosImportantes] = useState([]);
-    const [contatoAdicionado, setContatoAdicionado] = useState(0)
+    const [contatoAdicionado, setContatoAdicionado] = useState(0);
+
+    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+
+    useEffect(() => {
+        // Verifica o tipo de usuário e atualiza o estado
+        if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+            setIsAdminOrDev(true);
+        } else {
+            setIsAdminOrDev(false);
+        }
+    }, [cookies.tipo]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                
+
                 const clienteData = await api.get(`/clientes/${id}`);
                 setCliente(clienteData.cliente);
 
@@ -126,7 +139,7 @@ export default function Cliente() {
                             <h1 id="cliente-titulo-nome">Cliente - {cliente.nome_fantasia}</h1>
                             <p id="cliente-titulo-razao">{cliente.razao_social} - {cliente.cpf_cnpj}</p>
                         </div>
-                        <button onClick={e => editar(cliente.id)} id="cliente-botao-editar"><img src={botaoEditar} alt="ícone editar" /></button>
+                        <button disabled={!isAdminOrDev} onClick={e => editar(cliente.id)} id="cliente-botao-editar" className={!isAdminOrDev ? 'disabled' : ''}><img src={botaoEditar} alt="ícone editar" /></button>
                     </div>
                     <h2 id="cliente-subtitulo-contratos">Contratos</h2>
                     <table id="cliente-tabela">
@@ -145,7 +158,7 @@ export default function Cliente() {
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                     <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.quantidade * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                    <td>{contrato.duracao} MESES</td>
+                                    <td>{contrato.duracao == 12000 ? `INDETERMINADO` : `${contrato.duracao} MESES`}</td>
                                     <td>{getFabricanteNome(contrato.id_produto)}</td>
                                 </tr>
                             ))}
@@ -155,9 +168,9 @@ export default function Cliente() {
                         Faturamento mensal: <b>{calculaValorTotalContratos()}</b>
                     </div>
                     <div id="cliente-card-container">
-                        <CardGestor titulo={"Gestor de Contratos"} nome={cliente.gestor_contratos_nome} email={cliente.gestor_contratos_email} telefone1={cliente.gestor_contratos_telefone_1} telefone2={cliente.gestor_contratos_telefone_2} />
-                        <CardGestor titulo={"Gestor de Chamados"} nome={cliente.gestor_chamados_nome} email={cliente.gestor_chamados_email} telefone1={cliente.gestor_chamados_telefone_1} telefone2={cliente.gestor_chamados_telefone_2} />
-                        <CardGestor titulo={"Gestor Financeiro"} nome={cliente.gestor_financeiro_nome} email={cliente.gestor_financeiro_email} telefone1={cliente.gestor_financeiro_telefone_1} telefone2={cliente.gestor_financeiro_telefone_2} />
+                        <CardGestor titulo={"Gestor de Contratos"} nome={cliente.gestor_contratos_nome} email={cliente.gestor_contratos_email} telefone1={cliente.gestor_contratos_telefone_1} telefone2={cliente.gestor_contratos_telefone_2} permissao={isAdminOrDev} />
+                        <CardGestor titulo={"Gestor de Chamados"} nome={cliente.gestor_chamados_nome} email={cliente.gestor_chamados_email} telefone1={cliente.gestor_chamados_telefone_1} telefone2={cliente.gestor_chamados_telefone_2} permissao={isAdminOrDev} />
+                        <CardGestor titulo={"Gestor Financeiro"} nome={cliente.gestor_financeiro_nome} email={cliente.gestor_financeiro_email} telefone1={cliente.gestor_financeiro_telefone_1} telefone2={cliente.gestor_financeiro_telefone_2} permissao={isAdminOrDev} />
                     </div>
                     <div className="cliente-contatos-container">
                         <CardContato titulo={"Contato Comercial"} contatos={contatoComercial} abrirPopUp={e => abrirPopUp(e, "Contato Comercial")} />

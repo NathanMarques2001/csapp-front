@@ -19,6 +19,11 @@
 	--input-desabilitado: #EEEEEE;
 }
 
+*[disabled] {
+  color: var(--preto);
+  background-color: var(--input-desabilitado);
+}
+
 .global-display {
 	display: flex;
 }

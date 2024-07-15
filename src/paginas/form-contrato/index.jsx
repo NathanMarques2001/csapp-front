@@ -7,6 +7,7 @@ import imgCadastroContrato from "../../assets/images/img-cadastro-contrato.png";
 import Loading from '../../componetes/loading';
 import Popup from '../../componetes/pop-up';
 import formatDate from '../../utils/formatDate';
+import { useCookies } from 'react-cookie';
 
 export default function FormContrato({ mode = "cadastro" }) {
   const api = new Api();
@@ -18,9 +19,8 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [popupAction, setPopupAction] = useState(null);
 
   const [clientes, setClientes] = useState([]);
-  const [cliente, setCliente] = useState(null);
-  const [filteredClientes, setFilteredClientes] = useState([]);
   const [clienteInput, setClienteInput] = useState("");
+  const [filteredClientes, setFilteredClientes] = useState([]);
   const [selectedClienteId, setSelectedClienteId] = useState(null);
   const [selectedClienteCpfCnpj, setSelectedClienteCpfCnpj] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -38,7 +38,19 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [dataInicio, setDataInicio] = useState("");
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [indiceReajusteValor, setIndiceReajusteValor] = useState(null); // Novo estado para armazenar o valor do índice de reajuste
+  const [indiceReajusteValor, setIndiceReajusteValor] = useState(null);
+
+  const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+  const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+
+  useEffect(() => {
+    // Verifica o tipo de usuário e atualiza o estado
+    if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+      setIsAdminOrDev(true);
+    } else {
+      setIsAdminOrDev(false);
+    }
+  }, [cookies.tipo]);
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -75,7 +87,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setSolucao(contrato.id_produto);
           setFaturadoPor(contrato.faturado_por);
           setVencimento(contrato.dia_vencimento);
-          setReajuste(contrato.indice_reajuste);
+          setReajuste(contrato.nome_indice);
           setProximoReajuste(formatDate(contrato.proximo_reajuste));
           setDuracao(contrato.duracao);
           setValorMensal(contrato.valor_mensal);
@@ -156,14 +168,14 @@ export default function FormContrato({ mode = "cadastro" }) {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedClienteId) {
       alert("Por favor, selecione um cliente.");
       return;
     }
 
-    setPopupAction(confirmSubmit);
+    setPopupAction(() => confirmSubmit);
     setShowPopup(true);
   };
 
@@ -177,7 +189,8 @@ export default function FormContrato({ mode = "cadastro" }) {
         faturado: false,
         faturado_por: faturadoPor,
         dia_vencimento: Number(vencimento),
-        indice_reajuste: Number(indiceReajusteValor), // Usando o valor do índice de reajuste armazenado
+        indice_reajuste: Number(indiceReajusteValor),
+        nome_indice: reajuste,
         proximo_reajuste: formatDate(proximoReajuste),
         status: "ativo",
         duracao: Number(duracao),
@@ -242,6 +255,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                   <input
                     type="text"
                     name='cliente'
+                    disabled={!isAdminOrDev}
                     value={clienteInput}
                     onChange={handleClienteInputChange}
                     onFocus={handleClienteInputFocus}
@@ -268,7 +282,7 @@ export default function FormContrato({ mode = "cadastro" }) {
               <div className='form-contrato-cliente-tres-inputs-container'>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="faturado" className='label-form-contrato'><b>Faturado por <span className='required'>*</span></b></label>
-                  <select name="faturado" className='form-contrato-input form-contrato-select' value={faturadoPor} onChange={(e) => setFaturadoPor(e.target.value)}>
+                  <select name="faturado" className='form-contrato-input form-contrato-select' value={faturadoPor} disabled={!isAdminOrDev} onChange={(e) => setFaturadoPor(e.target.value)}>
                     <option value="">Selecione</option>
                     <option value="Braga & Fontes">Braga & Fontes</option>
                     <option value="Prolinx">Prolinx</option>
@@ -277,7 +291,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="solucao" className='label-form-contrato'><b>Solução ofertada <span className='required'>*</span></b></label>
-                  <select name="solucao" className='form-contrato-input form-contrato-select' value={solucao} onChange={(e) => setSolucao(e.target.value)}>
+                  <select name="solucao" disabled={!isAdminOrDev} className='form-contrato-input form-contrato-select' value={solucao} onChange={(e) => setSolucao(e.target.value)}>
                     <option value="">Selecione uma solução</option>
                     {produtos.map(produto => (
                       <option key={produto.id} value={produto.id}>{produto.nome}</option>
@@ -286,7 +300,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="duracao" className='label-form-contrato'><b>Duração do contrato <span className='required'>*</span></b></label>
-                  <select name="duracao" className='form-contrato-input form-contrato-select' value={duracao} onChange={(e) => setDuracao(e.target.value)}>
+                  <select name="duracao" disabled={!isAdminOrDev} className='form-contrato-input form-contrato-select' value={duracao} onChange={(e) => setDuracao(e.target.value)}>
                     <option value="">Selecione</option>
                     {options.map((i) => (
                       <option key={i} value={i}>
@@ -302,7 +316,7 @@ export default function FormContrato({ mode = "cadastro" }) {
               <div className='form-contrato-cliente-tres-inputs-container'>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="vencimento" className='label-form-contrato'><b>Dia vencimento <span className='required'>*</span></b></label>
-                  <select name="vencimento" className='form-contrato-input form-contrato-select' value={vencimento} onChange={(e) => setVencimento(e.target.value)}>
+                  <select name="vencimento" disabled={!isAdminOrDev} className='form-contrato-input form-contrato-select' value={vencimento} onChange={(e) => setVencimento(e.target.value)}>
                     <option value="">Selecione</option>
                     {days.map((i) => (
                       <option key={i} value={i}>
@@ -313,7 +327,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="reajuste" className='label-form-contrato'><b>Índice reajuste <span className='required'>*</span></b></label>
-                  <select name="reajuste" value={reajuste} onChange={handleReajusteChange} className='form-contrato-input form-contrato-select'>
+                  <select name="reajuste" disabled={!isAdminOrDev} value={reajuste} onChange={handleReajusteChange} className='form-contrato-input form-contrato-select'>
                     <option value="">Selecione um índice</option>
                     <option value="igpm">IGPM</option>
                     <option value="ipca">IPCA</option>
@@ -321,41 +335,35 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="proximo-reajuste" className='label-form-contrato'><b>Próximo reajuste <span className='required'>*</span></b></label>
-                  <input type="date" name="proximo-reajuste" className='form-contrato-input' value={proximoReajuste} onChange={(e) => setProximoReajuste(e.target.value)} />
+                  <input type="date" disabled={!isAdminOrDev} name="proximo-reajuste" className='form-contrato-input' value={proximoReajuste} onChange={(e) => setProximoReajuste(e.target.value)} />
                 </div>
               </div>
               <div className='form-contrato-cliente-tres-inputs-container'>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="valor-mensal" className='label-form-contrato'><b>Valor mensal <span className='required'>*</span></b></label>
-                  <input type="text" name="valor-mensal" className='form-contrato-input' placeholder='Valor do contrato mensalmente' value={valorMensal} onChange={(e) => setValorMensal(e.target.value)} />
+                  <input type="text" disabled={!isAdminOrDev} name="valor-mensal" className='form-contrato-input' placeholder='Valor do contrato mensalmente' value={valorMensal} onChange={(e) => setValorMensal(e.target.value)} />
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="quantidade" className='label-form-contrato'><b>Quantidade <span className='required'>*</span></b></label>
-                  <input type="text" name="quantidade" className='form-contrato-input' placeholder='Quantidade da solução' value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
+                  <input type="text" disabled={!isAdminOrDev} name="quantidade" className='form-contrato-input' placeholder='Quantidade da solução' value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="data-inicio" className='label-form-contrato'><b>Data ínicio <span className='required'>*</span></b></label>
-                  <input type="date" name="data-inicio" className='form-contrato-input' value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
+                  <input type="date" disabled={!isAdminOrDev} name="data-inicio" className='form-contrato-input' value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
                 </div>
               </div>
               <div className='form-contrato-cliente-tres-inputs-container'>
                 <img id='form-contrato-img' src={imgCadastroContrato} alt="" />
-                <div id='form-contrato-container-email-descricao'>
-                  <div className='form-contrato-label-input-container'>
-                    <label htmlFor="email" className='label-form-contrato'><b>Email de envio <span className='required'>*</span></b></label>
-                    <input type="email" name="email" id="form-cliente-input-email" className='form-contrato-input form-contrato-input-padding-menor' placeholder='Email que receberá o contrato' value={email} onChange={(e) => setEmail(e.target.value)} />
-                  </div>
                   <div className='form-contrato-label-input-container' id='form-cliente-container-input-descricao'>
                     <label htmlFor="descricao" className='label-form-contrato'><b>Descrição breve</b></label>
-                    <textarea name="descricao" id="form-cliente-input-descricao" className='form-contrato-input' placeholder='Algo a mais que deveria ser descrito aqui...' value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
+                    <textarea name="descricao" disabled={!isAdminOrDev} id="form-cliente-input-descricao" className='form-contrato-input' placeholder='Algo a mais que deveria ser descrito aqui...' value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
                   </div>
-                </div>
               </div>
               <div id='form-contrato-container-btn'>
-                <button type="button" className='form-cliente-btn-cancelar' onClick={() => navigate('/contratos')}>Cancelar</button>
-                <button className="global-btn-verde form-cliente-btn-enviar">
+                <button type="button" className='form-cliente-btn-cancelar' onClick={() => navigate('/contratos')}>{!isAdminOrDev ? "Voltar" : "Cancelar"}</button>
+                {!isAdminOrDev ? <></> : <button className="global-btn-verde form-cliente-btn-enviar">
                   {mode === "cadastro" ? "Adicionar contrato" : "Salvar alterações"}
-                </button>
+                </button>}
               </div>
             </form>
           </div>

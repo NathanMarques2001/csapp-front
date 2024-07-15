@@ -41,6 +41,13 @@
   background-color: var(--verde-hover);
 }
 
+#contratos-botao-add.disabled,
+#contratos-botao-add.disabled:hover {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: #666;
+}
+
 #contratos-botao-filtro {
   /* background-color: var(--azul-borda); */
   background-color: var(--cinza);
