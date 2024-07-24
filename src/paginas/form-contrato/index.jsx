@@ -118,7 +118,7 @@ export default function FormContrato({ mode = "cadastro" }) {
     if (solucao !== "") {
       const produtoAtual = produtos.filter((item) => item.id === Number(solucao));
       const nomeProdutoAtual = removeAcentos(produtoAtual[0].nome.trim().toLowerCase());
-      if (produtoAtual.length > 0 && (nomeProdutoAtual === "probackup" || nomeProdutoAtual.includes("antivirus"))) {
+      if (produtoAtual.length > 0 && (nomeProdutoAtual.includes("probackup") || nomeProdutoAtual.includes("antivirus"))) {
         setIsQuantidadeDisabled(false);
       } else {
         setIsQuantidadeDisabled(true);
