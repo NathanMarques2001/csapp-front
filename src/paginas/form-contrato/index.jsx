@@ -39,6 +39,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
   const [indiceReajusteValor, setIndiceReajusteValor] = useState(null);
+  const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
 
   const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
@@ -107,6 +108,24 @@ export default function FormContrato({ mode = "cadastro" }) {
     fetchProdutos();
     fetchContrato();
   }, [mode, id]);
+
+  useEffect(() => {
+    const removeAcentos = (str) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    // Habilita ou desabilita o campo quantidade dependendo da solução selecionada
+    if (solucao !== "") {
+      const produtoAtual = produtos.filter((item) => item.id === Number(solucao));
+      const nomeProdutoAtual = removeAcentos(produtoAtual[0].nome.trim().toLowerCase());
+      if (produtoAtual.length > 0 && (nomeProdutoAtual === "probackup" || nomeProdutoAtual.includes("antivirus"))) {
+        setIsQuantidadeDisabled(false);
+      } else {
+        setIsQuantidadeDisabled(true);
+        setQuantidade("");
+      }
+    }
+  }, [solucao, produtos]);
 
   const fetchIndice = async (indice) => {
     let url = '';
@@ -345,7 +364,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="quantidade" className='label-form-contrato'><b>Quantidade <span className='required'>*</span></b></label>
-                  <input type="text" disabled={!isAdminOrDev} name="quantidade" className='form-contrato-input' placeholder='Quantidade da solução' value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
+                  <input type="text" disabled={!isAdminOrDev || isQuantidadeDisabled} name="quantidade" className='form-contrato-input' placeholder='Quantidade da solução' value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="data-inicio" className='label-form-contrato'><b>Data ínicio <span className='required'>*</span></b></label>
@@ -354,10 +373,10 @@ export default function FormContrato({ mode = "cadastro" }) {
               </div>
               <div className='form-contrato-cliente-tres-inputs-container'>
                 <img id='form-contrato-img' src={imgCadastroContrato} alt="" />
-                  <div className='form-contrato-label-input-container' id='form-cliente-container-input-descricao'>
-                    <label htmlFor="descricao" className='label-form-contrato'><b>Descrição breve</b></label>
-                    <textarea name="descricao" disabled={!isAdminOrDev} id="form-cliente-input-descricao" className='form-contrato-input' placeholder='Algo a mais que deveria ser descrito aqui...' value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
-                  </div>
+                <div className='form-contrato-label-input-container' id='form-cliente-container-input-descricao'>
+                  <label htmlFor="descricao" className='label-form-contrato'><b>Descrição breve</b></label>
+                  <textarea name="descricao" disabled={!isAdminOrDev} id="form-cliente-input-descricao" className='form-contrato-input' placeholder='Algo a mais que deveria ser descrito aqui...' value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
+                </div>
               </div>
               <div id='form-contrato-container-btn'>
                 <button type="button" className='form-cliente-btn-cancelar' onClick={() => navigate('/contratos')}>{!isAdminOrDev ? "Voltar" : "Cancelar"}</button>

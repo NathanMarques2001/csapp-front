@@ -48,12 +48,17 @@
   color: #666;
 }
 
-#contratos-botao-filtro {
-  /* background-color: var(--azul-borda); */
-  background-color: var(--cinza);
+#contratos-botao-filtro,
+#contratos-botao-limpar-filtros {
+  background-color: var(--azul-borda);
   border: 1px solid var(--preto);
   color: var(--branco);
-  cursor: not-allowed;
+  cursor: pointer;
+}
+
+#contratos-botao-filtro:hover,
+#contratos-botao-limpar-filtros:hover {
+  background-color: var(--azul-borda-hover);
 }
 
 #contratos-tabela {
@@ -69,6 +74,20 @@
   border-bottom: 1px solid var(--cinza);
 }
 
-#contratos-sem-contratos {
+#contratos-sem-contratos,
+.active-filters {
   margin-top: 2%;
+}
+
+#active-filters-container {
+  display: flex;
+  gap: 2%;
+  flex-wrap: wrap;
+}
+
+.active-filters-current {
+  margin: 1% 0;
+  padding: 1%;
+  background-color: #d8d8d8;
+  border-radius: 5px;
 }
