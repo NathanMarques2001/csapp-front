@@ -18,6 +18,7 @@ export default function FormCliente({ mode }) {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
+  const [segmentos, setSegmentos] = useState(null);
 
   const [cliente, setCliente] = useState({
     razao_social: "",
@@ -44,8 +45,6 @@ export default function FormCliente({ mode }) {
   });
 
   const [usuarios, setUsuarios] = useState([]);
-
-  const segmentos = ["TI"];
 
   const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
@@ -105,6 +104,17 @@ export default function FormCliente({ mode }) {
     };
 
     fetchUsuarios();
+  }, []);
+
+  useEffect(() => {
+    const fetchSegmentos = async () => {
+      try {
+        const response = await api.get("/segmentos");
+        setSegmentos(response.segmentos);
+      } catch (error) {
+        console.error("Erro ao buscar os segmentos: " + error);
+      }
+    };
   }, []);
 
   const handleChange = (e) => {
@@ -244,8 +254,8 @@ export default function FormCliente({ mode }) {
                         onChange={handleChange}>
                         <option value="">Selecione</option>
                         {segmentos.map((segmento) => (
-                          <option key={segmento} value={segmento}>
-                            {segmento}
+                          <option key={segmento.id} value={segmento.id}>
+                            {segmento.nome}
                           </option>
                         ))}
                       </select>
