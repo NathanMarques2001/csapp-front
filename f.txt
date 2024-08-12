@@ -1,7 +1,23 @@
  - Refatorar codigo (forms)
  - Colorir contrato quando estiver próximo de vencer
  - Contrato deve ficar inativo ou expirar duração
- - Alterar usuario salva a senha literal nao criptografada
- - Estilo Pop Up filtro
  - Limpar input de cpf e cnpj
  - Mostrar cpf e cnpj formatado
+ - status filtro ativo ou inativo - ser dropdown
+ - filtros ser igual ao dropdown do contrato
+ - Ao inves de excluir inativar o produto
+ - classificação ser visivel
+ - pro backup tem que ter quantidade
+ - Cadastro de segmento tabela nova - (ok)
+ - Aba segmentos gestão
+ - Segmentos filtrados no cadastro do cliente
+ - buildar nova aplicação - quantidade continua ativo
+ - quando remover um usuario migrar contratos para um novo
+ - novos indices
+ - adicionar clube permuta no faturado
+ - Navbar relatorio
+Banco:
+ - vendedor so ve seus proprios contratos e clientes - (ok)
+ - quando remover um usuario migrar contratos para um novo - (ok)
+ - tudo em ordem alfabetica - (ok)
+ - Ao registros sao invativados ao inves de excluidos - clientes, fabricantes, produtos e segmentos
