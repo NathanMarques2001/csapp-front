@@ -18,7 +18,7 @@ export default function FormCliente({ mode }) {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-  const [segmentos, setSegmentos] = useState(null);
+  const [segmentos, setSegmentos] = useState([]);
 
   const [cliente, setCliente] = useState({
     razao_social: "",
@@ -252,7 +252,7 @@ export default function FormCliente({ mode }) {
                         disabled={!isAdminOrDev}
                         value={cliente.segmento}
                         onChange={handleChange}>
-                        <option value="">Selecione</option>
+                        <option value="">Selecione...</option>
                         {segmentos.map((segmento) => (
                           <option key={segmento.id} value={segmento.id}>
                             {segmento.nome}
