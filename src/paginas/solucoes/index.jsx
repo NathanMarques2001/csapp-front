@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
-import iconeExcluir from "../../assets/icons/icon-lixeira.png";
+import iconeInativar from "../../assets/icons/icon-inativar.png";
+import iconeAtivar from "../../assets/icons/icon-ativar.png";
 import Loading from "../../componetes/loading";
 import { useNavigate } from "react-router-dom";
 // Bibliotecas
@@ -96,9 +97,15 @@ export default function Solucoes() {
                                             <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(produto.id)}>
                                                 <img src={editIcon} alt="" />
                                             </button>
-                                            <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(produto.id)}>
-                                                <img src={iconeExcluir} alt="" />
-                                            </button>
+                                            {produto.status == 'ativo' ? (
+                                                <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(produto.id)}>
+                                                    <img src={iconeInativar} alt="" />
+                                                </button>
+                                            ) : (
+                                                <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(produto.id)}>
+                                                    <img src={iconeAtivar} alt="" />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

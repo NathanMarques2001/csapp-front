@@ -11,8 +11,8 @@ export default function Contratos() {
     const api = new Api();
     const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
     const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-    const [clientesRoute, setClientesRoute] = useState(`/clientes/vendedor/${cookies.id}`);
-    const [contratosRoute, setContratosRoute] = useState(`/contratos/vendedor/${cookies.id}`);
+    const [clientesRoute, setClientesRoute] = useState("");
+    const [contratosRoute, setContratosRoute] = useState("");
     const [contratos, setContratos] = useState([]);
     const [clientes, setClientes] = useState({});
     const [produtos, setProdutos] = useState({});
@@ -27,6 +27,10 @@ export default function Contratos() {
             setIsAdminOrDev(true);
             setClientesRoute('/clientes');
             setContratosRoute('/contratos');
+        } else {
+            setIsAdminOrDev(false);
+            setClientesRoute(`/clientes/vendedor/${cookies.id}`);
+            setContratosRoute(`/contratos/vendedor/${cookies.id}`);
         }
 
         const fetchData = async () => {
@@ -61,7 +65,7 @@ export default function Contratos() {
         };
 
         fetchData();
-    }, []);
+    }, [cookies.tipo, cookies.id, clientesRoute, contratosRoute]);
 
     const detalhesContrato = (id) => {
         navigate(`/edicao-contrato/${id}`);
@@ -108,7 +112,8 @@ export default function Contratos() {
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     const calculaValorTotalContratos = (contrato) => {
-        const total = calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * contrato.quantidade) * contrato.duracao), contrato.indice_reajuste);
+        const quantidade = contrato.quantidade || 1;
+        const total = calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * quantidade) * contrato.duracao), contrato.indice_reajuste);
         return total;
     };
 

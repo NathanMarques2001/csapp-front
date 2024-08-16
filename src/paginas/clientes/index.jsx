@@ -13,8 +13,8 @@ export default function Clientes() {
     const api = new Api();
     const [cookies, setCookie, removeCookie] = useCookies(['tipo', 'id']);
     const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-    const [clientesRoute, setClientesRoute] = useState(`/clientes/vendedor/${cookies.id}`);
-    const [contratosRoute, setContratosRoute] = useState(`/contratos/vendedor/${cookies.id}`);
+    const [clientesRoute, setClientesRoute] = useState("");
+    const [contratosRoute, setContratosRoute] = useState("");
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
     const [filter, setFilter] = useState("");
@@ -26,10 +26,12 @@ export default function Clientes() {
             setIsAdminOrDev(true);
             setClientesRoute('/clientes');
             setContratosRoute('/contratos');
+        } else {
+            setIsAdminOrDev(false);
+            setClientesRoute(`/clientes/vendedor/${cookies.id}`);
+            setContratosRoute(`/contratos/vendedor/${cookies.id}`);
         }
-    }, [cookies.tipo]);
 
-    useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
@@ -49,13 +51,13 @@ export default function Clientes() {
         };
 
         fetchData();
-    }, []);
+    }, [cookies.tipo, cookies.id, clientesRoute, contratosRoute]);
 
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     const calculaValorTotalContratos = (clienteId) => {
         const clienteContratos = contratos.filter(contrato => contrato.id_cliente === clienteId && contrato.status === 'ativo');
-        const total = clienteContratos.reduce((sum, contrato) => sum + calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * contrato.quantidade) * contrato.duracao), contrato.indice_reajuste), 0);
+        const total = clienteContratos.reduce((sum, contrato) => sum + calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * (contrato.quantidade || 1)) * contrato.duracao), contrato.indice_reajuste), 0);
 
         return total;
     };

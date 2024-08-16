@@ -244,7 +244,7 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div>
                   <div className="form-group">
-                    <label htmlFor="id_segmento">Relacionamento <span className="required">*</span></label>
+                    <label htmlFor="id_segmento">Segmento <span className="required">*</span></label>
                     <select required id="id_segmento" disabled={!isAdminOrDev} name="id_segmento" value={cliente.id_segmento} onChange={handleChange}>
                       <option value="">Selecione...</option>
                       {segmentos.map((segmento) => (
