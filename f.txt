@@ -1,14 +1,12 @@
  - Colorir contrato quando estiver próximo de vencer
  - Contrato deve ficar inativo ou expirar duração
- - Limpar input de cpf e cnpj
- - Mostrar cpf e cnpj formatado
  - filtros ser igual ao dropdown do contrato
  - Ao inves de excluir inativar o produto
  - classificação ser visivel - (ok)
- - pro backup tem que ter quantidade
  - Aba segmentos gestão - (ok)
  - Segmentos filtrados no cadastro do cliente - (ok)
  - quando remover um usuario migrar contratos para um novo
+ - Vendedor só ve seus proprios clientes e contratos - (ok)
  - novos indices
  - Adicionar clube permuta no faturado - (ok)
  - Navbar relatorio - (ok)
