@@ -25,7 +25,7 @@ export default function FormCliente({ mode }) {
     nome_fantasia: "",
     cpf_cnpj: "",
     id_usuario: "",
-    segmento: "",
+    id_segmento: "",
     nps: "",
     gestor_contratos_nome: "",
     gestor_contratos_email: "",
@@ -115,6 +115,8 @@ export default function FormCliente({ mode }) {
         console.error("Erro ao buscar os segmentos: " + error);
       }
     };
+
+    fetchSegmentos();
   }, []);
 
   const handleChange = (e) => {
@@ -241,25 +243,15 @@ export default function FormCliente({ mode }) {
                     </select>
                   </div>
                   <div>
-                    <div className="form-group">
-                      <label htmlFor="segmento">
-                        Segmento <span className="required">*</span>
-                      </label>
-                      <select
-                        name="segmento"
-                        id="segmento"
-                        required
-                        disabled={!isAdminOrDev}
-                        value={cliente.segmento}
-                        onChange={handleChange}>
-                        <option value="">Selecione...</option>
-                        {segmentos.map((segmento) => (
-                          <option key={segmento.id} value={segmento.id}>
-                            {segmento.nome}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                  <div className="form-group">
+                    <label htmlFor="id_segmento">Relacionamento <span className="required">*</span></label>
+                    <select required id="id_segmento" disabled={!isAdminOrDev} name="id_segmento" value={cliente.id_segmento} onChange={handleChange}>
+                      <option value="">Selecione...</option>
+                      {segmentos.map((segmento) => (
+                        <option key={segmento.id} value={segmento.id}>{segmento.nome}</option>
+                      ))}
+                    </select>
+                  </div>
                     <div className="form-group">
                       <label htmlFor="nps">NPS</label>
                       <input

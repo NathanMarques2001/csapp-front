@@ -8,6 +8,7 @@ import iconeContratos from "../../assets/icons/icon-contratos.png";
 import iconeUsuarios from "../../assets/icons/icon-usuarios.png";
 import iconeCentralGestao from "../../assets/icons/icon-central-gestao.png";
 import iconeSair from "../../assets/icons/icon-sair.png";
+import iconeRelatorios from "../../assets/icons/icon-relatorios.png";
 import logo from "../../assets/images/logo.png";
 
 export default function Navbar() {
@@ -51,7 +52,12 @@ export default function Navbar() {
                                 <img className='navbar-icon' src={iconeCentralGestao} alt="ícone gestão" />
                                 <span className='navbar-span'>Gestão</span>
                             </Link>
+
                         )}
+                        <Link to="/relatorios" className="link">
+                            <img className='navbar-icon' src={iconeRelatorios} alt="ícone relatórios" />
+                            <span className='navbar-span'>Relatórios</span>
+                        </Link>
                     </div>
                     <div id='navbar-client'>
                         <span id="navbar-nomeUsuario" className='navbar-span'>{cookies.nomeUsuario}</span>

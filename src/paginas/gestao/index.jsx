@@ -5,6 +5,7 @@ import './style.css';
 import Solucoes from '../solucoes';
 import Usuarios from '../usuarios';
 import Fabricantes from '../fabricantes';
+import Segmentos from '../segmentos';
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -12,7 +13,7 @@ import Fabricantes from '../fabricantes';
 export default function Gestao() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const aba = queryParams.get("aba") || "usuarios";
+    const aba = queryParams.get("aba") || "fabricantes";
 
     const [selectedItem, setSelectedItem] = useState(aba);
 
@@ -31,10 +32,16 @@ export default function Gestao() {
                 <h1 id='central-gestao-titulo'>Central de Gestão</h1>
                 <div id="central-gestao-switch-container">
                     <p
-                        className={`switch-item ${selectedItem === 'usuarios' ? 'active' : ''}`}
-                        onClick={() => handleClick('usuarios')}
+                        className={`switch-item ${selectedItem === 'fabricantes' ? 'active' : ''}`}
+                        onClick={() => handleClick('fabricantes')}
                     >
-                        Usuários
+                        Fornecedores
+                    </p>
+                    <p
+                        className={`switch-item ${selectedItem === 'segmentos' ? 'active' : ''}`}
+                        onClick={() => handleClick('segmentos')}
+                    >
+                        Segmentos
                     </p>
                     <p
                         className={`switch-item ${selectedItem === 'solucoes' ? 'active' : ''}`}
@@ -43,10 +50,10 @@ export default function Gestao() {
                         Soluções
                     </p>
                     <p
-                        className={`switch-item ${selectedItem === 'fabricantes' ? 'active' : ''}`}
-                        onClick={() => handleClick('fabricantes')}
+                        className={`switch-item ${selectedItem === 'usuarios' ? 'active' : ''}`}
+                        onClick={() => handleClick('usuarios')}
                     >
-                        Fornecedores
+                        Usuários
                     </p>
                 </div>
 
@@ -59,6 +66,9 @@ export default function Gestao() {
                     )}
                     {selectedItem === 'fabricantes' && (
                         <Fabricantes />
+                    )}
+                    {selectedItem === 'segmentos' && (
+                        <Segmentos />
                     )}
                 </div>
             </div>

@@ -11,32 +11,34 @@ import { useCookies } from "react-cookie";
 
 export default function Clientes() {
     const api = new Api();
+    const [cookies, setCookie, removeCookie] = useCookies(['tipo', 'id']);
+    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+    const [clientesRoute, setClientesRoute] = useState(`/clientes/vendedor/${cookies.id}`);
+    const [contratosRoute, setContratosRoute] = useState(`/contratos/vendedor/${cookies.id}`);
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
     const [filter, setFilter] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
-    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-  
     useEffect(() => {
-      // Verifica o tipo de usuário e atualiza o estado
-      if (cookies.tipo === "dev" || cookies.tipo === "admin") {
-        setIsAdminOrDev(true);
-      } else {
-        setIsAdminOrDev(false);
-      }
+        if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+            setIsAdminOrDev(true);
+            setClientesRoute('/clientes');
+            setContratosRoute('/contratos');
+        }
     }, [cookies.tipo]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const clientesResponse = await api.get('/clientes');
+                console.log(clientesRoute)
+                console.log(contratosRoute)
+                const clientesResponse = await api.get(clientesRoute);
                 setClientes(clientesResponse.clientes);
 
-                const contratosResponse = await api.get('/contratos');
+                const contratosResponse = await api.get(contratosRoute);
                 setContratos(contratosResponse.contratos);
             } catch (err) {
                 console.error("Error fetching data:", err);
@@ -95,7 +97,7 @@ export default function Clientes() {
                                 <tr>
                                     <th className="clientes-titulo-tabela">Nome Fantasia</th>
                                     <th className="clientes-titulo-tabela">CPF/CNPJ</th>
-                                    <th className="clientes-titulo-tabela">NPS</th>
+                                    <th className="clientes-titulo-tabela">Categoria</th>
                                     <th className="clientes-titulo-tabela">Valor Contratos</th>
                                     <th className="clientes-titulo-tabela">Data Cadastro</th>
                                 </tr>
@@ -105,7 +107,7 @@ export default function Clientes() {
                                     <tr key={cliente.id} onClick={() => detalhesCliente(cliente.id)} className="clickable-row">
                                         <td className="clientes-conteudo-tabela">{cliente.nome_fantasia}</td>
                                         <td className="clientes-conteudo-tabela">{cliente.cpf_cnpj}</td>
-                                        <td className="clientes-conteudo-tabela">{cliente.nps}</td>
+                                        <td className="clientes-conteudo-tabela">{cliente.tipo.toUpperCase()}</td>
                                         <td className="clientes-conteudo-tabela">{calculaValorTotalContratos(cliente.id).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                         <td className="clientes-conteudo-tabela">{new Date(cliente.data_criacao).toLocaleDateString()}</td>
                                     </tr>

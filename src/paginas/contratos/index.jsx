@@ -9,6 +9,10 @@ import { useCookies } from "react-cookie";
 
 export default function Contratos() {
     const api = new Api();
+    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+    const [clientesRoute, setClientesRoute] = useState(`/clientes/vendedor/${cookies.id}`);
+    const [contratosRoute, setContratosRoute] = useState(`/contratos/vendedor/${cookies.id}`);
     const [contratos, setContratos] = useState([]);
     const [clientes, setClientes] = useState({});
     const [produtos, setProdutos] = useState({});
@@ -18,25 +22,20 @@ export default function Contratos() {
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const navigate = useNavigate();
 
-    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
-    const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-
     useEffect(() => {
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
             setIsAdminOrDev(true);
-        } else {
-            setIsAdminOrDev(false);
+            setClientesRoute('/clientes');
+            setContratosRoute('/contratos');
         }
-    }, [cookies.tipo]);
 
-    useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const contratosResponse = await api.get('/contratos');
+                const contratosResponse = await api.get(contratosRoute);
                 setContratos(contratosResponse.contratos);
 
-                const clientesResponse = await api.get('/clientes');
+                const clientesResponse = await api.get(clientesRoute);
                 const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
                     map[cliente.id] = {
                         nome_fantasia: cliente.nome_fantasia,

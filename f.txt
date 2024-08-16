@@ -4,15 +4,15 @@
  - Mostrar cpf e cnpj formatado
  - filtros ser igual ao dropdown do contrato
  - Ao inves de excluir inativar o produto
- - classificação ser visivel
+ - classificação ser visivel - (ok)
  - pro backup tem que ter quantidade
- - Aba segmentos gestão
+ - Aba segmentos gestão - (ok)
  - Segmentos filtrados no cadastro do cliente - (ok)
- - buildar nova aplicação - quantidade continua ativo
  - quando remover um usuario migrar contratos para um novo
  - novos indices
- - adicionar clube permuta no faturado
- - Navbar relatorio
+ - Adicionar clube permuta no faturado - (ok)
+ - Navbar relatorio - (ok)
+ - Página de relatórios
 Banco:
  - Vendedor so ve seus proprios contratos e clientes - (ok)
  - Quando remover um usuario migrar contratos para um novo - (ok)

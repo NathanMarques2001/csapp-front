@@ -306,6 +306,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                     <option value="Braga & Fontes">Braga & Fontes</option>
                     <option value="Prolinx">Prolinx</option>
                     <option value="Infour">Infour</option>
+                    <option value="Clube Permuta">Clube Permuta</option>
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>

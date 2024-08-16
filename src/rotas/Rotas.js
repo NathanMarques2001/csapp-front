@@ -16,6 +16,8 @@ import FormFabricante from '../paginas/form-fabricante';
 import FormCliente from '../paginas/form-cliente';
 import FormUsuario from '../paginas/form-usuario';
 import FormContrato from '../paginas/form-contrato';
+import Relatorios from '../paginas/relatorios';
+import FormSegmento from '../paginas/form-segmento';
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -31,6 +33,7 @@ export default function Rotas() {
                 <Route path="/contratos" element={!cookies['jwtToken'] ? <Login /> : <Contratos />} />
                 <Route path="/clientes/:id" element={!cookies['jwtToken'] ? <Login /> : <Cliente />} />
                 <Route path="/clientes" element={!cookies['jwtToken'] ? <Login /> : <Clientes />} />
+                <Route path="/relatorios" element={!cookies['jwtToken'] ? <Login /> : <Relatorios />} />
                 <Route path="/gestao" element={!cookies['jwtToken'] ? <Login /> : cookies['tipo'] === "admin" || cookies['tipo'] === "dev" ? <Gestao /> : <Navigate to="/contratos" />} />
                 <Route path="/cadastro-solucao" element={!cookies['jwtToken'] ? <Login /> : <FormSolucao mode="cadastro" />} />
                 <Route path="/edicao-solucao/:id" element={!cookies['jwtToken'] ? <Login /> : <FormSolucao mode="edicao" />} />
@@ -42,6 +45,8 @@ export default function Rotas() {
                 <Route path="/edicao-usuario/:id" element={!cookies['jwtToken'] ? <Login /> : <FormUsuario mode="edicao" />} />
                 <Route path="/cadastro-contrato" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="cadastro" />} />
                 <Route path="/edicao-contrato/:id" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="edicao" />} />
+                <Route path="/cadastro-segmento" element={!cookies['jwtToken'] ? <Login /> : <FormSegmento mode="cadastro" />} />
+                <Route path="/edicao-segmento/:id" element={!cookies['jwtToken'] ? <Login /> : <FormSegmento mode="edicao" />} />
             </Routes>
         </Router>
     );

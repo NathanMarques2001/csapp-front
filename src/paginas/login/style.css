@@ -65,4 +65,9 @@
   border-radius: 7px;
   background-color: var(--verde);
   padding: 5%;
+  cursor: pointer;
+}
+
+#login-button:hover {
+  background-color: var(--verde-hover);
 }
