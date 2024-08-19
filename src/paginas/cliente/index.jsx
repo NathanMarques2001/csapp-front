@@ -57,7 +57,16 @@ export default function Cliente() {
                 setProdutos(produtosData.produtos)
 
                 const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
-                setContratos(contratosAtivos);
+                const contratosMap = contratosAtivos.contratos.reduce((map, contrato) => {
+                    map[contrato.id] = {
+                        id_produto: contrato.id_produto,
+                        valor_mensal: contrato.valor_mensal,
+                        duracao: contrato.duracao,
+                        indice_reajuste: contrato.indice_reajuste
+                    };
+                    return map;
+                }, {});
+                setContratos(contratosMap);
 
                 const fabricantesData = await api.get('/fabricantes');
                 setFabricantes(fabricantesData.fabricantes);
@@ -154,7 +163,7 @@ export default function Cliente() {
                         </thead>
                         <tbody>
                             {contratos.map(contrato => (
-                                <tr key={contrato.id}>
+                                <tr key={contrato.id - 1}>
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                     <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>

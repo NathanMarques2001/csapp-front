@@ -3,17 +3,21 @@ import Excel from "../utils/excel";
 
 export default function RelatorioContratos({ contratos, produtos, clientes, usuarios }) {
   const dateJs = new DateJS();
-  const excel = new Excel();
+  const excel = new Excel("Relatório de Contratos");
 
-  const data = contratos.map(contrato => ({
-    Solução: produtos[contrato.id_produto]?.nome,
-    Cliente: clientes[contrato.id_cliente]?.nome_fantasia,
-    Status: contrato.status,
-    Vendedor: usuarios[clientes[contrato.id_cliente]?.id_usuario]?.nome,
-    Reajuste: dateJs.formatDate(contrato.proximo_reajuste),
-    Expiração: `${contrato.duracao} MESES`,
-    Valor: contrato.valor_mensal
-  }));
+  const data = contratos.map(contrato => {
+    const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
+    
+    return {
+      "Solução": produtos[contrato.id_produto - 1]?.nome,
+      "Cliente": clientes[contrato.id_cliente - 1]?.nome_fantasia,
+      "Status": contrato.status,
+      "Vendedor": usuarios[clientes[contrato.id_cliente - 1]?.id_usuario - 1]?.nome,
+      "Reajuste": dateJs.formatDate(contrato.proximo_reajuste),
+      "Expiração": `${contrato.duracao} MESES`,
+      "Valor": calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste),
+    };
+  });
 
   function handleDownloadReport(e) {
     e.preventDefault();
@@ -44,7 +48,7 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
               <td className="global-conteudo-tabela">{contrato["Vendedor"]}</td>
               <td className="global-conteudo-tabela">{contrato["Reajuste"]}</td>
               <td className="global-conteudo-tabela">{contrato["Expiração"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Valor"]}</td>
+              <td className="global-conteudo-tabela">{contrato["Valor"].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
             </tr>
           ))}
         </tbody>

@@ -22,7 +22,6 @@ export default function Relatorios() {
   const [segmentos, setSegmentos] = useState([]);
   const [cookies, setCookie, removeCookie] = useCookies(['tipo', 'id']);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-  const [clientesRoute, setClientesRoute] = useState("");
   const [contratosRoute, setContratosRoute] = useState("");
 
   useEffect(() => {
@@ -31,39 +30,57 @@ export default function Relatorios() {
     setContratos([])
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
       setIsAdminOrDev(true);
-      setClientesRoute('/clientes');
       setContratosRoute('/contratos');
     } else {
       setIsAdminOrDev(false);
-      setClientesRoute(`/clientes/vendedor/${cookies.id}`);
       setContratosRoute(`/contratos/vendedor/${cookies.id}`);
     }
 
     const fetchData = async () => {
       try {
         const contratosResponse = await api.get(contratosRoute);
-        setContratos(contratosResponse.contratos);
+        const contratosMap = contratosResponse.contratos.reduce((map, contrato) => {
+          map[contrato.id] = contrato;
+          return map;
+        }, {});
+        setContratos(Object.values(contratosMap));
 
-        const clientesResponse = await api.get(clientesRoute);
-        setClientes(clientesResponse.clientes);
+        const clientesResponse = await api.get('/clientes');
+        const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
+          map[cliente.id] = cliente;
+          return map;
+        }, {});
+        setClientes(Object.values(clientesMap));
 
         const produtosResponse = await api.get('/produtos');
-        setProdutos(produtosResponse.produtos);
+        const produtosMap = produtosResponse.produtos.reduce((map, produto) => {
+          map[produto.id] = produto;
+          return map;
+        }, {});
+        setProdutos(Object.values(produtosMap));
 
         const vendedoresResponse = await api.get('/usuarios');
-        setUsuarios(vendedoresResponse.usuarios);
+        const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
+          map[vendedor.id] = vendedor;
+          return map;
+        }, {});
+        setUsuarios(Object.values(vendedoresMap));
 
         const responseSegmentos = await api.get('/segmentos');
-        setSegmentos(responseSegmentos.segmentos);
+        const segmentosMap = responseSegmentos.segmentos.reduce((map, segmento) => {
+          map[segmento.id] = segmento;
+          return map;
+        }, {});
+        setSegmentos(Object.values(segmentosMap));
 
       } catch (error) {
-        console.error("AConteceu algo inesperado: " + error);
+        console.error("Aconteceu algo inesperado: " + error);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, [tabelaSelecionada, cookies.tipo, cookies.id, clientesRoute, contratosRoute]);
+  }, [tabelaSelecionada, cookies.tipo, cookies.id, contratosRoute]);
 
   return (
     <>

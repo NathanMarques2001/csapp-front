@@ -38,7 +38,11 @@ export default function Contratos() {
         const fetchData = async () => {
             try {
                 const contratosResponse = await api.get(contratosRoute);
-                setContratos(contratosResponse.contratos);
+                const contratosMap = contratosResponse.contratos.reduce((map, contrato) => {
+                    map[contrato.id] = contrato;
+                    return map;
+                }, {});
+                setContratos(Object.values(contratosMap));
 
                 const clientesResponse = await api.get(clientesRoute);
                 const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
@@ -122,12 +126,6 @@ export default function Contratos() {
 
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
-    const calculaValorTotalContratos = (contrato) => {
-        const quantidade = contrato.quantidade || 1;
-        const total = calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * quantidade) * contrato.duracao), contrato.indice_reajuste);
-        return total;
-    };
-
     return (
         <>
             {loading && <Loading />}
@@ -177,7 +175,7 @@ export default function Contratos() {
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.nome_fantasia || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
-                                        <td className="contratos-conteudo-tabela">{calculaValorTotalContratos(contrato).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td className="contratos-conteudo-tabela">{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                         <td className="contratos-conteudo-tabela">{vendedores[clientes[contrato.id_cliente]?.vendedor]?.nome}</td>
                                     </tr>
                                 ))}

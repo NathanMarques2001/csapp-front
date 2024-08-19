@@ -36,22 +36,26 @@ export default function Clientes() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                console.log(clientesRoute)
-                console.log(contratosRoute)
                 const clientesResponse = await api.get(clientesRoute);
-                setClientes(clientesResponse.clientes);
+                const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
+                    map[cliente.id] = cliente;
+                    return map;
+                }, {});
+                setClientes(Object.values(clientesMap));
 
                 const vendedoresResponse = await api.get('/usuarios');
                 const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
-                    map[vendedor.id] = {
-                        nome: vendedor.nome
-                    };
+                    map[vendedor.id] = vendedor;
                     return map;
                 }, {});
-                setVendedores(vendedoresMap);
+                setVendedores(Object.values(vendedoresMap));
 
                 const contratosResponse = await api.get(contratosRoute);
-                setContratos(contratosResponse.contratos);
+                const contratosMap = contratosResponse.contratos.reduce((map, contrato) => {
+                    map[contrato.id] = contrato;
+                    return map;
+                }, {});
+                setContratos(Object.values(contratosMap));
             } catch (err) {
                 console.error("Error fetching data:", err);
             }
@@ -67,10 +71,16 @@ export default function Clientes() {
 
     const calculaValorTotalContratos = (clienteId) => {
         const clienteContratos = contratos.filter(contrato => contrato.id_cliente === clienteId && contrato.status === 'ativo');
-        const total = clienteContratos.reduce((sum, contrato) => sum + calculaValorImpostoMensal(parseFloat((contrato.valor_mensal * (contrato.quantidade || 1)) * contrato.duracao), contrato.indice_reajuste), 0);
-
+        
+        const total = clienteContratos.reduce((sum, contrato) => {
+            const valorContrato = parseFloat(contrato.valor_mensal) * contrato.duracao;
+            const valorComImposto = calculaValorImpostoMensal(valorContrato, contrato.indice_reajuste);
+            return sum + valorComImposto;
+        }, 0);
+    
         return total;
     };
+    
 
     const detalhesCliente = (id) => {
         navigate(`/clientes/${id}`);
