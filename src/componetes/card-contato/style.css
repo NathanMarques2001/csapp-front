@@ -7,7 +7,7 @@
 .card-cliente-contatos-titulo-btn {
     display: flex;
     width: 100%;
-    background-color: var(--azul-borda);
+    background-color: var(--preto);
     border-radius: 7px 7px 0 0;
     border-bottom: 1px solid var(--preto);
 }
@@ -25,6 +25,7 @@
     font-weight: bold;
     font-size: 2rem;
     background-color: var(--preto);
+    border: 1px solid var(--branco);
     color: var(--verde);
     cursor: pointer;
 }

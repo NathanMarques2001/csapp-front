@@ -9,12 +9,13 @@ import { useCookies } from "react-cookie";
 
 export default function Contratos() {
     const api = new Api();
-    const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+    const [cookies, setCookie, removeCookie] = useCookies(['tipo', 'id']);
     const [isAdminOrDev, setIsAdminOrDev] = useState(false);
     const [clientesRoute, setClientesRoute] = useState("");
     const [contratosRoute, setContratosRoute] = useState("");
     const [contratos, setContratos] = useState([]);
     const [clientes, setClientes] = useState({});
+    const [vendedores, setVendedores] = useState({});
     const [produtos, setProdutos] = useState({});
     const [filter, setFilter] = useState("");
     const [filters, setFilters] = useState({});
@@ -23,6 +24,7 @@ export default function Contratos() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        setLoading(true);
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
             setIsAdminOrDev(true);
             setClientesRoute('/clientes');
@@ -35,7 +37,6 @@ export default function Contratos() {
 
         const fetchData = async () => {
             try {
-                setLoading(true);
                 const contratosResponse = await api.get(contratosRoute);
                 setContratos(contratosResponse.contratos);
 
@@ -44,11 +45,21 @@ export default function Contratos() {
                     map[cliente.id] = {
                         nome_fantasia: cliente.nome_fantasia,
                         cpf_cnpj: cliente.cpf_cnpj,
-                        razao_social: cliente.razao_social
+                        razao_social: cliente.razao_social,
+                        vendedor: cliente.id_usuario
                     };
                     return map;
                 }, {});
                 setClientes(clientesMap);
+
+                const vendedoresResponse = await api.get('/usuarios');
+                const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
+                    map[vendedor.id] = {
+                        nome: vendedor.nome
+                    };
+                    return map;
+                }, {});
+                setVendedores(vendedoresMap);
 
                 const produtosResponse = await api.get('/produtos');
                 const produtosMap = produtosResponse.produtos.reduce((map, produto) => {
@@ -157,7 +168,7 @@ export default function Contratos() {
                                     <th className="contratos-titulo-tabela">CPF/CNPJ</th>
                                     <th className="contratos-titulo-tabela">Solução</th>
                                     <th className="contratos-titulo-tabela">Valor Contrato</th>
-                                    <th className="contratos-titulo-tabela">Início Contrato</th>
+                                    <th className="contratos-titulo-tabela">Vendedor</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -167,7 +178,7 @@ export default function Contratos() {
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{calculaValorTotalContratos(contrato).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        <td className="contratos-conteudo-tabela">{new Date(contrato.createdAt).toLocaleDateString()}</td>
+                                        <td className="contratos-conteudo-tabela">{vendedores[clientes[contrato.id_cliente]?.vendedor]?.nome}</td>
                                     </tr>
                                 ))}
                             </tbody>

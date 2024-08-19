@@ -10,7 +10,7 @@
  - novos indices
  - Adicionar clube permuta no faturado - (ok)
  - Navbar relatorio - (ok)
- - Página de relatórios
+ - Página de relatórios- (ok)
 Banco:
  - Vendedor so ve seus proprios contratos e clientes - (ok)
  - Quando remover um usuario migrar contratos para um novo - (ok)

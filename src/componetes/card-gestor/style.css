@@ -4,7 +4,7 @@
 
 .cliente-card-gestor-titulo {
     text-align: center;
-    background-color: var(--azul-borda);
+    background-color: var(--preto);
     color: var(--branco);
     border: 1px solid var(--preto);
     border-radius: 7px 7px 0 0;

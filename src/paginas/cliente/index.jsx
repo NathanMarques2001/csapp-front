@@ -50,7 +50,7 @@ export default function Cliente() {
                 const clienteData = await api.get(`/clientes/${id}`);
                 setCliente(clienteData.cliente);
 
-                const contratosData = await api.get(`/contratos/usuario/${id}`);
+                const contratosData = await api.get(`/contratos/cliente/${id}`);
                 setContratos(contratosData.contratos);
 
                 const produtosData = await api.get('/produtos');
@@ -103,7 +103,7 @@ export default function Cliente() {
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     const calculaValorTotalContratos = () => {
-        return contratos.reduce((total, contrato) => total + calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.quantidade), contrato.indice_reajuste), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        return contratos.reduce((total, contrato) => total + calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
     const abrirPopUp = async (e, titulo) => {
@@ -157,7 +157,7 @@ export default function Cliente() {
                                 <tr key={contrato.id}>
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
-                                    <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.quantidade * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                    <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                     <td>{contrato.duracao == 12000 ? `INDETERMINADO` : `${contrato.duracao} MESES`}</td>
                                     <td>{getFabricanteNome(contrato.id_produto)}</td>
                                 </tr>

@@ -5,6 +5,7 @@ import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeExcluir from "../../assets/icons/icon-lixeira.png";
 import { useNavigate } from "react-router-dom";
 import formataTipoUsuario from "../../utils/formatUserType";
+import PopUpMigrate from "../../componetes/pop-up-migrate";
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -14,6 +15,9 @@ export default function Usuarios() {
     const [response, setResponse] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
+    const [modalAberto, setModalAberto] = useState(false);
+    const [idAntigo, setIdAntigo] = useState(null);
+    const [reload, setReload] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,7 +34,7 @@ export default function Usuarios() {
             }
         };
         fetchData();
-    }, []);
+    }, [reload]);
 
     const handleSearch = (event) => {
         setSearchTerm(event.target.value);
@@ -53,8 +57,13 @@ export default function Usuarios() {
     };
 
     const handleDelete = (id) => {
-        console.log("Delete user with ID:", id);
+        setModalAberto(true);
+        setIdAntigo(id);
     };
+
+    const handleCloseModal = () => {
+        setModalAberto(false);
+    }
 
     const filteredUsuarios = response && response.usuarios
         ? response.usuarios.filter(usuario =>
@@ -71,6 +80,7 @@ export default function Usuarios() {
     return (
         <>
             {loading && <Loading />}
+            {modalAberto && <PopUpMigrate id_antigo={idAntigo} fechar={handleCloseModal} reload={() => setReload(prev => prev + 1)} />}
             <div>
                 <h3 className="gestao-section-subtitulo">Usuários ({totalUsuarios})</h3>
                 <input

@@ -17,6 +17,7 @@ export default function Clientes() {
     const [contratosRoute, setContratosRoute] = useState("");
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
+    const [vendedores, setVendedores] = useState([]);
     const [filter, setFilter] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -39,6 +40,15 @@ export default function Clientes() {
                 console.log(contratosRoute)
                 const clientesResponse = await api.get(clientesRoute);
                 setClientes(clientesResponse.clientes);
+
+                const vendedoresResponse = await api.get('/usuarios');
+                const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
+                    map[vendedor.id] = {
+                        nome: vendedor.nome
+                    };
+                    return map;
+                }, {});
+                setVendedores(vendedoresMap);
 
                 const contratosResponse = await api.get(contratosRoute);
                 setContratos(contratosResponse.contratos);
@@ -101,7 +111,7 @@ export default function Clientes() {
                                     <th className="clientes-titulo-tabela">CPF/CNPJ</th>
                                     <th className="clientes-titulo-tabela">Categoria</th>
                                     <th className="clientes-titulo-tabela">Valor Contratos</th>
-                                    <th className="clientes-titulo-tabela">Data Cadastro</th>
+                                    <th className="clientes-titulo-tabela">Vendedor</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -111,7 +121,7 @@ export default function Clientes() {
                                         <td className="clientes-conteudo-tabela">{cliente.cpf_cnpj}</td>
                                         <td className="clientes-conteudo-tabela">{cliente.tipo.toUpperCase()}</td>
                                         <td className="clientes-conteudo-tabela">{calculaValorTotalContratos(cliente.id).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        <td className="clientes-conteudo-tabela">{new Date(cliente.data_criacao).toLocaleDateString()}</td>
+                                        <td className="clientes-conteudo-tabela">{vendedores[cliente.id_usuario]?.nome}</td>
                                     </tr>
                                 ))}
                             </tbody>
