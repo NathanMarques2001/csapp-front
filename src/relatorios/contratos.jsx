@@ -7,7 +7,7 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
 
   const data = contratos.map(contrato => {
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
-    
+
     return {
       "Solução": produtos[contrato.id_produto - 1]?.nome,
       "Cliente": clientes[contrato.id_cliente - 1]?.nome_fantasia,
@@ -26,6 +26,7 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
 
   return (
     <>
+      <button>Filtrar</button>
       <button onClick={e => handleDownloadReport(e)}>Exportar para Excel</button>
       <table className="global-tabela">
         <thead>

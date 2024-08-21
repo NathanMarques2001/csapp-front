@@ -1,5 +1,6 @@
 #clientes-display {
   display: flex;
+  margin-bottom: 4%;
 }
 
 #clientes-container {
@@ -60,4 +61,10 @@
 
 #clientes-sem-clientes {
   margin-top: 2%;
+}
+
+.clickable-row:hover {
+  cursor: pointer;
+  background-color: var(--azul-borda);
+  color: var(--branco);
 }

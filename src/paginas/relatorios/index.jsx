@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import { useCookies } from "react-cookie";
 import RelatorioClientes from "../../relatorios/clientes";
+import Excel from "../../utils/excel";
 
 export default function Relatorios() {
   const [loading, setLoading] = useState(false);
@@ -89,9 +90,8 @@ export default function Relatorios() {
         <Navbar />
         <div id="clientes-container">
           <h1 id="clientes-titulo">Relatórios</h1>
-          <label htmlFor="">Escolha a fonte de dados</label>
           <select onChange={e => setTabeleSelecionada(e.target.value)} name="" id="">
-            <option value="">Selecione a fonte</option>
+            <option value="">Selecione a fonte de dados</option>
             {tabelas.map(tabela => (
               <option key={tabela} value={tabela}>{tabela}</option>
             ))}

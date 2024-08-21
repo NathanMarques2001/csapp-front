@@ -100,8 +100,8 @@ export default function Contratos() {
     const filteredContratos = contratos.filter(contrato => {
         const clienteNome = clientes[contrato.id_cliente]?.nome_fantasia || "";
         const clienteRazao = clientes[contrato.id_cliente]?.razao_social || "";
-        const produtoNome = produtos[contrato.id_produto] || "";
-
+        const produtoNome = produtos[contrato.id_produto - 1]?.nome || "";
+    
         const filterConditions = [
             filters.id_cliente ? contrato.id_cliente.toString().includes(filters.id_cliente) : true,
             filters.id_produto ? contrato.id_produto.toString().includes(filters.id_produto) : true,
@@ -115,8 +115,11 @@ export default function Contratos() {
             clienteNome.toLowerCase().includes(filter.toLowerCase()),
         ];
 
+        console.log(produtos[contrato.id_produto]);
+    
         return filterConditions.every(condition => condition);
     });
+    
 
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
@@ -138,7 +141,7 @@ export default function Contratos() {
                     <button onClick={() => setShowFilterPopup(true)} className="contratos-botao" id="contratos-botao-filtro">Filtrar</button>
                     {showFilterPopup && (
                         <div className="filter-popup">
-                            <PopUpFiltro onFilter={aplicarFiltroPopUp} closeModal={() => setShowFilterPopup(false)} />
+                            <PopUpFiltro onFilter={aplicarFiltroPopUp} closeModal={() => setShowFilterPopup(false)} clientes={clientes} produtos={produtos}/>
                         </div>
                     )}
                     {Object.keys(filters).length > 0 && (

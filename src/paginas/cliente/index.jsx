@@ -56,20 +56,15 @@ export default function Cliente() {
                 const produtosData = await api.get('/produtos');
                 setProdutos(produtosData.produtos)
 
-                const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
-                const contratosMap = contratosAtivos.contratos.reduce((map, contrato) => {
-                    map[contrato.id] = {
-                        id_produto: contrato.id_produto,
-                        valor_mensal: contrato.valor_mensal,
-                        duracao: contrato.duracao,
-                        indice_reajuste: contrato.indice_reajuste
-                    };
-                    return map;
-                }, {});
-                setContratos(contratosMap);
-
                 const fabricantesData = await api.get('/fabricantes');
                 setFabricantes(fabricantesData.fabricantes);
+
+                const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
+                // const contratosMap = contratosAtivos.contratos.reduce((map, contrato) => {
+                //     map[contrato.id] = contrato;
+                //     return map;
+                // }, {});
+                setContratos(contratosAtivos);
 
                 const contatosComerciaisData = await api.get(`/contatos-comerciais/${id}`);
                 setContatoComercial(contatosComerciaisData.contatos_comerciais);
@@ -163,10 +158,10 @@ export default function Cliente() {
                         </thead>
                         <tbody>
                             {contratos.map(contrato => (
-                                <tr key={contrato.id - 1}>
+                                <tr key={contrato.id - 1} className="clickable-row">
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
-                                    <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                    <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                     <td>{contrato.duracao == 12000 ? `INDETERMINADO` : `${contrato.duracao} MESES`}</td>
                                     <td>{getFabricanteNome(contrato.id_produto)}</td>
                                 </tr>

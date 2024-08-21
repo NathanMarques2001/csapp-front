@@ -1,11 +1,11 @@
  - Colorir contrato quando estiver próximo de vencer
  - Contrato deve ficar inativo ou expirar duração
- - filtros ser igual ao dropdown do contrato
- - Ao inves de excluir inativar o produto
+ - filtros ser igual ao dropdown do contrato - (ok)
+ - Ao inves de excluir inativar o produto - (ok)
  - classificação ser visivel - (ok)
  - Aba segmentos gestão - (ok)
  - Segmentos filtrados no cadastro do cliente - (ok)
- - quando remover um usuario migrar contratos para um novo
+ - quando remover um usuario migrar contratos para um novo - (ok)
  - Vendedor só ve seus proprios clientes e contratos - (ok)
  - novos indices
  - Adicionar clube permuta no faturado - (ok)

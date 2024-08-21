@@ -1,5 +1,6 @@
 #contratos-display {
   display: flex;
+  margin-bottom: 4%;
 }
 
 #contratos-container {

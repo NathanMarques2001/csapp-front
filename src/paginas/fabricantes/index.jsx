@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
-import iconeExcluir from "../../assets/icons/icon-lixeira.png";
+import iconeInativar from "../../assets/icons/icon-inativar.png";
 import Loading from "../../componetes/loading";
 import { useNavigate } from "react-router-dom";
 // Bibliotecas
@@ -91,7 +91,7 @@ export default function Fabricantes() {
                                                 <img src={editIcon} alt="" />
                                             </button>
                                             <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(fabricante.id)}>
-                                                <img src={iconeExcluir} alt="" />
+                                                <img src={iconeInativar} alt="" />
                                             </button>
                                         </div>
                                     </td>

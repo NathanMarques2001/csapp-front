@@ -1,5 +1,6 @@
 #cliente-display {
   display: flex;
+  margin-bottom: 4%;
 }
 
 #cliente-container {

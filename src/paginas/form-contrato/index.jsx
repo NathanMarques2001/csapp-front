@@ -81,13 +81,15 @@ export default function FormContrato({ mode = "cadastro" }) {
           const contrato = response.contrato;
           const clienteResponse = await api.get(`/clientes/${contrato.id_cliente}`);
           const selectedCliente = clienteResponse.cliente;
+          const faturado = await api.get(`/faturados/${contrato.id_faturado}`);
+          const selectedFaturado = faturado.faturado;
 
           setSelectedClienteId(contrato.id_cliente);
           setClienteInput(selectedCliente ? `${selectedCliente.razao_social} - ${selectedCliente.nome_fantasia}` : "");
           setSelectedClienteCpfCnpj(selectedCliente ? selectedCliente.cpf_cnpj : "");
+          setFaturadoPor(selectedFaturado ? selectedFaturado.id : "");
 
           setSolucao(contrato.id_produto);
-          setFaturadoPor(contrato.faturado_por);
           setVencimento(contrato.dia_vencimento);
           setReajuste(contrato.nome_indice);
           setProximoReajuste(formatDate(contrato.proximo_reajuste));
@@ -145,6 +147,8 @@ export default function FormContrato({ mode = "cadastro" }) {
       url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.189/dados?formato=json';
     } else if (indice === 'ipca') {
       url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json';
+    } else if (indice === 'ipc-fipe') {
+      url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.4466/dados?formato=json';
     }
 
     try {
@@ -362,6 +366,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                     <option value="">Selecione um índice</option>
                     <option value="igpm">IGPM</option>
                     <option value="ipca">IPCA</option>
+                    <option value="ipc-fipe">IPC-FIPE</option>
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>

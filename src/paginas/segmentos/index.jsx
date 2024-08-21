@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
-import iconeExcluir from "../../assets/icons/icon-lixeira.png";
+import iconeInativar from "../../assets/icons/icon-inativar.png";
+import iconeAtivar from "../../assets/icons/icon-ativar.png";
 import Loading from "../../componetes/loading";
 import { useNavigate } from "react-router-dom";
 // Bibliotecas
@@ -13,6 +14,7 @@ export default function Segmentos() {
   const [segmentos, setSegmentos] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [atualizar, setAtualizar] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function Segmentos() {
     };
 
     fetchData();
-  }, []);
+  }, [atualizar]);
 
   const handleEdit = (id) => {
     navigate(`/edicao-segmento/${id}`)
@@ -40,9 +42,11 @@ export default function Segmentos() {
     const response = await api.get(`/segmentos/${id}`);
     if (response.segmento.status === 'ativo') {
       await api.put(`/segmentos/${id}`, { status: 'inativo' });
+      setAtualizar(atualizar + 1);
       return;
     }
     await api.put(`/segmentos/${id}`, { status: 'ativo' });
+    setAtualizar(atualizar + 1);
   };
 
   const handleSearch = (event) => {
@@ -86,12 +90,21 @@ export default function Segmentos() {
                   <td className="gestao-section-conteudo-tabela">{segmento.nome}</td>
                   <td className="gestao-section-conteudo-tabela">
                     <div className="gestao-section-container-btn">
-                      <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(segmento.id)}>
-                        <img src={editIcon} alt="" />
-                      </button>
-                      <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(segmento.id)}>
-                        <img src={iconeExcluir} alt="" />
-                      </button>
+                      {segmento.status === 'ativo' ? (<>
+                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(segmento.id)}>
+                          <img src={editIcon} alt="" />
+                        </button>
+                        <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(segmento.id)}>
+                          <img src={iconeInativar} alt="" />
+                        </button>
+                      </>) : <>
+                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(segmento.id)}>
+                          <img src={editIcon} alt="" />
+                        </button>
+                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleDelete(segmento.id)}>
+                          <img src={iconeAtivar} alt="" />
+                        </button>
+                      </>}
                     </div>
                   </td>
                 </tr>

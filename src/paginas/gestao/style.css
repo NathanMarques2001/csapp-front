@@ -1,5 +1,6 @@
 #gestao-display {
     display: flex;
+    margin-bottom: 4%;
 }
 
 #gestao-container {
@@ -78,6 +79,9 @@
 
 .gestao-section-editar-btn {
     background-color: var(--verde);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .gestao-section-editar-btn:hover {
@@ -86,6 +90,9 @@
 
 .gestao-section-excluir-btn {
     background-color: var(--vermelho);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .gestao-section-excluir-btn:hover {
