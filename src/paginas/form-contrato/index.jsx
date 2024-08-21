@@ -17,7 +17,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-
+  const [faturados, setFaturados] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [clienteInput, setClienteInput] = useState("");
   const [filteredClientes, setFilteredClientes] = useState([]);
@@ -66,7 +66,8 @@ export default function FormContrato({ mode = "cadastro" }) {
     const fetchProdutos = async () => {
       try {
         const response = await api.get('/produtos');
-        setProdutos(response.produtos);
+        const produtosAtivos = response.produtos.filter((produto) => produto.status !== 'inativo');
+        setProdutos(produtosAtivos);
       } catch (err) {
         console.error("Erro ao buscar produtos:", err);
       }
@@ -104,9 +105,20 @@ export default function FormContrato({ mode = "cadastro" }) {
       }
     };
 
+    const fetchFaturados = async () => {
+      try {
+        const response = await api.get('/faturados');
+        const faturadosAtivos = response.faturados.filter((faturado) => faturado.status !== 'inativo');
+        setFaturados(faturadosAtivos);
+      } catch (err) {
+        console.error("Erro ao buscar faturado:", err);
+      }
+    };
+
     fetchClientes();
     fetchProdutos();
     fetchContrato();
+    fetchFaturados();
   }, [mode, id]);
 
   useEffect(() => {
@@ -206,7 +218,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         id_cliente: Number(selectedClienteId),
         id_produto: Number(solucao),
         faturado: false,
-        faturado_por: faturadoPor,
+        id_faturado: Number(faturadoPor),
         dia_vencimento: Number(vencimento),
         indice_reajuste: Number(indiceReajusteValor),
         nome_indice: reajuste,
@@ -303,10 +315,9 @@ export default function FormContrato({ mode = "cadastro" }) {
                   <label htmlFor="faturado" className='label-form-contrato'><b>Faturado por <span className='required'>*</span></b></label>
                   <select name="faturado" className='form-contrato-input form-contrato-select' value={faturadoPor} disabled={!isAdminOrDev} onChange={(e) => setFaturadoPor(e.target.value)}>
                     <option value="">Selecione</option>
-                    <option value="Braga & Fontes">Braga & Fontes</option>
-                    <option value="Prolinx">Prolinx</option>
-                    <option value="Infour">Infour</option>
-                    <option value="Clube Permuta">Clube Permuta</option>
+                    {faturados.map(faturado => (
+                      <option key={faturado.id} value={faturado.id}>{faturado.nome}</option>
+                    ))}
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>

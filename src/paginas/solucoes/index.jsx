@@ -45,8 +45,13 @@ export default function Solucoes() {
         navigate(`/edicao-solucao/${id}`)
     };
 
-    const handleDelete = (id) => {
-        console.log("Delete product with ID:", id);
+    const handleDelete = async (id) => {
+        const response = await api.get(`/produtos/${id}`);
+        if (response.produto.status === 'ativo') {
+            await api.put(`/produtos/${id}`, { status: 'inativo' });
+            return;
+        }
+        await api.put(`/produtos/${id}`, { status: 'ativo' });
     };
 
     const handleSearch = (event) => {

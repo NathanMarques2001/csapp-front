@@ -18,6 +18,7 @@ import FormUsuario from '../paginas/form-usuario';
 import FormContrato from '../paginas/form-contrato';
 import Relatorios from '../paginas/relatorios';
 import FormSegmento from '../paginas/form-segmento';
+import FormFaturado from '../paginas/form-faturado';
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -47,6 +48,8 @@ export default function Rotas() {
                 <Route path="/edicao-contrato/:id" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="edicao" />} />
                 <Route path="/cadastro-segmento" element={!cookies['jwtToken'] ? <Login /> : <FormSegmento mode="cadastro" />} />
                 <Route path="/edicao-segmento/:id" element={!cookies['jwtToken'] ? <Login /> : <FormSegmento mode="edicao" />} />
+                <Route path="/cadastro-faturado" element={!cookies['jwtToken'] ? <Login /> : <FormFaturado mode="cadastro" />} />
+                <Route path="/edicao-faturado/:id" element={!cookies['jwtToken'] ? <Login /> : <FormFaturado mode="edicao" />} />
             </Routes>
         </Router>
     );

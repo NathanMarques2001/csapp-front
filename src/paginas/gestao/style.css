@@ -14,7 +14,7 @@
 #central-gestao-switch-container {
     display: flex;
     margin: 8% 0 3% 0;
-    width: 64%;
+    width: 74%;
     justify-content: space-around;
     border-bottom: 1px solid var(--cinza);
 }

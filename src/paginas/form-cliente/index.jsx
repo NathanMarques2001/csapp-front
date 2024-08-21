@@ -103,19 +103,17 @@ export default function FormCliente({ mode }) {
       }
     };
 
-    fetchUsuarios();
-  }, []);
-
-  useEffect(() => {
     const fetchSegmentos = async () => {
       try {
         const response = await api.get("/segmentos");
-        setSegmentos(response.segmentos);
+        const segmentosAtivos = response.segmentos.filter((segmento) => segmento.status !== 'inativo');
+        setSegmentos(segmentosAtivos);
       } catch (error) {
         console.error("Erro ao buscar os segmentos: " + error);
       }
     };
 
+    fetchUsuarios();
     fetchSegmentos();
   }, []);
 
@@ -243,15 +241,15 @@ export default function FormCliente({ mode }) {
                     </select>
                   </div>
                   <div>
-                  <div className="form-group">
-                    <label htmlFor="id_segmento">Segmento <span className="required">*</span></label>
-                    <select required id="id_segmento" disabled={!isAdminOrDev} name="id_segmento" value={cliente.id_segmento} onChange={handleChange}>
-                      <option value="">Selecione...</option>
-                      {segmentos.map((segmento) => (
-                        <option key={segmento.id} value={segmento.id}>{segmento.nome}</option>
-                      ))}
-                    </select>
-                  </div>
+                    <div className="form-group">
+                      <label htmlFor="id_segmento">Segmento <span className="required">*</span></label>
+                      <select required id="id_segmento" disabled={!isAdminOrDev} name="id_segmento" value={cliente.id_segmento} onChange={handleChange}>
+                        <option value="">Selecione...</option>
+                        {segmentos.map((segmento) => (
+                          <option key={segmento.id} value={segmento.id}>{segmento.nome}</option>
+                        ))}
+                      </select>
+                    </div>
                     <div className="form-group">
                       <label htmlFor="nps">NPS</label>
                       <input

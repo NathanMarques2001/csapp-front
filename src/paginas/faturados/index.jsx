@@ -8,9 +8,9 @@ import { useNavigate } from "react-router-dom";
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
 
-export default function Fabricantes() {
+export default function Faturados() {
     const api = new Api();
-    const [fabricantes, setFabricantes] = useState([]);
+    const [faturados, setFaturados] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -19,8 +19,8 @@ export default function Fabricantes() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const fabricantesResponse = await api.get('/fabricantes');
-                setFabricantes(fabricantesResponse.fabricantes);
+                const faturadosResponse = await api.get('/faturados');
+                setFaturados(faturadosResponse.faturados);
 
             } catch (err) {
                 console.error("Error fetching data:", err);
@@ -34,16 +34,16 @@ export default function Fabricantes() {
     }, []);
 
     const handleEdit = (id) => {
-        navigate(`/edicao-fabricante/${id}`)
+        navigate(`/edicao-faturado/${id}`)
     };
 
     const handleDelete = async (id) => {
-        const response = await api.get(`/fabricantes/${id}`);
-        if (response.fabricante.status === 'ativo') {
-            await api.put(`/fabricantes/${id}`, { status: 'inativo' });
+        const response = await api.get(`/faturados/${id}`);
+        if (response.faturado.status === 'ativo') {
+            await api.put(`/faturados/${id}`, { status: 'inativo' });
             return;
         }
-        await api.put(`/fabricantes/${id}`, { status: 'ativo' });
+        await api.put(`/faturados/${id}`, { status: 'ativo' });
     };
 
     const handleSearch = (event) => {
@@ -54,17 +54,17 @@ export default function Fabricantes() {
         navigate(url);
     }
 
-    const filteredFabricantes = fabricantes.filter(fabricante => {
-        return fabricante.nome.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredfaturados = faturados.filter(faturado => {
+        return faturado.nome.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    const totalFabricantes = filteredFabricantes.length;
+    const totalfaturados = filteredfaturados.length;
 
     return (
         <>
             {loading && <Loading />}
             <div>
-                <h3 className="gestao-section-subtitulo">Fornecedores ({totalFabricantes})</h3>
+                <h3 className="gestao-section-subtitulo">Faturistas ({totalfaturados})</h3>
                 <input
                     type="text"
                     placeholder="Procure pelo nome"
@@ -72,8 +72,8 @@ export default function Fabricantes() {
                     onChange={handleSearch}
                     className="gestao-section-input"
                 />
-                <button className="gestao-section-btn" onClick={e => handleRedirect("/cadastro-fabricante")}>Adicionar fornecedor</button>
-                {fabricantes.length > 0 ? (
+                <button className="gestao-section-btn" onClick={e => handleRedirect("/cadastro-faturado")}>Adicionar faturista</button>
+                {faturados.length > 0 ? (
                     <table className="gestao-section-tabela">
                         <thead>
                             <tr>
@@ -82,15 +82,15 @@ export default function Fabricantes() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredFabricantes.map(fabricante => (
-                                <tr key={fabricante.id}>
-                                    <td className="gestao-section-conteudo-tabela">{fabricante.nome}</td>
+                            {filteredfaturados.map(faturado => (
+                                <tr key={faturado.id}>
+                                    <td className="gestao-section-conteudo-tabela">{faturado.nome}</td>
                                     <td className="gestao-section-conteudo-tabela">
                                         <div className="gestao-section-container-btn">
-                                            <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(fabricante.id)}>
+                                            <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(faturado.id)}>
                                                 <img src={editIcon} alt="" />
                                             </button>
-                                            <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(fabricante.id)}>
+                                            <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(faturado.id)}>
                                                 <img src={iconeExcluir} alt="" />
                                             </button>
                                         </div>

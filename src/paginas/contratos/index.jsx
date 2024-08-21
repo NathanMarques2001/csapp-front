@@ -14,9 +14,9 @@ export default function Contratos() {
     const [clientesRoute, setClientesRoute] = useState("");
     const [contratosRoute, setContratosRoute] = useState("");
     const [contratos, setContratos] = useState([]);
-    const [clientes, setClientes] = useState({});
-    const [vendedores, setVendedores] = useState({});
-    const [produtos, setProdutos] = useState({});
+    const [clientes, setClientes] = useState([]);
+    const [vendedores, setVendedores] = useState([]);
+    const [produtos, setProdutos] = useState([]);
     const [filter, setFilter] = useState("");
     const [filters, setFilters] = useState({});
     const [loading, setLoading] = useState(false);
@@ -46,31 +46,25 @@ export default function Contratos() {
 
                 const clientesResponse = await api.get(clientesRoute);
                 const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
-                    map[cliente.id] = {
-                        nome_fantasia: cliente.nome_fantasia,
-                        cpf_cnpj: cliente.cpf_cnpj,
-                        razao_social: cliente.razao_social,
-                        vendedor: cliente.id_usuario
-                    };
+                    map[cliente.id] = cliente
                     return map;
                 }, {});
                 setClientes(clientesMap);
 
                 const vendedoresResponse = await api.get('/usuarios');
                 const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
-                    map[vendedor.id] = {
-                        nome: vendedor.nome
-                    };
+                    map[vendedor.id] = vendedor
                     return map;
                 }, {});
                 setVendedores(vendedoresMap);
 
                 const produtosResponse = await api.get('/produtos');
                 const produtosMap = produtosResponse.produtos.reduce((map, produto) => {
-                    map[produto.id] = produto.nome;
+                    map[produto.id] = produto;
                     return map;
                 }, {});
-                setProdutos(produtosMap);
+                setProdutos(Object.values(produtosMap));
+
             } catch (err) {
                 console.error("Error fetching data:", err);
             }
@@ -174,9 +168,9 @@ export default function Contratos() {
                                     <tr key={contrato.id} onClick={() => detalhesContrato(contrato.id)} className="clickable-row">
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.nome_fantasia || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
-                                        <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto] || "Carregando..."}</td>
+                                        <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto - 1]?.nome || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        <td className="contratos-conteudo-tabela">{vendedores[clientes[contrato.id_cliente]?.vendedor]?.nome}</td>
+                                        <td className="contratos-conteudo-tabela">{vendedores[clientes[contrato.id_cliente]?.id_usuario]?.nome}</td>
                                     </tr>
                                 ))}
                             </tbody>

@@ -24,7 +24,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
     return {
       "Nome Fantasia": cliente.nome_fantasia,
       "CPF/CNPJ": cliente.cpf_cnpj,
-      "Tipo": cliente.tipo,
+      "Tipo": cliente.tipo.toUpperCase(),
       "Status": cliente.status,
       "Usuário Responsável": usuarios[cliente.id_usuario - 1]?.nome,
       "Segmento": segmentos[cliente.id_segmento - 1]?.nome,

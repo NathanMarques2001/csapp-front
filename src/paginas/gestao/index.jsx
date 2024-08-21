@@ -6,6 +6,7 @@ import Solucoes from '../solucoes';
 import Usuarios from '../usuarios';
 import Fabricantes from '../fabricantes';
 import Segmentos from '../segmentos';
+import Faturados from '../faturados';
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -13,7 +14,7 @@ import Segmentos from '../segmentos';
 export default function Gestao() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const aba = queryParams.get("aba") || "fabricantes";
+    const aba = queryParams.get("aba") || "faturados";
 
     const [selectedItem, setSelectedItem] = useState(aba);
 
@@ -31,6 +32,12 @@ export default function Gestao() {
             <div id="gestao-container">
                 <h1 id='central-gestao-titulo'>Central de Gestão</h1>
                 <div id="central-gestao-switch-container">
+                    <p
+                        className={`switch-item ${selectedItem === 'faturados' ? 'active' : ''}`}
+                        onClick={() => handleClick('faturados')}
+                    >
+                        Faturista
+                    </p>
                     <p
                         className={`switch-item ${selectedItem === 'fabricantes' ? 'active' : ''}`}
                         onClick={() => handleClick('fabricantes')}
@@ -69,6 +76,9 @@ export default function Gestao() {
                     )}
                     {selectedItem === 'segmentos' && (
                         <Segmentos />
+                    )}
+                    {selectedItem === 'faturados' && (
+                        <Faturados />
                     )}
                 </div>
             </div>

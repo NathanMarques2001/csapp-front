@@ -36,8 +36,13 @@ export default function Segmentos() {
     navigate(`/edicao-segmento/${id}`)
   };
 
-  const handleDelete = (id) => {
-    console.log("Delete product with ID:", id);
+  const handleDelete = async (id) => {
+    const response = await api.get(`/segmentos/${id}`);
+    if (response.segmento.status === 'ativo') {
+      await api.put(`/segmentos/${id}`, { status: 'inativo' });
+      return;
+    }
+    await api.put(`/segmentos/${id}`, { status: 'ativo' });
   };
 
   const handleSearch = (event) => {

@@ -131,7 +131,7 @@ export default function Clientes() {
                                         <td className="clientes-conteudo-tabela">{cliente.cpf_cnpj}</td>
                                         <td className="clientes-conteudo-tabela">{cliente.tipo.toUpperCase()}</td>
                                         <td className="clientes-conteudo-tabela">{calculaValorTotalContratos(cliente.id).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        <td className="clientes-conteudo-tabela">{vendedores[cliente.id_usuario]?.nome}</td>
+                                        <td className="clientes-conteudo-tabela">{vendedores[cliente.id_usuario - 1]?.nome}</td>
                                     </tr>
                                 ))}
                             </tbody>
