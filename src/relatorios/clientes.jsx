@@ -1,6 +1,7 @@
 import { useCookies } from "react-cookie";
 import Excel from "../utils/excel";
 import { useState } from "react";
+import Popup from "../componetes/pop-up";
 
 export default function RelatorioClientes({ clientes, contratos, usuarios, segmentos }) {
   const excel = new Excel("Relatório de Clientes");
@@ -13,6 +14,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
     segmento: ''
   });
   const [openModal, setOpenModal] = useState(false);
+  const [abrirPopup, setAbrirPopup] = useState(false);
 
   if (cookies.tipo !== 'admin' && cookies.tipo !== 'dev') {
     clientes = clientes.filter(cliente => cliente.id_usuario === cookies.id);
@@ -51,6 +53,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
   function handleDownloadReport(e) {
     e.preventDefault();
     excel.exportToExcel(data);
+    setAbrirPopup(false);
   }
 
   function handleFiltroChange(e) {
@@ -60,6 +63,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
 
   return (
     <>
+      {abrirPopup && (<Popup title="Exportar Clientes" message="Tem certeza que deseja exportar o relatório de clientes?" onConfirm={e => handleDownloadReport(e)} onCancel={e => setAbrirPopup(false)} />)}
       {openModal &&
         <div id='filter-container'>
           <form onSubmit={e => e.preventDefault()} className="filter-form">
@@ -119,7 +123,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
         </div>}
 
       <button onClick={e => setOpenModal(true)}>Filtrar</button>
-      <button onClick={e => handleDownloadReport(e)}>Exportar para Excel</button>
+      <button onClick={e => setAbrirPopup(true)}>Exportar para Excel</button>
       <table className="global-tabela">
         <thead>
           <tr>

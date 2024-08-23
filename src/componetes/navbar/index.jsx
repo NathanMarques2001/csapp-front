@@ -10,11 +10,13 @@ import iconeCentralGestao from "../../assets/icons/icon-central-gestao.png";
 import iconeSair from "../../assets/icons/icon-sair.png";
 import iconeRelatorios from "../../assets/icons/icon-relatorios.png";
 import logo from "../../assets/images/logo.png";
+import Popup from "../pop-up";
 
 export default function Navbar() {
 
     const [cookies, setCookie, removeCookie] = useCookies(['jwtToken', 'nomeUsuario', 'id', 'tipo']);
     const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+    const [abrirPopup, setAbrirPopup] = useState(false);
 
     useEffect(() => {
         // Verifica o tipo de usuário e atualiza o estado
@@ -30,10 +32,12 @@ export default function Navbar() {
         removeCookie('nomeUsuario', { path: '/' });
         removeCookie('id', { path: '/' });
         removeCookie('tipo', { path: '/' });
+        setAbrirPopup(false);
     }
 
     return (
         <>
+            {abrirPopup && (<Popup title="Deslogar" message="Tem certeza que deseja sair?" onConfirm={deslogar} onCancel={e => setAbrirPopup(false)} />)}
             <div id="navbar-preenchimento"></div>
             <nav id='navbar-container'>
                 <img src={logo} alt="logo prolinx" id="logo-img" />
@@ -63,7 +67,7 @@ export default function Navbar() {
                         <span id="navbar-nomeUsuario" className='navbar-span'>{cookies.nomeUsuario}</span>
                     </div>
                 </div>
-                <button id='navbar-btn' onClick={deslogar}>
+                <button id='navbar-btn' onClick={e => setAbrirPopup(true)}>
                     <img className='navbar-icon' src={iconeSair} alt="ícone sair" />
                     <span className='navbar-span'>Sair</span>
                 </button>

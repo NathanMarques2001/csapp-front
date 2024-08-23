@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import { useCookies } from "react-cookie";
 import RelatorioClientes from "../../relatorios/clientes";
-import Excel from "../../utils/excel";
 
 export default function Relatorios() {
   const [loading, setLoading] = useState(false);
