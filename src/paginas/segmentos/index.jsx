@@ -5,9 +5,7 @@ import iconeInativar from "../../assets/icons/icon-inativar.png";
 import iconeAtivar from "../../assets/icons/icon-ativar.png";
 import Loading from "../../componetes/loading";
 import { useNavigate } from "react-router-dom";
-// Bibliotecas
-// Componentes
-// Estilos, funcoes, classes, imagens e etc
+import Popup from "../../componetes/pop-up";
 
 export default function Segmentos() {
   const api = new Api();
@@ -15,18 +13,23 @@ export default function Segmentos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [atualizar, setAtualizar] = useState(0);
+  const [popupConfig, setPopupConfig] = useState({
+    open: false,
+    title: "",
+    message: "",
+    id: null,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/segmentos');
+        const response = await api.get("/segmentos");
         setSegmentos(response.segmentos);
       } catch (err) {
         console.error("Error fetching data:", err);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -34,77 +37,112 @@ export default function Segmentos() {
     fetchData();
   }, [atualizar]);
 
-  const handleEdit = (id) => {
-    navigate(`/edicao-segmento/${id}`)
-  };
+  const handleEdit = (id) => navigate(`/edicao-segmento/${id}`);
 
-  const handleDelete = async (id) => {
-    const response = await api.get(`/segmentos/${id}`);
-    if (response.segmento.status === 'ativo') {
-      await api.put(`/segmentos/${id}`, { status: 'inativo' });
-      setAtualizar(atualizar + 1);
-      return;
+  const handleChangeStatus = async () => {
+    const { id } = popupConfig;
+    setPopupConfig((prev) => ({ ...prev, open: false }));
+    setLoading(true);
+    try {
+      const response = await api.get(`/segmentos/${id}`);
+      const newStatus = response.segmento.status === "ativo" ? "inativo" : "ativo";
+      await api.put(`/segmentos/${id}`, { status: newStatus });
+      setAtualizar((prev) => prev + 1);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
-    await api.put(`/segmentos/${id}`, { status: 'ativo' });
-    setAtualizar(atualizar + 1);
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const handleStatusChange = (id, status) => {
+    const titles = {
+      ativo: "Inativar Segmento",
+      inativo: "Ativar Segmento",
+    };
+    const messages = {
+      ativo:
+        "Tem certeza que deseja inativar este segmento? Após isso, não será possível criar clientes com o mesmo.",
+      inativo:
+        "Tem certeza que deseja ativar este segmento? Após isso, será possível criar clientes com o mesmo.",
+    };
+    setPopupConfig({
+      open: true,
+      title: titles[status],
+      message: messages[status],
+      id,
+    });
   };
 
-  const handleRedirect = (url) => {
-    navigate(url);
-  }
-
-  const filteredSegmentos = segmentos.filter(segmentos => {
-    return segmentos.nome.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  const filteredSegmentos = segmentos.filter(({ nome }) =>
+    nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const totalSegmentos = filteredSegmentos.length;
 
   return (
     <>
       {loading && <Loading />}
+      {popupConfig.open && (
+        <Popup
+          title={popupConfig.title}
+          message={popupConfig.message}
+          onConfirm={handleChangeStatus}
+          onCancel={() =>
+            setPopupConfig((prev) => ({ ...prev, open: false }))
+          }
+        />
+      )}
       <div>
-        <h3 className="gestao-section-subtitulo">Segmentos ({totalSegmentos})</h3>
+        <h3 className="gestao-section-subtitulo">
+          Segmentos ({totalSegmentos})
+        </h3>
         <input
           type="text"
           placeholder="Procure pelo nome"
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="gestao-section-input"
         />
-        <button className="gestao-section-btn gestao-section-btn-verde" onClick={e => handleRedirect("/cadastro-segmento")}>Adicionar segmento</button>
+        <button
+          className="gestao-section-btn gestao-section-btn-verde"
+          onClick={() => navigate("/cadastro-segmento")}
+        >
+          Adicionar segmento
+        </button>
         {segmentos.length > 0 ? (
           <table className="gestao-section-tabela">
             <thead>
               <tr>
                 <th className="gestao-section-titulo-tabela">Nome</th>
+                <th className="gestao-section-titulo-tabela">Status</th>
                 <th className="gestao-section-titulo-tabela">Ações</th>
               </tr>
             </thead>
             <tbody>
-              {filteredSegmentos.map(segmento => (
-                <tr key={segmento.id}>
-                  <td className="gestao-section-conteudo-tabela">{segmento.nome}</td>
+              {filteredSegmentos.map(({ id, nome, status }) => (
+                <tr key={id}>
+                  <td className="gestao-section-conteudo-tabela">{nome}</td>
+                  <td className="gestao-section-conteudo-tabela">{status}</td>
                   <td className="gestao-section-conteudo-tabela">
                     <div className="gestao-section-container-btn">
-                      {segmento.status === 'ativo' ? (<>
-                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(segmento.id)}>
-                          <img src={editIcon} alt="" />
-                        </button>
-                        <button className="gestao-section-excluir-btn gestao-section-item-btn" onClick={() => handleDelete(segmento.id)}>
-                          <img src={iconeInativar} alt="" />
-                        </button>
-                      </>) : <>
-                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleEdit(segmento.id)}>
-                          <img src={editIcon} alt="" />
-                        </button>
-                        <button className="gestao-section-editar-btn gestao-section-item-btn" onClick={() => handleDelete(segmento.id)}>
-                          <img src={iconeAtivar} alt="" />
-                        </button>
-                      </>}
+                      <button
+                        className="gestao-section-editar-btn gestao-section-item-btn"
+                        onClick={() => handleEdit(id)}
+                      >
+                        <img src={editIcon} alt="Editar" />
+                      </button>
+                      <button
+                        className={`${status === 'ativo' ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
+                        onClick={() =>
+                          handleStatusChange(id, status)
+                        }
+                      >
+                        <img
+                          src={status === "ativo" ? iconeInativar : iconeAtivar}
+                          alt={status === "ativo" ? "Inativar" : "Ativar"}
+                        />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -112,7 +150,9 @@ export default function Segmentos() {
             </tbody>
           </table>
         ) : (
-          <p className="gestao-section-sem-registros">Ainda não foram cadastrados segmentos!</p>
+          <p className="gestao-section-sem-registros">
+            Ainda não foram cadastrados segmentos!
+          </p>
         )}
       </div>
     </>

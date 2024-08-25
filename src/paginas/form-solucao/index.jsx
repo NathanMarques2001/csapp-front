@@ -26,7 +26,8 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       try {
         setLoading(true);
         const data = await api.get('/fabricantes');
-        setFabricantes(data.fabricantes);
+        const fabricantesAitovs = data.fabricantes.filter((fab) => fab.status !== "inativo");
+        setFabricantes(fabricantesAitovs);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
