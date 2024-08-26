@@ -61,3 +61,39 @@
 #clientes-sem-clientes {
   margin-top: 2%;
 }
+
+.relatorio-button {
+  border-radius: 5px;
+  padding: 1%;
+  width: 24%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 4%;
+}
+
+#relatorio-button-filtrar {
+  background-color: var(--azul-borda);
+  border: 1px solid var(--preto);
+  color: var(--branco);
+}
+
+#relatorio-button-filtrar:hover {
+  background-color: var(--azul-borda-hover);
+}
+
+#relatorio-button-exportar {
+  background-color: var(--verde);
+  border: 1px solid var(--azul-borda);
+}
+
+#relatorio-button-exportar:hover {
+  background-color: var(--verde-hover);
+}
+
+#select-tabela-relatorios {
+  padding: 1%;
+  width: 24%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: 1px solid var(--preto);
+}

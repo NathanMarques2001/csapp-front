@@ -15,49 +15,76 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
     vendedor: '',
   });
 
+  // Mapeando arrays para facilitar o acesso por ID
+  const produtosMap = produtos.reduce((map, produto) => {
+    map[produto.id] = produto;
+    return map;
+  }, {});
+
+  const clientesMap = clientes.reduce((map, cliente) => {
+    map[cliente.id] = cliente;
+    return map;
+  }, {});
+
+  const usuariosMap = usuarios.reduce((map, usuario) => {
+    map[usuario.id] = usuario;
+    return map;
+  }, {});
+
+  // Filtrando contratos de acordo com os filtros selecionados
   const contratosFiltrados = contratos.filter(contrato =>
-    (!filtros.solucao || produtos[contrato.id_produto - 1]?.nome === filtros.solucao) &&
-    (!filtros.cliente || clientes[contrato.id_cliente - 1]?.nome_fantasia === filtros.cliente) &&
+    (!filtros.solucao || produtosMap[contrato.id_produto]?.nome === filtros.solucao) &&
+    (!filtros.cliente || clientesMap[contrato.id_cliente]?.nome_fantasia === filtros.cliente) &&
     (!filtros.status || contrato.status === filtros.status) &&
-    (!filtros.vendedor || usuarios[clientes[contrato.id_cliente - 1]?.id_usuario - 1]?.nome === filtros.vendedor)
+    (!filtros.vendedor || usuariosMap[clientesMap[contrato.id_cliente]?.id_usuario]?.nome === filtros.vendedor)
   );
 
+  // Mapeando os dados para exportação e exibição
   const data = contratosFiltrados.map(contrato => {
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     return {
-      "Solução": produtos[contrato.id_produto - 1]?.nome,
-      "Cliente": clientes[contrato.id_cliente - 1]?.nome_fantasia,
+      "Solução": produtosMap[contrato.id_produto]?.nome,
+      "Cliente": clientesMap[contrato.id_cliente]?.nome_fantasia,
       "Status": contrato.status,
-      "Vendedor": usuarios[clientes[contrato.id_cliente - 1]?.id_usuario - 1]?.nome,
+      "Vendedor": usuariosMap[clientesMap[contrato.id_cliente]?.id_usuario]?.nome,
       "Reajuste": dateJs.formatDate(contrato.proximo_reajuste),
       "Expiração": `${contrato.duracao} MESES`,
       "Valor": calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste),
     };
   });
 
+  // Função para realizar o download do relatório em Excel
   function handleDownloadReport(e) {
     e.preventDefault();
     excel.exportToExcel(data);
     setAbrirPopup(false);
   }
 
+  // Função para lidar com mudanças nos filtros
   function handleFiltroChange(e) {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   }
 
   return (
     <>
-      {abrirPopup && (<Popup title="Exportar Contratos" message="Tem certeza que deseja exportar o relatório de contratos?" onConfirm={e => handleDownloadReport(e)} onCancel={e => setAbrirPopup(false)} />)}
+      {abrirPopup && (
+        <Popup 
+          title="Exportar Contratos" 
+          message="Tem certeza que deseja exportar o relatório de contratos?" 
+          onConfirm={e => handleDownloadReport(e)} 
+          onCancel={e => setAbrirPopup(false)} 
+        />
+      )}
 
-      {openModal &&
+      {openModal && (
         <div id='filter-container'>
           <form onSubmit={e => e.preventDefault()} className="filter-form">
             <div className="form-group">
               <label>Solução:</label>
               <select name="solucao" value={filtros.solucao} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(produtos).map(produto => (
+                {Object.values(produtosMap).map(produto => (
                   <option key={produto.id} value={produto.nome}>{produto.nome}</option>
                 ))}
               </select>
@@ -67,7 +94,7 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
               <label>Cliente:</label>
               <select name="cliente" value={filtros.cliente} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(clientes).map(cliente => (
+                {Object.values(clientesMap).map(cliente => (
                   <option key={cliente.id} value={cliente.nome_fantasia}>{cliente.nome_fantasia}</option>
                 ))}
               </select>
@@ -86,7 +113,7 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
               <label>Vendedor:</label>
               <select name="vendedor" value={filtros.vendedor} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(usuarios).map(usuario => (
+                {Object.values(usuariosMap).map(usuario => (
                   <option key={usuario.id} value={usuario.nome}>{usuario.nome}</option>
                 ))}
               </select>
@@ -95,10 +122,10 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
             <button type="button" onClick={() => setOpenModal(false)} id='filter-close-button' className="filter-button">Fechar</button>
           </form>
         </div>
-      }
+      )}
 
-      <button onClick={e => setOpenModal(true)}>Filtrar</button>
-      <button onClick={e => setAbrirPopup(true)}>Exportar para Excel</button>
+      <button onClick={e => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">Filtrar</button>
+      <button onClick={e => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">Exportar para Excel</button>
 
       <table className="global-tabela">
         <thead>

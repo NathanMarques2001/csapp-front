@@ -5,7 +5,7 @@ import Popup from "../componetes/pop-up";
 
 export default function RelatorioClientes({ clientes, contratos, usuarios, segmentos }) {
   const excel = new Excel("Relatório de Clientes");
-  const [cookies, setCookie, removeCookie] = useCookies(['id', 'tipo']);
+  const [cookies] = useCookies(['id', 'tipo']);
   const [filtros, setFiltros] = useState({
     nome_fantasia: '',
     tipo: '',
@@ -21,7 +21,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
   }
 
   const clientesFiltrados = clientes.filter(cliente =>
-    (!filtros.nome_fantasia || cliente.nome_fantasia === filtros.nome_fantasia) &&
+    (!filtros.nome_fantasia || cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&
     (!filtros.tipo || cliente.tipo === filtros.tipo) &&
     (!filtros.status || cliente.status === filtros.status) &&
     (!filtros.vendedor || usuarios[cliente.id_usuario - 1]?.nome === filtros.vendedor) &&
@@ -49,7 +49,6 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
     };
   });
 
-
   function handleDownloadReport(e) {
     e.preventDefault();
     excel.exportToExcel(data);
@@ -60,18 +59,24 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   }
 
-
   return (
     <>
-      {abrirPopup && (<Popup title="Exportar Clientes" message="Tem certeza que deseja exportar o relatório de clientes?" onConfirm={e => handleDownloadReport(e)} onCancel={e => setAbrirPopup(false)} />)}
-      {openModal &&
-        <div id='filter-container'>
+      {abrirPopup && (
+        <Popup
+          title="Exportar Clientes"
+          message="Tem certeza que deseja exportar o relatório de clientes?"
+          onConfirm={e => handleDownloadReport(e)}
+          onCancel={() => setAbrirPopup(false)}
+        />
+      )}
+      {openModal && (
+        <div id="filter-container">
           <form onSubmit={e => e.preventDefault()} className="filter-form">
             <div className="form-group">
               <label>Razão Social:</label>
               <select name="nome_fantasia" value={filtros.nome_fantasia} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(clientes).map(cliente => (
+                {clientes.map(cliente => (
                   <option key={cliente.id} value={cliente.nome_fantasia}>{cliente.nome_fantasia}</option>
                 ))}
               </select>
@@ -101,7 +106,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
               <label>Vendedor:</label>
               <select name="vendedor" value={filtros.vendedor} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(usuarios).map(usuario => (
+                {usuarios.map(usuario => (
                   <option key={usuario.id} value={usuario.nome}>{usuario.nome}</option>
                 ))}
               </select>
@@ -111,19 +116,18 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
               <label>Segmento:</label>
               <select name="segmento" value={filtros.segmento} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(segmentos).map(segmento => (
+                {segmentos.map(segmento => (
                   <option key={segmento.id} value={segmento.nome}>{segmento.nome}</option>
                 ))}
               </select>
             </div>
 
-            <button type="button" onClick={() => setOpenModal(false)} id='filter-close-button' className="filter-button">Fechar</button>
+            <button type="button" onClick={() => setOpenModal(false)} id="filter-close-button" className="filter-button">Fechar</button>
           </form>
-
-        </div>}
-
-      <button onClick={e => setOpenModal(true)}>Filtrar</button>
-      <button onClick={e => setAbrirPopup(true)}>Exportar para Excel</button>
+        </div>
+      )}
+      <button onClick={() => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">Filtrar</button>
+      <button onClick={() => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">Exportar para Excel</button>
       <table className="global-tabela">
         <thead>
           <tr>
@@ -150,7 +154,6 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
           ))}
         </tbody>
       </table>
-
     </>
   );
 }

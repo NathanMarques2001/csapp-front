@@ -65,26 +65,30 @@ export default function PopUpMigrate({ id_antigo, fechar, reload }) {
           onCancel={e => setAbrirPopup(false)}
         />
       )}
-      <div>
-        <form onSubmit={handleFormSubmit}>
+      <div id='migrate-container'>
+        <form onSubmit={handleFormSubmit} className="filter-form">
           <p>Migrar Clientes</p>
-          <label htmlFor="vendedor-antigo">Vendedor Antigo</label>
-          <input
-            type="text"
-            disabled
-            name="vendedor-antigo"
-            value={vendedorAntigo.nome || ''}
-          />
-          <label htmlFor="vendedor-novo">Novo Vendedor</label>
-          <select onChange={handleChangeVendedor} name="vendedor-novo" id="vendedor-novo">
-            {vendedores.map(vendedor => (
-              vendedor.id !== vendedorAntigo.id && (
-                <option key={vendedor.id} value={vendedor.id}>{vendedor.nome}</option>
-              )
-            ))}
-          </select>
-          <button type="submit">Migrar</button>
-          <button type="button" onClick={fechar}>Fechar</button>
+          <div className="form-group">
+            <label htmlFor="vendedor-antigo">Vendedor Antigo</label>
+            <input
+              type="text"
+              disabled
+              name="vendedor-antigo"
+              value={vendedorAntigo.nome || ''}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="vendedor-novo">Novo Vendedor</label>
+            <select onChange={handleChangeVendedor} name="vendedor-novo" id="vendedor-novo">
+              {vendedores.map(vendedor => (
+                vendedor.id !== vendedorAntigo.id && (
+                  <option key={vendedor.id} value={vendedor.id}>{vendedor.nome}</option>
+                )
+              ))}
+            </select>
+          </div>
+          <button type="submit" id='filter-apply-button' className="filter-button">Migrar</button>
+          <button type="button" onClick={fechar} id='filter-close-button' className="filter-button">Fechar</button>
         </form>
       </div>
     </>

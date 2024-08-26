@@ -17,7 +17,7 @@ export default function Clientes() {
     const [contratosRoute, setContratosRoute] = useState("");
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
-    const [vendedores, setVendedores] = useState([]);
+    const [vendedores, setVendedores] = useState({});
     const [filter, setFilter] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -37,25 +37,17 @@ export default function Clientes() {
             try {
                 setLoading(true);
                 const clientesResponse = await api.get(clientesRoute);
-                const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
-                    map[cliente.id] = cliente;
-                    return map;
-                }, {});
-                setClientes(Object.values(clientesMap));
+                setClientes(clientesResponse.clientes);
 
                 const vendedoresResponse = await api.get('/usuarios');
                 const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
-                    map[vendedor.id] = vendedor;
+                    map[vendedor.id] = vendedor.nome;
                     return map;
                 }, {});
-                setVendedores(Object.values(vendedoresMap));
+                setVendedores(vendedoresMap);
 
                 const contratosResponse = await api.get(contratosRoute);
-                const contratosMap = contratosResponse.contratos.reduce((map, contrato) => {
-                    map[contrato.id] = contrato;
-                    return map;
-                }, {});
-                setContratos(Object.values(contratosMap));
+                setContratos(contratosResponse.contratos);
             } catch (err) {
                 console.error("Error fetching data:", err);
             }
@@ -71,16 +63,15 @@ export default function Clientes() {
 
     const calculaValorTotalContratos = (clienteId) => {
         const clienteContratos = contratos.filter(contrato => contrato.id_cliente === clienteId && contrato.status === 'ativo');
-        
+
         const total = clienteContratos.reduce((sum, contrato) => {
             const valorContrato = parseFloat(contrato.valor_mensal) * contrato.duracao;
             const valorComImposto = calculaValorImpostoMensal(valorContrato, contrato.indice_reajuste);
             return sum + valorComImposto;
         }, 0);
-    
+
         return total;
     };
-    
 
     const detalhesCliente = (id) => {
         navigate(`/clientes/${id}`);
@@ -131,7 +122,7 @@ export default function Clientes() {
                                         <td className="clientes-conteudo-tabela">{cliente.cpf_cnpj}</td>
                                         <td className="clientes-conteudo-tabela">{cliente.tipo.toUpperCase()}</td>
                                         <td className="clientes-conteudo-tabela">{calculaValorTotalContratos(cliente.id).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        <td className="clientes-conteudo-tabela">{vendedores[cliente.id_usuario - 1]?.nome}</td>
+                                        <td className="clientes-conteudo-tabela">{vendedores[cliente.id_usuario]}</td>
                                     </tr>
                                 ))}
                             </tbody>

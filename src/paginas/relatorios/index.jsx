@@ -89,7 +89,7 @@ export default function Relatorios() {
         <Navbar />
         <div id="clientes-container">
           <h1 id="clientes-titulo">Relatórios</h1>
-          <select onChange={e => setTabeleSelecionada(e.target.value)} name="" id="">
+          <select onChange={e => setTabeleSelecionada(e.target.value)} name="" id="select-tabela-relatorios">
             <option value="">Selecione a fonte de dados</option>
             {tabelas.map(tabela => (
               <option key={tabela} value={tabela}>{tabela}</option>
