@@ -132,7 +132,7 @@ export default function FormContrato({ mode = "cadastro" }) {
     if (solucao !== "") {
       const produtoAtual = produtos.filter((item) => item.id === Number(solucao));
       const nomeProdutoAtual = removeAcentos(produtoAtual[0].nome.trim().toLowerCase());
-      if (produtoAtual.length > 0 && (nomeProdutoAtual.includes("probackup") || nomeProdutoAtual.includes("antivirus"))) {
+      if (produtoAtual.length > 0 && (nomeProdutoAtual.includes("backup") || nomeProdutoAtual.includes("antivirus"))) {
         setIsQuantidadeDisabled(false);
       } else {
         setIsQuantidadeDisabled(true);
@@ -377,7 +377,11 @@ export default function FormContrato({ mode = "cadastro" }) {
               <div className='form-contrato-cliente-tres-inputs-container'>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="valor-mensal" className='label-form-contrato'><b>Valor mensal <span className='required'>*</span></b></label>
-                  <input type="text" disabled={!isAdminOrDev} name="valor-mensal" className='form-contrato-input' placeholder='Valor do contrato mensalmente' value={valorMensal} onChange={(e) => setValorMensal(e.target.value)} />
+                  <input type="text" disabled={!isAdminOrDev} name="valor-mensal" className='form-contrato-input' placeholder='Valor do contrato mensalmente' value={valorMensal}
+                    onChange={(e) => {
+                      const valorFormatado = e.target.value.replace(',', '.');
+                      setValorMensal(valorFormatado);
+                    }} />
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
                   <label htmlFor="quantidade" className='label-form-contrato'><b>Quantidade <span className='required'>*</span></b></label>
