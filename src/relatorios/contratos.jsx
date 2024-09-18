@@ -50,7 +50,7 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
       "Vendedor": usuariosMap[clientesMap[contrato.id_cliente]?.id_usuario]?.nome,
       "Reajuste": dateJs.formatDate(contrato.proximo_reajuste),
       "Expiração": `${contrato.duracao} MESES`,
-      "Valor": calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste),
+      "Valor": calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste),
     };
   });
 
