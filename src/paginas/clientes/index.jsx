@@ -65,7 +65,7 @@ export default function Clientes() {
         const clienteContratos = contratos.filter(contrato => contrato.id_cliente === clienteId && contrato.status === 'ativo');
 
         const total = clienteContratos.reduce((sum, contrato) => {
-            const valorContrato = parseFloat(contrato.valor_mensal) * contrato.duracao;
+            const valorContrato = parseFloat(contrato.valor_mensal);
             const valorComImposto = calculaValorImpostoMensal(valorContrato, contrato.indice_reajuste);
             return sum + valorComImposto;
         }, 0);
