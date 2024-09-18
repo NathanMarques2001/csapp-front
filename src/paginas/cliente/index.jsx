@@ -125,6 +125,10 @@ export default function Cliente() {
         setShowPopup(false);
     };
 
+    const detalhesContrato = (id) => {
+        navigate(`/edicao-contrato/${id}`);
+    };
+
     return (
         <>
             {loading && <Loading />}
@@ -158,7 +162,7 @@ export default function Cliente() {
                         </thead>
                         <tbody>
                             {contratos.map(contrato => (
-                                <tr key={contrato.id - 1} className="clickable-row">
+                                <tr key={contrato.id - 1} className="clickable-row"  onClick={() => detalhesContrato(contrato.id)}>
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                     <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
