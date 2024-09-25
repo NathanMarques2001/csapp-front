@@ -33,7 +33,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     const valorTotalContratos = contratosCliente.reduce((sum, contrato) => {
-      const valorContrato = parseFloat(contrato.valor_mensal) * contrato.duracao;
+      const valorContrato = parseFloat(contrato.valor_mensal);
       const valorComImposto = calculaValorImpostoMensal(valorContrato, contrato.indice_reajuste);
       return sum + valorComImposto;
     }, 0);
