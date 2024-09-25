@@ -16,9 +16,9 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
   const [openModal, setOpenModal] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
-  if (cookies.tipo !== 'admin' && cookies.tipo !== 'dev') {
-    clientes = clientes.filter(cliente => cliente.id_usuario === cookies.id);
-  }
+  // if (cookies.tipo !== 'admin' && cookies.tipo !== 'dev') {
+  //   clientes = clientes.filter(cliente => cliente.id_usuario === cookies.id);
+  // }
 
   const clientesFiltrados = clientes.filter(cliente =>
     (!filtros.nome_fantasia || cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&

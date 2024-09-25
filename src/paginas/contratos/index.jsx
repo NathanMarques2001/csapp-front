@@ -25,14 +25,16 @@ export default function Contratos() {
 
     useEffect(() => {
         setLoading(true);
+        setClientesRoute('/clientes');
+        setContratosRoute('/contratos');
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
             setIsAdminOrDev(true);
-            setClientesRoute('/clientes');
-            setContratosRoute('/contratos');
+            // setClientesRoute('/clientes');
+            // setContratosRoute('/contratos');
         } else {
             setIsAdminOrDev(false);
-            setClientesRoute(`/clientes/vendedor/${cookies.id}`);
-            setContratosRoute(`/contratos/vendedor/${cookies.id}`);
+            // setClientesRoute(`/clientes/vendedor/${cookies.id}`);
+            // setContratosRoute(`/contratos/vendedor/${cookies.id}`);
         }
 
         const fetchData = async () => {
@@ -120,7 +122,6 @@ export default function Contratos() {
         return filterConditions.every(condition => condition);
     });
     
-
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     return (
@@ -172,7 +173,8 @@ export default function Contratos() {
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.nome_fantasia || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto - 1]?.nome || "Carregando..."}</td>
-                                        <td className="contratos-conteudo-tabela">{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal * contrato.duracao), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td className="contratos-conteudo-tabela">{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        {console.log(contrato.indice_reajuste)}
                                         <td className="contratos-conteudo-tabela">{vendedores[clientes[contrato.id_cliente]?.id_usuario]?.nome}</td>
                                     </tr>
                                 ))}

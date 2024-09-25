@@ -23,14 +23,16 @@ export default function Clientes() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        setClientesRoute('/clientes');
+        setContratosRoute('/contratos');
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
             setIsAdminOrDev(true);
-            setClientesRoute('/clientes');
-            setContratosRoute('/contratos');
+            // setClientesRoute('/clientes');
+            // setContratosRoute('/contratos');
         } else {
             setIsAdminOrDev(false);
-            setClientesRoute(`/clientes/vendedor/${cookies.id}`);
-            setContratosRoute(`/contratos/vendedor/${cookies.id}`);
+            // setClientesRoute(`/clientes/vendedor/${cookies.id}`);
+            // setContratosRoute(`/contratos/vendedor/${cookies.id}`);
         }
 
         const fetchData = async () => {
@@ -65,7 +67,7 @@ export default function Clientes() {
         const clienteContratos = contratos.filter(contrato => contrato.id_cliente === clienteId && contrato.status === 'ativo');
 
         const total = clienteContratos.reduce((sum, contrato) => {
-            const valorContrato = parseFloat(contrato.valor_mensal) * contrato.duracao;
+            const valorContrato = parseFloat(contrato.valor_mensal);
             const valorComImposto = calculaValorImpostoMensal(valorContrato, contrato.indice_reajuste);
             return sum + valorComImposto;
         }, 0);

@@ -28,12 +28,13 @@ export default function Relatorios() {
     setLoading(true);
     setClientes([])
     setContratos([])
+    setContratosRoute('/contratos');
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
       setIsAdminOrDev(true);
-      setContratosRoute('/contratos');
+      // setContratosRoute('/contratos');
     } else {
       setIsAdminOrDev(false);
-      setContratosRoute(`/contratos/vendedor/${cookies.id}`);
+      // setContratosRoute(`/contratos/vendedor/${cookies.id}`);
     }
 
     const fetchData = async () => {
