@@ -50,4 +50,11 @@
     border-bottom: 1px solid var(--preto);
     padding: 1%;
     font-size: 0.8rem;
+    text-align: center;
+    cursor: pointer;
+}
+
+.card-cliente-contatos-conteudo:hover {
+    background-color: var(--azul-borda);
+    color: var(--branco);
 }

@@ -1,12 +1,9 @@
-// Bibliotecas
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// Componentes
 import Navbar from "../../componetes/navbar";
 import CardGestor from "../../componetes/card-gestor";
 import CardContato from "../../componetes/card-contato";
 import Loading from "../../componetes/loading";
-// Estilos, funcoes, classes, imagens e etc
 import "./style.css";
 import Api from "../../utils/api";
 import botaoEditar from "../../assets/icons/icon-lapis.png";
@@ -16,13 +13,15 @@ import { useCookies } from "react-cookie";
 
 export default function Cliente() {
     const api = new Api();
-    const [showPopup, setShowPopup] = useState(false)
+    const [showPopup, setShowPopup] = useState(false);
     const [cliente, setCliente] = useState({});
     const [contratos, setContratos] = useState([]);
     const [produtos, setProdutos] = useState([]);
     const [fabricantes, setFabricantes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [titulo, setTitulo] = useState("");
+    const [conteudo, setConteudo] = useState("");
+    const [cardID, setCardID] = useState("");
     const navigate = useNavigate();
     const { id } = useParams();
     const [contatoComercial, setContatoComercial] = useState([]);
@@ -34,7 +33,6 @@ export default function Cliente() {
     const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
     useEffect(() => {
-        // Verifica o tipo de usuário e atualiza o estado
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
             setIsAdminOrDev(true);
         } else {
@@ -54,16 +52,12 @@ export default function Cliente() {
                 setContratos(contratosData.contratos);
 
                 const produtosData = await api.get('/produtos');
-                setProdutos(produtosData.produtos)
+                setProdutos(produtosData.produtos);
 
                 const fabricantesData = await api.get('/fabricantes');
                 setFabricantes(fabricantesData.fabricantes);
 
                 const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
-                // const contratosMap = contratosAtivos.contratos.reduce((map, contrato) => {
-                //     map[contrato.id] = contrato;
-                //     return map;
-                // }, {});
                 setContratos(contratosAtivos);
 
                 const contatosComerciaisData = await api.get(`/contatos-comerciais/${id}`);
@@ -77,8 +71,7 @@ export default function Cliente() {
 
             } catch (err) {
                 console.error("Error fetching data:", err);
-            }
-            finally {
+            } finally {
                 setLoading(false);
             }
         };
@@ -101,11 +94,11 @@ export default function Cliente() {
     };
 
     const editar = (id) => {
-        navigate(`/edicao-cliente/${id}`)
+        navigate(`/edicao-cliente/${id}`);
     };
 
     const editarContato = (id) => {
-        navigate(`/edicao-contrato/${id}`)
+        navigate(`/edicao-contrato/${id}`);
     };
 
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
@@ -114,15 +107,17 @@ export default function Cliente() {
         return contratos.reduce((total, contrato) => total + calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
-    const abrirPopUp = async (e, titulo) => {
+    const abrirPopUp = async (e, titulo, conteudo = "", cardID = "") => {
         e.preventDefault();
         setTitulo(titulo);
+        setConteudo(conteudo);
+        setCardID(cardID);
         setShowPopup(true);
     };
 
     const confirmSubmit = async () => {
         setShowPopup(false);
-        setContatoAdicionado(contatoAdicionado + 1)
+        setContatoAdicionado(contatoAdicionado + 1);
     };
 
     const cancelPopup = () => {
@@ -135,6 +130,8 @@ export default function Cliente() {
             {showPopup && (
                 <PopupInformacoes
                     title={titulo}
+                    conteudo={conteudo}
+                    cardID={cardID}
                     onConfirm={confirmSubmit}
                     onCancel={cancelPopup}
                 />
@@ -176,16 +173,16 @@ export default function Cliente() {
                         Faturamento mensal: <b>{calculaValorTotalContratos()}</b>
                     </div>
                     <div id="cliente-card-container">
-                        <CardGestor titulo={"Gestor de Contratos"} nome={cliente.gestor_contratos_nome} email={cliente.gestor_contratos_email} telefone1={cliente.gestor_contratos_telefone_1} telefone2={cliente.gestor_contratos_telefone_2} permissao={isAdminOrDev} />
-                        <CardGestor titulo={"Gestor de Chamados"} nome={cliente.gestor_chamados_nome} email={cliente.gestor_chamados_email} telefone1={cliente.gestor_chamados_telefone_1} telefone2={cliente.gestor_chamados_telefone_2} permissao={isAdminOrDev} />
-                        <CardGestor titulo={"Gestor Financeiro"} nome={cliente.gestor_financeiro_nome} email={cliente.gestor_financeiro_email} telefone1={cliente.gestor_financeiro_telefone_1} telefone2={cliente.gestor_financeiro_telefone_2} permissao={isAdminOrDev} />
+                        <CardGestor titulo={"Gestor de Contratos"} nome={cliente.gestor_contratos_nome} email={cliente.gestor_contratos_email} telefone1={cliente.gestor_contratos_telefone_1} telefone2={cliente.gestor_contratos_telefone_2} />
+                        <CardGestor titulo={"Gestor de Chamados"} nome={cliente.gestor_chamados_nome} email={cliente.gestor_chamados_email} telefone1={cliente.gestor_chamados_telefone_1} telefone2={cliente.gestor_chamados_telefone_2} />
+                        <CardGestor titulo={"Gestor Financeiro"} nome={cliente.gestor_financeiro_nome} email={cliente.gestor_financeiro_email} telefone1={cliente.gestor_financeiro_telefone_1} telefone2={cliente.gestor_financeiro_telefone_2} />
                     </div>
                     <div className="cliente-contatos-container">
-                        <CardContato titulo={"Contato Comercial"} contatos={contatoComercial} abrirPopUp={e => abrirPopUp(e, "Contato Comercial")} />
-                        <CardContato titulo={"Contato Técnico"} contatos={contatoTecnico} abrirPopUp={e => abrirPopUp(e, "Contato Técnico")} />
+                        <CardContato titulo={"Contato Comercial"} contatos={contatoComercial} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} />
+                        <CardContato titulo={"Contato Técnico"} contatos={contatoTecnico} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} />
                     </div>
                     <div className="cliente-contatos-container" id="cliente-contatos-container-img">
-                        <CardContato titulo={"Fatos Importantes"} contatos={fatosImportantes} abrirPopUp={e => abrirPopUp(e, "Fatos Importantes")} />
+                        <CardContato titulo={"Fatos Importantes"} contatos={fatosImportantes} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} />
                         <img src={imgCliente} alt="" id="cliente-img" />
                     </div>
                 </div>

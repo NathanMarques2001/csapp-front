@@ -361,7 +361,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
-                  <label htmlFor="reajuste" className='label-form-contrato'><b>Índice reajuste <span className='required'>*</span></b></label>
+                  <label htmlFor="reajuste" className='label-form-contrato'><b>Índice reajuste</b></label>
                   <select name="reajuste" disabled={!isAdminOrDev} value={reajuste} onChange={handleReajusteChange} className='form-contrato-input form-contrato-select'>
                     <option value="">Selecione um índice</option>
                     <option value="igpm">IGPM</option>
