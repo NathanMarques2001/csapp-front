@@ -117,12 +117,16 @@ export default function Cliente() {
 
     const confirmSubmit = async () => {
         setShowPopup(false);
-        setContatoAdicionado(contatoAdicionado + 1);
+        renderizar();
     };
 
     const cancelPopup = () => {
         setShowPopup(false);
     };
+
+    const renderizar = () => {
+        setContatoAdicionado(contatoAdicionado + 1);
+    }
 
     return (
         <>
@@ -178,11 +182,11 @@ export default function Cliente() {
                         <CardGestor titulo={"Gestor Financeiro"} nome={cliente.gestor_financeiro_nome} email={cliente.gestor_financeiro_email} telefone1={cliente.gestor_financeiro_telefone_1} telefone2={cliente.gestor_financeiro_telefone_2} />
                     </div>
                     <div className="cliente-contatos-container">
-                        <CardContato titulo={"Contato Comercial"} contatos={contatoComercial} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} />
-                        <CardContato titulo={"Contato Técnico"} contatos={contatoTecnico} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} />
+                        <CardContato titulo={"Contato Comercial"} contatos={contatoComercial} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} renderizar={renderizar} />
+                        <CardContato titulo={"Contato Técnico"} contatos={contatoTecnico} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} renderizar={renderizar} />
                     </div>
                     <div className="cliente-contatos-container" id="cliente-contatos-container-img">
-                        <CardContato titulo={"Fatos Importantes"} contatos={fatosImportantes} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} />
+                        <CardContato titulo={"Fatos Importantes"} contatos={fatosImportantes} abrirPopUp={abrirPopUp} permissao={!isAdminOrDev} renderizar={renderizar} />
                         <img src={imgCliente} alt="" id="cliente-img" />
                     </div>
                 </div>

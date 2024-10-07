@@ -46,15 +46,31 @@
     overflow-y: scroll;
 }
 
-.card-cliente-contatos-conteudo {
+.card-cliente-conteudo-btn {
+    display: flex;
     border-bottom: 1px solid var(--preto);
-    padding: 1%;
-    font-size: 0.8rem;
-    text-align: center;
     cursor: pointer;
 }
 
-.card-cliente-contatos-conteudo:hover {
+.card-cliente-contatos-conteudo {
+    font-size: 0.8rem;
+    padding: 1%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-cliente-conteudo-btn:hover {
     background-color: var(--azul-borda);
     color: var(--branco);
+}
+
+.card-cliente-btn {
+    margin: 0.5% 0;
+    font-size: 0.8rem;
+}
+
+.card-cliente-img-btn {
+    width: 35%;
 }
