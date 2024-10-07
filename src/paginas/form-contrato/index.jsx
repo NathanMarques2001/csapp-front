@@ -260,6 +260,23 @@ export default function FormContrato({ mode = "cadastro" }) {
     setShowPopup(false);
   };
 
+  const inativarContrato = async () => {
+    try {
+      setLoading(true);
+      const req = await api.put(`/contratos/${id}`, { status: "inativo" });
+      if (req.message === "Contrato atualizado com sucesso!") {
+        navigate(`/contratos`);
+      } else {
+        alert("Erro ao inativar contrato.");
+      }
+    } catch (error) {
+      console.error("Erro ao inativar contrato:", error);
+      alert("Erro ao inativar contrato.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const options = [6, 12, 24, 36, 48, 60];
 
   const days = [];
@@ -281,7 +298,15 @@ export default function FormContrato({ mode = "cadastro" }) {
         <Navbar />
         <div className="global-container">
           <h2>{mode === 'cadastro' ? 'Cadastro de Contrato' : 'Edição de Contrato'}</h2>
-          <p id='cadastro-contrato-descricao'>Campos com "*" são obrigatórios.</p>
+          <div id='div-cadastro-contrato-descricao-btn'>
+            <p id='cadastro-contrato-descricao'>Campos com "*" são obrigatórios.</p>
+            {mode !== 'cadastro' && (
+              <button id='btn-inativar-contrato' onClick={() => {
+                setPopupAction(() => inativarContrato);
+                setShowPopup(true);
+              }}>Inativar Contrato</button>
+            )}
+          </div>
           <div id='form-contrato-container'>
             <form id='form-contrato-form' onSubmit={handleSubmit}>
               <div id='form-contrato-cliente-cpf-cnpj-container'>

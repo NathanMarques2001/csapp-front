@@ -18,7 +18,7 @@ export default function Contratos() {
     const [vendedores, setVendedores] = useState([]);
     const [produtos, setProdutos] = useState([]);
     const [filter, setFilter] = useState("");
-    const [filters, setFilters] = useState({});
+    const [filters, setFilters] = useState({ status: "ativo" }); // Filtro padrão para contratos ativos
     const [loading, setLoading] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const navigate = useNavigate();
@@ -29,12 +29,8 @@ export default function Contratos() {
         setContratosRoute('/contratos');
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
             setIsAdminOrDev(true);
-            // setClientesRoute('/clientes');
-            // setContratosRoute('/contratos');
         } else {
             setIsAdminOrDev(false);
-            // setClientesRoute(`/clientes/vendedor/${cookies.id}`);
-            // setContratosRoute(`/contratos/vendedor/${cookies.id}`);
         }
 
         const fetchData = async () => {
@@ -96,7 +92,7 @@ export default function Contratos() {
     };
 
     const limparFiltros = () => {
-        setFilters({});
+        setFilters({ status: "ativo" }); // Resetar para o filtro padrão
     };
 
     const filteredContratos = contratos.filter(contrato => {
@@ -108,7 +104,7 @@ export default function Contratos() {
             filters.id_cliente ? contrato.id_cliente.toString().includes(filters.id_cliente) : true,
             filters.id_produto ? contrato.id_produto.toString().includes(filters.id_produto) : true,
             filters.faturado ? contrato.faturado.toString().includes(filters.faturado) : true,
-            filters.status ? contrato.status.toString().includes(filters.status) : true,
+            filters.status ? contrato.status === filters.status : true, // Verificação de igualdade exata
             filters.duracao ? contrato.duracao.toString().includes(filters.duracao) : true,
             filters.valor_mensal ? contrato.valor_mensal.toString().includes(filters.valor_mensal) : true,
             filters.razao_social ? clienteRazao.toLowerCase().includes(filters.razao_social.toLowerCase()) : true,
@@ -117,8 +113,6 @@ export default function Contratos() {
             clienteNome.toLowerCase().includes(filter.toLowerCase()),
         ];
 
-        console.log(produtos[contrato.id_produto]);
-    
         return filterConditions.every(condition => condition);
     });
     
@@ -174,7 +168,6 @@ export default function Contratos() {
                                         <td className="contratos-conteudo-tabela">{clientes[contrato.id_cliente]?.cpf_cnpj || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{produtos[contrato.id_produto - 1]?.nome || "Carregando..."}</td>
                                         <td className="contratos-conteudo-tabela">{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        {console.log(contrato.indice_reajuste)}
                                         <td className="contratos-conteudo-tabela">{vendedores[clientes[contrato.id_cliente]?.id_usuario]?.nome}</td>
                                     </tr>
                                 ))}

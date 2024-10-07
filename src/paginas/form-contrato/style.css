@@ -1,8 +1,27 @@
-#cadastro-contrato-descricao {
-  margin-top: 1rem;
+#div-cadastro-contrato-descricao-btn {
+  display: flex;
   padding-bottom: 1.5rem;
-  color: var(--cinza);
   border-bottom: 1px solid var(--cinza);
+  margin-top: 1rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#cadastro-contrato-descricao {
+  color: var(--cinza);
+}
+
+#btn-inativar-contrato {
+  background-color: var(--vermelho);
+  border: 1px solid var(--preto);
+  padding: 1%;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#btn-inativar-contrato:hover {
+  background-color: var(--vermelho-hover);
 }
 
 #form-contrato-container {
