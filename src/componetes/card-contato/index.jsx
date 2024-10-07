@@ -51,7 +51,7 @@ export default function CardContato({ titulo, contatos, abrirPopUp, permissao, r
                     {contatos.map(contato => (
                         <div className="card-cliente-conteudo-btn">
                             <p onClick={(e) => abrirPopUp(e, titulo, contato.conteudo, contato.id)} className="card-cliente-contatos-conteudo" key={contato.id}>{contato.conteudo}</p>
-                            <button onClick={() => { handleDelete(contato.id) }} className="gestao-section-excluir-btn gestao-section-item-btn card-cliente-btn"><img src={imgExcluir} alt="" className="card-cliente-img-btn" /></button>
+                            <button onClick={() => { handleDelete(contato.id) }} className="gestao-section-excluir-btn gestao-section-item-btn card-cliente-btn" disabled={permissao}><img src={imgExcluir} alt="" className="card-cliente-img-btn" /></button>
                         </div>
                     ))}
                 </div>
