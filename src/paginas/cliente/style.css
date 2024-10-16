@@ -27,6 +27,11 @@
   text-transform: capitalize;
 }
 
+#cliente-btn-div {
+  display: flex;
+  gap: 8%;
+}
+
 #cliente-botao-editar {
   border: 1px solid var(--preto);
   height: 30px;
@@ -36,8 +41,40 @@
   background-color: var(--verde);
 }
 
+#cliente-botao-inativar {
+  border: 1px solid var(--preto);
+  height: 30px;
+  width: 60px;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: var(--vermelho);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#cliente-botao-ativar {
+  border: 1px solid var(--preto);
+  height: 30px;
+  width: 60px;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: var(--verde);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#cliente-botao-ativar:hover {
+  background-color: var(--verde-hover);
+}
+
 #cliente-botao-editar:hover {
   background-color: var(--verde-hover);
+}
+
+#cliente-botao-inativar:hover {
+  background-color: var(--vermelho-hover);
 }
 
 #cliente-botao-editar.disabled {
@@ -95,6 +132,10 @@
 .cliente-contatos-container {
   display: flex;
   justify-content: space-between;
+}
+
+.inactive-contract {
+  background-color: var(--cinza);
 }
 
 #cliente-contatos-container-img {

@@ -7,9 +7,12 @@ import Loading from "../../componetes/loading";
 import "./style.css";
 import Api from "../../utils/api";
 import botaoEditar from "../../assets/icons/icon-lapis.png";
+import botaoInativar from "../../assets/icons/icon-inativar.png";
+import botaoAtivar from "../../assets/icons/icon-ativar.png";
 import imgCliente from "../../assets/images/img-cliente.png";
 import PopupInformacoes from "../../componetes/pop-up-informacoes-adicionais";
 import { useCookies } from "react-cookie";
+import Popup from "../../componetes/pop-up";
 
 export default function Cliente() {
     const api = new Api();
@@ -28,6 +31,9 @@ export default function Cliente() {
     const [contatoTecnico, setContatoTecnico] = useState([]);
     const [fatosImportantes, setFatosImportantes] = useState([]);
     const [contatoAdicionado, setContatoAdicionado] = useState(0);
+    const [popUpAction, setPopUpAction] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [message, setMessage] = useState("");
 
     const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
     const [isAdminOrDev, setIsAdminOrDev] = useState(false);
@@ -57,8 +63,8 @@ export default function Cliente() {
                 const fabricantesData = await api.get('/fabricantes');
                 setFabricantes(fabricantesData.fabricantes);
 
-                const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
-                setContratos(contratosAtivos);
+                // const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
+                // setContratos(contratosAtivos);
 
                 const contatosComerciaisData = await api.get(`/contatos-comerciais/${id}`);
                 setContatoComercial(contatosComerciaisData.contatos_comerciais);
@@ -101,10 +107,24 @@ export default function Cliente() {
         navigate(`/edicao-contrato/${id}`);
     };
 
+    const ativarOuInativar = async (id) => {
+        setLoading(true);
+        try {
+            await api.put(`/clientes/active-inactive/${id}`);
+            setShowModal(false);
+            navigate('/clientes');
+        } catch (err) {
+            console.error("Erro ao inativar cliente:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
 
     const calculaValorTotalContratos = () => {
-        return contratos.reduce((total, contrato) => total + calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const vendedorContratosAtivos = contratos.filter(contrato => contrato.status === 'ativo');
+        return vendedorContratosAtivos.reduce((total, contrato) => total + calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
     const abrirPopUp = async (e, titulo, conteudo = "", cardID = "") => {
@@ -122,6 +142,7 @@ export default function Cliente() {
 
     const cancelPopup = () => {
         setShowPopup(false);
+        setShowModal(false);
     };
 
     const renderizar = () => {
@@ -140,6 +161,13 @@ export default function Cliente() {
                     onCancel={cancelPopup}
                 />
             )}
+            {showModal && (
+                <Popup
+                    message={message}
+                    onConfirm={popUpAction}
+                    onCancel={cancelPopup}
+                />
+            )}
             <div id="cliente-display">
                 <Navbar />
                 <div id="cliente-container">
@@ -148,12 +176,26 @@ export default function Cliente() {
                             <h1 id="cliente-titulo-nome">Cliente - {cliente.nome_fantasia}</h1>
                             <p id="cliente-titulo-razao">{cliente.razao_social} - {cliente.cpf_cnpj}</p>
                         </div>
-                        <button disabled={!isAdminOrDev} onClick={e => editar(cliente.id)} id="cliente-botao-editar" className={!isAdminOrDev ? 'disabled' : ''}><img src={botaoEditar} alt="ícone editar" /></button>
+                        <div id="cliente-btn-div">
+                            <button disabled={!isAdminOrDev} onClick={e => editar(cliente.id)} id="cliente-botao-editar" className={!isAdminOrDev ? 'disabled' : ''}><img src={botaoEditar} alt="ícone editar" /></button>
+                            <button disabled={!isAdminOrDev} onClick={e => {
+                                cliente.status === 'ativo' ?
+                                    setMessage("Tem certeza que deseja inativar esse cliente? Todos os contratos serão inativados também.") :
+                                    setMessage("Tem certeza que deseja ativar esse cliente?");
+                                setPopUpAction(() => () => ativarOuInativar(cliente.id));
+                                setShowModal(true);
+                            }} id={cliente.status === 'ativo' ? 'cliente-botao-inativar' : 'cliente-botao-ativar'} className={!isAdminOrDev ? 'disabled' : ''}>
+                                {cliente.status === 'ativo' ?
+                                    <img src={botaoInativar} alt="icone inativar" /> :
+                                    <img src={botaoAtivar} alt="icone ativar" />}
+                            </button>
+                        </div>
                     </div>
                     <h2 id="cliente-subtitulo-contratos">Contratos</h2>
                     <table id="cliente-tabela">
                         <thead>
                             <tr>
+                                <th>Status</th>
                                 <th>Solução</th>
                                 <th>Contratação</th>
                                 <th>Valor</th>
@@ -163,7 +205,8 @@ export default function Cliente() {
                         </thead>
                         <tbody>
                             {contratos.map(contrato => (
-                                <tr key={contrato.id - 1} className="clickable-row" onClick={() => editarContato(contrato.id)}>
+                                <tr key={contrato.id - 1} className={`clickable-row ${contrato.status !== 'ativo' ? 'inactive-contract' : ''}`} onClick={() => editarContato(contrato.id)}>
+                                    <td>{contrato.status}</td>
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
                                     <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
                                     <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>

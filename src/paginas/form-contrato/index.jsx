@@ -25,6 +25,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [selectedClienteCpfCnpj, setSelectedClienteCpfCnpj] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [produtos, setProdutos] = useState([]);
+  const [status, setStatus] = useState("");
 
   // Campos do formulário
   const [faturadoPor, setFaturadoPor] = useState("");
@@ -99,6 +100,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setDataInicio(formatDate(contrato.data_inicio));
           setEmail(contrato.email_envio);
           setDescricao(contrato.descricao);
+          setStatus(contrato.status);
         } catch (err) {
           console.error("Erro ao buscar contrato:", err);
         } finally {
@@ -263,7 +265,12 @@ export default function FormContrato({ mode = "cadastro" }) {
   const inativarContrato = async () => {
     try {
       setLoading(true);
-      const req = await api.put(`/contratos/${id}`, { status: "inativo" });
+      let req;
+      if (status === 'ativo') {
+        req = await api.put(`/contratos/${id}`, { status: "inativo" });
+      } else {
+        req = await api.put(`/contratos/${id}`, { status: "ativo" });
+      }
       if (req.message === "Contrato atualizado com sucesso!") {
         navigate(`/contratos`);
       } else {
@@ -301,10 +308,10 @@ export default function FormContrato({ mode = "cadastro" }) {
           <div id='div-cadastro-contrato-descricao-btn'>
             <p id='cadastro-contrato-descricao'>Campos com "*" são obrigatórios.</p>
             {mode !== 'cadastro' && (
-              <button id='btn-inativar-contrato' onClick={() => {
+              <button id={`${status === 'ativo' ? 'btn-inativar-contrato' : 'btn-ativar-contrato'}`} onClick={() => {
                 setPopupAction(() => inativarContrato);
                 setShowPopup(true);
-              }}>Inativar Contrato</button>
+              }}>{status === 'ativo' ? 'Inativar Contrato' : 'Ativar Contrato'}</button>
             )}
           </div>
           <div id='form-contrato-container'>
