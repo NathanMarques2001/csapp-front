@@ -151,19 +151,34 @@ export default function FormContrato({ mode = "cadastro" }) {
   }, [solucao, produtos]);
 
   const fetchIndice = async (indice) => {
-    let url = '';
-    if (indice === 'igpm') {
-      url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.189/dados?formato=json';
-    } else if (indice === 'ipca') {
-      url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json';
+    let code = '';
+    if (indice === 'inpc') {
+      code = '188';
+    } else if (indice === 'igpm') {
+      code = '189';
     } else if (indice === 'ipc-fipe') {
-      url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.4466/dados?formato=json';
+      code = '193';
+    } else if (indice === 'ipca') {
+      code = '433';
     }
 
+    // Obtenha a data de 12 meses atrás
+    const today = new Date();
+    const lastYear = new Date();
+    lastYear.setFullYear(today.getFullYear() - 1);
+
+    // Formate as datas para 'DD/MM/YYYY'
+    const startDate = `${lastYear.getDate().toString().padStart(2, '0')}/${(lastYear.getMonth() + 1).toString().padStart(2, '0')}/${lastYear.getFullYear()}`;
+    const endDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+
     try {
-      const response = await fetch(url);
+      const response = await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${code}/dados?dataInicial=${startDate}&dataFinal=${endDate}&formato=json`);
       const data = await response.json();
-      return data[data.length - 1].valor;
+
+      const total = data.reduce((acc, item) => acc + parseFloat(item.valor), 0);
+
+      console.log(`Soma dos últimos 12 meses para ${indice}: ${total}`);
+      return total; // Retorna a soma
     } catch (err) {
       console.error(`Erro ao buscar ${indice}:`, err);
       return null;
@@ -205,12 +220,21 @@ export default function FormContrato({ mode = "cadastro" }) {
   const handleReajusteChange = async (e) => {
     const indice = e.target.value;
     setReajuste(indice);
-    const valor = await fetchIndice(indice);
-    if (valor) {
-      setIndiceReajusteValor(valor);
-      console.log(`Valor do índice ${indice}: ${valor}`);
+
+    if (indice) {
+      const valor = await fetchIndice(indice);
+      if (valor !== null) {
+        setIndiceReajusteValor(valor);
+        console.log(`Valor do índice ${indice}: ${valor}`);
+      } else {
+        console.warn(`Não foi possível obter valor para o índice: ${indice}`);
+        setIndiceReajusteValor(null); // ou algum valor padrão
+      }
+    } else {
+      setIndiceReajusteValor(null); // ou um valor padrão se necessário
     }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -406,6 +430,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                     <option value="igpm">IGPM</option>
                     <option value="ipca">IPCA</option>
                     <option value="ipc-fipe">IPC-FIPE</option>
+                    <option value="inpc">INPC</option>
                   </select>
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
