@@ -74,6 +74,11 @@ export default function FormContrato({ mode = "cadastro" }) {
       }
     };
 
+    const formatDateForInput = (dateString) => {
+      if (!dateString) return "";
+      return dateString.split("T")[0]; // Extrai apenas a parte "YYYY-MM-DD"
+    };
+
     const fetchContrato = async () => {
       if (mode === 'edicao' && id) {
         try {
@@ -85,6 +90,8 @@ export default function FormContrato({ mode = "cadastro" }) {
           const faturado = await api.get(`/faturados/${contrato.id_faturado}`);
           const selectedFaturado = faturado.faturado;
 
+          console.log(contrato);
+
           setSelectedClienteId(contrato.id_cliente);
           setClienteInput(selectedCliente ? `${selectedCliente.razao_social} - ${selectedCliente.nome_fantasia}` : "");
           setSelectedClienteCpfCnpj(selectedCliente ? selectedCliente.cpf_cnpj : "");
@@ -93,11 +100,11 @@ export default function FormContrato({ mode = "cadastro" }) {
           setSolucao(contrato.id_produto);
           setVencimento(contrato.dia_vencimento);
           setReajuste(contrato.nome_indice);
-          setProximoReajuste(formatDate(contrato.proximo_reajuste));
+          setProximoReajuste(formatDateForInput(contrato.proximo_reajuste));
           setDuracao(contrato.duracao);
           setValorMensal(contrato.valor_mensal);
           setQuantidade(contrato.quantidade);
-          setDataInicio(formatDate(contrato.data_inicio));
+          setDataInicio(formatDateForInput(contrato.data_inicio));
           setEmail(contrato.email_envio);
           setDescricao(contrato.descricao);
           setStatus(contrato.status);
