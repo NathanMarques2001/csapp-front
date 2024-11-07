@@ -78,7 +78,7 @@ export default function FormFabricante({ mode = 'cadastro' }) {
             }
         } catch (err) {
             console.error("Error saving data:", err);
-            alert("Erro ao salvar fabricante.");
+            alert(err);
         }
         finally {
             setLoading(false);

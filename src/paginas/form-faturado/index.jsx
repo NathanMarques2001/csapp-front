@@ -78,7 +78,7 @@ export default function FormFaturado({ mode = 'cadastro' }) {
             }
         } catch (err) {
             console.error("Error saving data:", err);
-            alert("Erro ao salvar faturado.");
+            alert(err);
         }
         finally {
             setLoading(false);

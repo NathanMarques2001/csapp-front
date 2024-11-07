@@ -112,7 +112,7 @@ export default function FormUsuario({ mode = "cadastro" }) {
       }
     } catch (err) {
       console.error("Erro ao salvar usuário:", err);
-      alert("Erro ao salvar usuário.");
+      alert(err);
     } finally {
       setLoading(false);
     }
@@ -127,8 +127,8 @@ export default function FormUsuario({ mode = "cadastro" }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-        title={mode == "cadastro" ? "Adicionar Novo Usuário" : "Editar Usuário"}
-        message={mode == "cadastro" ? "Você está prestes a adicionar um novo usuário. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste usuário. Deseja continuar?"}
+          title={mode == "cadastro" ? "Adicionar Novo Usuário" : "Editar Usuário"}
+          message={mode == "cadastro" ? "Você está prestes a adicionar um novo usuário. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste usuário. Deseja continuar?"}
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />

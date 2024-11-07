@@ -283,7 +283,7 @@ export default function FormContrato({ mode = "cadastro" }) {
       }
     } catch (error) {
       console.error("Erro ao enviar os dados do contrato:", error);
-      alert("Erro ao salvar contrato.");
+      alert(error);
     } finally {
       setLoading(false);
     }

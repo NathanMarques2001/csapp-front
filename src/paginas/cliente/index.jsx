@@ -208,7 +208,7 @@ export default function Cliente() {
                                 <tr key={contrato.id - 1} className={`clickable-row ${contrato.status !== 'ativo' ? 'inactive-contract' : ''}`} onClick={() => editarContato(contrato.id)}>
                                     <td>{contrato.status}</td>
                                     <td>{getProdutoNome(contrato.id_produto)}</td>
-                                    <td>{new Date(contrato.createdAt).toLocaleDateString()}</td>
+                                    <td>{new Date(contrato.data_inicio).toLocaleDateString()}</td>
                                     <td>{calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                     <td>{contrato.duracao == 12000 ? `INDETERMINADO` : `${contrato.duracao} MESES`}</td>
                                     <td>{getFabricanteNome(contrato.id_produto)}</td>

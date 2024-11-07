@@ -78,7 +78,7 @@ export default function FormSegmento({ mode = 'cadastro' }) {
       }
     } catch (err) {
       console.error("Error saving data:", err);
-      alert("Erro ao salvar segmento.");
+      alert(err);
     }
     finally {
       setLoading(false);

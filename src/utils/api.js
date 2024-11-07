@@ -3,6 +3,7 @@ import cookie from 'cookie';
 
 class Api {
     static baseUrl = "http://localhost:8080/api";
+
     constructor() {
         this.api = axios.create({
             baseURL: Api.baseUrl,
@@ -24,9 +25,7 @@ class Api {
 
                 return config;
             },
-            (error) => {
-                return Promise.reject(error);
-            }
+            (error) => Promise.reject(error)
         );
     }
 
@@ -35,8 +34,7 @@ class Api {
             const res = await this.api.get(url);
             return res.data;
         } catch (err) {
-            console.error("Axios GET error:", err);
-            throw err;
+            throw err.response?.data?.message || "Erro ao fazer a requisição GET";
         }
     }
 
@@ -45,8 +43,7 @@ class Api {
             const res = await this.api.post(url, data);
             return res.data;
         } catch (err) {
-            console.error("Axios POST error:", err);
-            throw err;
+            throw err.response?.data?.message || "Erro ao fazer a requisição POST";
         }
     }
 
@@ -55,8 +52,7 @@ class Api {
             const res = await this.api.put(url, data);
             return res.data;
         } catch (err) {
-            console.error("Axios PUT error:", err);
-            throw err;
+            throw err.response?.data?.message || "Erro ao fazer a requisição PUT";
         }
     }
 
@@ -65,8 +61,7 @@ class Api {
             const res = await this.api.delete(url);
             return res.data;
         } catch (err) {
-            console.error("Axios DELETE error:", err);
-            throw err;
+            throw err.response?.data?.message || "Erro ao fazer a requisição DELETE";
         }
     }
 }

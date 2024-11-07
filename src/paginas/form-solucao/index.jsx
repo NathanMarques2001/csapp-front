@@ -101,7 +101,7 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       }
     } catch (err) {
       console.error("Error posting data:", err);
-      alert("Erro ao cadastrar solução.");
+      alert(err);
     }
     finally {
       setLoading(false);
