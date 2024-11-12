@@ -2,7 +2,7 @@ import axios from 'axios';
 import cookie from 'cookie';
 
 class Api {
-    static baseUrl = "http://localhost:8080/api";
+    static baseUrl = "http://20.186.19.140/api";
 
     constructor() {
         this.api = axios.create({
