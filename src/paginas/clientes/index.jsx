@@ -85,6 +85,7 @@ export default function Clientes() {
 
     const clientesFiltrados = clientes.filter(cliente =>
         cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase())
+        cliente.cpf_cnpj.includes(filter)
     );
 
     const addCliente = () => {
