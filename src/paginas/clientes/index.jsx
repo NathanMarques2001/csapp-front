@@ -83,10 +83,13 @@ export default function Clientes() {
         setFilter(e.target.value);
     };
 
-    const clientesFiltrados = clientes.filter(cliente =>
-        cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase())
-        cliente.cpf_cnpj.includes(filter)
-    );
+    const clientesFiltrados = clientes.filter(cliente => {
+        return (
+            cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase()) || 
+            cliente.cpf_cnpj.includes(filter)
+        );
+    });
+    
 
     const addCliente = () => {
         navigate('/cadastro-cliente');
