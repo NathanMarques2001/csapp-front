@@ -36,7 +36,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [proximoReajuste, setProximoReajuste] = useState("");
   const [valorMensal, setValorMensal] = useState("");
   const [quantidade, setQuantidade] = useState("");
-  const [dataInicio, setDataInicio] = useState("");
+  const [dataInicio, setDataInicio] = useState(null);
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
   const [indiceReajusteValor, setIndiceReajusteValor] = useState(null);
@@ -75,7 +75,7 @@ export default function FormContrato({ mode = "cadastro" }) {
     };
 
     const formatDateForInput = (dateString) => {
-      if (!dateString) return "";
+      if (!dateString || dateString === '') return null;
       return dateString.split("T")[0]; // Extrai apenas a parte "YYYY-MM-DD"
     };
 
@@ -452,7 +452,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                   <input type="text" disabled={!isAdminOrDev || isQuantidadeDisabled} name="quantidade" className='form-contrato-input' placeholder='Quantidade da solução' value={quantidade} onChange={(e) => setQuantidade(e.target.value)} />
                 </div>
                 <div className='form-contrato-label-input-container tres-inputs'>
-                  <label htmlFor="data-inicio" className='label-form-contrato'><b>Data ínicio <span className='required'>*</span></b></label>
+                  <label htmlFor="data-inicio" className='label-form-contrato'><b>Data ínicio</b></label>
                   <input type="date" disabled={!isAdminOrDev} name="data-inicio" className='form-contrato-input' value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} />
                 </div>
               </div>
