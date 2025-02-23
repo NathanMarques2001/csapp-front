@@ -39,7 +39,6 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [dataInicio, setDataInicio] = useState(null);
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [indiceReajusteValor, setIndiceReajusteValor] = useState(null);
   const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
 
   const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
@@ -150,41 +149,6 @@ export default function FormContrato({ mode = "cadastro" }) {
     }
   }, [solucao, produtos]);
 
-  const fetchIndice = async (indice) => {
-    let code = '';
-    if (indice === 'inpc') {
-      code = '188';
-    } else if (indice === 'igpm') {
-      code = '189';
-    } else if (indice === 'ipc-fipe') {
-      code = '193';
-    } else if (indice === 'ipca') {
-      code = '433';
-    }
-
-    // Obtenha a data de 12 meses atrás
-    const today = new Date();
-    const lastYear = new Date();
-    lastYear.setFullYear(today.getFullYear() - 1);
-
-    // Formate as datas para 'DD/MM/YYYY'
-    const startDate = `${lastYear.getDate().toString().padStart(2, '0')}/${(lastYear.getMonth() + 1).toString().padStart(2, '0')}/${lastYear.getFullYear()}`;
-    const endDate = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
-
-    try {
-      const response = await fetch(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.${code}/dados?dataInicial=${startDate}&dataFinal=${endDate}&formato=json`);
-      const data = await response.json();
-
-      const total = data.reduce((acc, item) => acc + parseFloat(item.valor), 0);
-
-      console.log(`Soma dos últimos 12 meses para ${indice}: ${total}`);
-      return total; // Retorna a soma
-    } catch (err) {
-      console.error(`Erro ao buscar ${indice}:`, err);
-      return null;
-    }
-  };
-
   const handleClienteInputChange = (e) => {
     const input = e.target.value;
     setClienteInput(input);
@@ -220,19 +184,6 @@ export default function FormContrato({ mode = "cadastro" }) {
   const handleReajusteChange = async (e) => {
     const indice = e.target.value;
     setReajuste(indice);
-
-    if (indice) {
-      const valor = await fetchIndice(indice);
-      if (valor !== null) {
-        setIndiceReajusteValor(valor);
-        console.log(`Valor do índice ${indice}: ${valor}`);
-      } else {
-        console.warn(`Não foi possível obter valor para o índice: ${indice}`);
-        setIndiceReajusteValor(null); // ou algum valor padrão
-      }
-    } else {
-      setIndiceReajusteValor(null); // ou um valor padrão se necessário
-    }
   };
 
 
@@ -257,7 +208,6 @@ export default function FormContrato({ mode = "cadastro" }) {
         faturado: false,
         id_faturado: Number(faturadoPor),
         dia_vencimento: Number(vencimento),
-        indice_reajuste: Number(indiceReajusteValor),
         nome_indice: reajuste,
         proximo_reajuste: formatDate(proximoReajuste),
         status: "ativo",
