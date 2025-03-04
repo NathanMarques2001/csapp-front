@@ -9,10 +9,11 @@ import { useEffect, useState } from "react";
 import Api from "../../utils/api";
 import { useCookies } from "react-cookie";
 import RelatorioClientes from "../../relatorios/clientes";
+import RelatorioProdutos from "../../relatorios/produtos";
 
 export default function Relatorios() {
   const [loading, setLoading] = useState(false);
-  const tabelas = ['Clientes', 'Contratos'];
+  const tabelas = ['Clientes', 'Contratos', 'Produtos'];
   const [tabelaSelecionada, setTabeleSelecionada] = useState('Contratos');
   const api = new Api();
   const [contratos, setContratos] = useState([]);
@@ -20,6 +21,7 @@ export default function Relatorios() {
   const [produtos, setProdutos] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [segmentos, setSegmentos] = useState([]);
+  const [fabricantes, setFabricantes] = useState([]);
   const [cookies, setCookie, removeCookie] = useCookies(['tipo', 'id']);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
   const [contratosRoute, setContratosRoute] = useState("");
@@ -74,6 +76,13 @@ export default function Relatorios() {
         }, {});
         setSegmentos(Object.values(segmentosMap));
 
+        const responseFabricantes = await api.get('/fabricantes');
+        const fabricantesMap = responseFabricantes.fabricantes.reduce((map, fabricante) => {
+          map[fabricante.id] = fabricante;
+          return map;
+        }, {});
+        setFabricantes(Object.values(fabricantesMap));
+
       } catch (error) {
         console.error("Aconteceu algo inesperado: " + error);
       } finally {
@@ -97,7 +106,9 @@ export default function Relatorios() {
             ))}
           </select>
           {
-            tabelaSelecionada == 'Contratos' ? (<RelatorioContratos contratos={contratos} produtos={produtos} clientes={clientes} usuarios={usuarios} />) : <RelatorioClientes clientes={clientes} contratos={contratos} usuarios={usuarios} segmentos={segmentos} />
+            tabelaSelecionada == 'Produtos' ? <RelatorioProdutos produtos={produtos} fabricantes={fabricantes} />
+              : tabelaSelecionada == 'Contratos' ? <RelatorioContratos contratos={contratos} produtos={produtos} clientes={clientes} usuarios={usuarios} />
+                : <RelatorioClientes clientes={clientes} contratos={contratos} usuarios={usuarios} segmentos={segmentos} />
           }
         </div>
       </div>
