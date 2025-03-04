@@ -8,6 +8,16 @@ import Loading from '../../componetes/loading';
 import Popup from '../../componetes/pop-up';
 import formatDate from '../../utils/formatDate';
 import { useCookies } from 'react-cookie';
+import { format, parseISO } from 'date-fns';
+
+// Função para formatar a data para o input
+const formatDateForInput = (dateString) => {
+  if (!dateString || dateString === '') return null;
+  const date = parseISO(dateString);
+  // Ajusta a data para o fuso horário local
+  const adjustedDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  return format(adjustedDate, 'yyyy-MM-dd');
+};
 
 export default function FormContrato({ mode = "cadastro" }) {
   const api = new Api();
@@ -33,7 +43,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [duracao, setDuracao] = useState("");
   const [vencimento, setVencimento] = useState("");
   const [reajuste, setReajuste] = useState("");
-  const [proximoReajuste, setProximoReajuste] = useState("");
+  const [proximoReajuste, setProximoReajuste] = useState(null);
   const [valorMensal, setValorMensal] = useState("");
   const [quantidade, setQuantidade] = useState("");
   const [dataInicio, setDataInicio] = useState(null);
@@ -73,11 +83,40 @@ export default function FormContrato({ mode = "cadastro" }) {
       }
     };
 
-    const formatDateForInput = (dateString) => {
-      if (!dateString || dateString === '') return null;
-      return dateString.split("T")[0]; // Extrai apenas a parte "YYYY-MM-DD"
+    const fetchFaturados = async () => {
+      try {
+        const response = await api.get('/faturados');
+        const faturadosAtivos = response.faturados.filter((faturado) => faturado.status !== 'inativo');
+        setFaturados(faturadosAtivos);
+      } catch (err) {
+        console.error("Erro ao buscar faturado:", err);
+      }
     };
 
+    fetchClientes();
+    fetchProdutos();
+    fetchFaturados();
+  }, [mode, id]);
+
+  useEffect(() => {
+    const removeAcentos = (str) => {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    // Habilita ou desabilita o campo quantidade dependendo da solução selecionada
+    if (solucao !== "") {
+      const produtoAtual = produtos.filter((item) => item.id === Number(solucao));
+      const nomeProdutoAtual = removeAcentos(produtoAtual[0].nome.trim().toLowerCase());
+      if (produtoAtual.length > 0 && (nomeProdutoAtual.includes("backup") || nomeProdutoAtual.includes("antivirus"))) {
+        setIsQuantidadeDisabled(false);
+      } else {
+        setIsQuantidadeDisabled(true);
+        setQuantidade("");
+      }
+    }
+  }, [solucao, produtos]);
+
+  useEffect(() => {
     const fetchContrato = async () => {
       if (mode === 'edicao' && id) {
         try {
@@ -88,8 +127,6 @@ export default function FormContrato({ mode = "cadastro" }) {
           const selectedCliente = clienteResponse.cliente;
           const faturado = await api.get(`/faturados/${contrato.id_faturado}`);
           const selectedFaturado = faturado.faturado;
-
-          console.log(contrato);
 
           setSelectedClienteId(contrato.id_cliente);
           setClienteInput(selectedCliente ? `${selectedCliente.razao_social} - ${selectedCliente.nome_fantasia}` : "");
@@ -115,39 +152,8 @@ export default function FormContrato({ mode = "cadastro" }) {
       }
     };
 
-    const fetchFaturados = async () => {
-      try {
-        const response = await api.get('/faturados');
-        const faturadosAtivos = response.faturados.filter((faturado) => faturado.status !== 'inativo');
-        setFaturados(faturadosAtivos);
-      } catch (err) {
-        console.error("Erro ao buscar faturado:", err);
-      }
-    };
-
-    fetchClientes();
-    fetchProdutos();
     fetchContrato();
-    fetchFaturados();
   }, [mode, id]);
-
-  useEffect(() => {
-    const removeAcentos = (str) => {
-      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
-
-    // Habilita ou desabilita o campo quantidade dependendo da solução selecionada
-    if (solucao !== "") {
-      const produtoAtual = produtos.filter((item) => item.id === Number(solucao));
-      const nomeProdutoAtual = removeAcentos(produtoAtual[0].nome.trim().toLowerCase());
-      if (produtoAtual.length > 0 && (nomeProdutoAtual.includes("backup") || nomeProdutoAtual.includes("antivirus"))) {
-        setIsQuantidadeDisabled(false);
-      } else {
-        setIsQuantidadeDisabled(true);
-        setQuantidade("");
-      }
-    }
-  }, [solucao, produtos]);
 
   const handleClienteInputChange = (e) => {
     const input = e.target.value;
@@ -218,6 +224,8 @@ export default function FormContrato({ mode = "cadastro" }) {
         descricao: descricao,
         data_inicio: formatDate(dataInicio),
       };
+
+      console.log(formData);
 
       let req;
       if (mode === "cadastro") {
