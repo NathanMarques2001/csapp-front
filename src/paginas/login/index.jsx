@@ -33,6 +33,8 @@ export default function Login() {
 
       const expirationTime = expireAt.getTime() - now.getTime(); // Calcula o tempo restante em milissegundos
 
+      console.log(email, password)
+
       const response = await auth.login('/usuarios/login', { email: email, senha: password });
       if (response.token !== '') {
         setCookie('jwtToken', response.token, { maxAge: expirationTime / 1000 }); // Define o token com 6 horas de expiração
@@ -47,6 +49,10 @@ export default function Login() {
       setLoading(false);
     }
   }
+
+  const resetSenha = () => {
+    navigate("/reset-senha");
+}
 
   return (
     <>
@@ -75,6 +81,9 @@ export default function Login() {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                 />
+
+                <button onClick={resetSenha} id="reset-senha">Esqueci minha senha</button>
+
                 <button onClick={e => sendForm(e)} id="login-button">Entrar</button>
               </form>
             </div>
