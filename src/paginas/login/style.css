@@ -50,24 +50,37 @@
   padding: 5%;
   border: 1px solid var(--cinza);
   border-radius: 7px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.2rem;
 }
 
 .form-label {
   width: 80%;
-  margin-bottom: 1rem;
+  margin-bottom: 0.6rem;
 }
 
 #login-button {
-  margin-top: 2rem;
+  margin-top: 1rem;
   width: 80%;
   border: 1px solid var(--preto);
   border-radius: 7px;
   background-color: var(--verde);
   padding: 5%;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 #login-button:hover {
   background-color: var(--verde-hover);
+}
+
+#reset-senha {
+  color: var(--cinza);
+  text-decoration: underline;
+  cursor: pointer;
+  background-color: var(--branco);
+  margin-top: 1.2rem;
+}
+
+#reset-senha:hover {
+  color: var(--preto);
 }

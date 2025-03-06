@@ -52,7 +52,7 @@ export default function Login() {
 
   const resetSenha = () => {
     navigate("/reset-senha");
-}
+  }
 
   return (
     <>
@@ -82,9 +82,9 @@ export default function Login() {
                   onChange={e => setPassword(e.target.value)}
                 />
 
-                <button onClick={resetSenha} id="reset-senha">Esqueci minha senha</button>
-
                 <button onClick={e => sendForm(e)} id="login-button">Entrar</button>
+
+                <button onClick={resetSenha} id="reset-senha">Esqueci minha senha</button>
               </form>
             </div>
 
