@@ -8,6 +8,7 @@ import Loading from "../../componetes/loading";
 import Api from "../../utils/api";
 import './style.css';
 import { useCookies } from "react-cookie";
+import imgQuestao from "../../assets/images/questao.png";
 
 export default function Clientes() {
     const api = new Api();
@@ -85,11 +86,11 @@ export default function Clientes() {
 
     const clientesFiltrados = clientes.filter(cliente => {
         return (
-            cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase()) || 
+            cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase()) ||
             cliente.cpf_cnpj.includes(filter)
         );
     });
-    
+
 
     const addCliente = () => {
         navigate('/cadastro-cliente');
@@ -102,14 +103,20 @@ export default function Clientes() {
                 <Navbar />
                 <div id="clientes-container">
                     <h1 id="clientes-titulo">Clientes</h1>
-                    <input
-                        type="text"
-                        placeholder="Procure pelo nome"
-                        id="clientes-input"
-                        value={filter}
-                        onChange={filtraClientes}
-                    />
-                    <button disabled={!isAdminOrDev} className={!isAdminOrDev ? 'disabled' : ''} onClick={e => addCliente()} id="clientes-botao">Adicionar cliente</button>
+                    <div id="header-clientes">
+                        <input
+                            type="text"
+                            placeholder="Procure pelo nome"
+                            id="clientes-input"
+                            value={filter}
+                            onChange={filtraClientes}
+                        />
+                        <button disabled={!isAdminOrDev} className={!isAdminOrDev ? 'disabled' : ''} onClick={e => addCliente()} id="clientes-botao">Adicionar cliente</button>
+                        <div id="tooltip-container">
+                            <img id="img-top30" src={imgQuestao} alt="imagem top 30" />
+                            <span id="tooltip-text">Categoria TOP 30: 30 Maiores faturamentos <br /> Categoria A: Faturamento acima de R$ 3.000,00 <br />Categoria B: Faturamento acima de R$ 1.000,00 <br />Categoria C: Faturamento até R$ 999,00</span>
+                        </div>
+                    </div>
                     {clientesFiltrados.length > 0 ? (
                         <table id="clientes-tabela">
                             <thead>

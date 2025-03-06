@@ -15,6 +15,11 @@
   font-size: 1.25rem;
 }
 
+#header-clientes {
+  display: flex;
+  align-items: center;
+}
+
 #clientes-input {
   border-radius: 5px;
   border: 1px solid var(--cinza);
@@ -44,6 +49,38 @@
 
 #clientes-botao:hover {
   background-color: var(--verde-hover);
+}
+
+#tooltip-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#tooltip-text {
+  visibility: hidden;
+  background-color: var(--azul-borda);
+  color: var(--branco);
+  left: 12%;
+  text-align: start;
+  position: absolute;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#img-top30 {
+  width: 10%;
+  cursor: pointer;
+}
+
+#img-top30:hover + #tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 #clientes-tabela {
