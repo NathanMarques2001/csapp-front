@@ -154,7 +154,7 @@ export default function FormUsuario({ mode = "cadastro" }) {
               <input type="password" name='senha' value={usuario.senha} onChange={handleChange} required disabled={mode == 'edicao'} />
               <label htmlFor="confirmarSenha">Confirmar senha <span className='required'>*</span></label>
               <input type="password" name='confirmarSenha' value={usuario.confirmarSenha} onChange={handleChange} required disabled={mode == 'edicao'} />
-              <p>A senha do usuário será redefinida em seu primeiro acesso.</p>
+              <p>Usuário poderá redefinir sua senha pela tela de login.</p>
               <div id='form-usuario-div-btn'>
                 <button className='form-usuario-btn' id='form-usuario-btn-cancelar' onClick={() => navigate('/gestao?aba=usuarios')}>
                   Cancelar
