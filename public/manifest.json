@@ -3,19 +3,9 @@
   "name": "Client Success App",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "C:\\Users\\NATHAN.BRANDAO\\Documents\\dev\\csapp\\csapp-front\\public\\manifest.json",
       "sizes": "64x64 32x32",
       "type": "image/x-icon"
-    },
-    {
-      "src": "/logo192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/logo512.png",
-      "sizes": "512x512",
-      "type": "image/png"
     }
   ],
   "start_url": ".",
