@@ -3,7 +3,7 @@
   "name": "Client Success App",
   "icons": [
     {
-      "src": "C:\\Users\\NATHAN.BRANDAO\\Documents\\dev\\csapp\\csapp-front\\public\\manifest.json",
+      "src": "logo.png",
       "sizes": "64x64 32x32",
       "type": "image/x-icon"
     }
