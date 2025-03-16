@@ -3,9 +3,9 @@ import cookie from 'cookie';
 
 class Api {
     // PRD
-    //static baseUrl = "http://20.186.19.140/api";
+    static baseUrl = "https://csapp.prolinx.com.br/api";
     // DEV
-    static baseUrl = "http://localhost:8080/api";
+    //static baseUrl = "http://localhost:8080/api";
  
 
     constructor() {

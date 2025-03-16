@@ -1,5 +1,5 @@
 function MailResetSenha(hash) {
-  const resetLink = `http://localhost:3000/reset-senha?hash=${hash}`;
+  const resetLink = `https://csapp.prolinx.com.br/reset-senha?hash=${hash}`;
   const emailContent = {
     "reset-senha": {
       "subject": "Redefinição de Senha",
