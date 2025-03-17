@@ -57,6 +57,8 @@ export default function ResetSenha() {
           html: mailReset['reset-senha'].html,
         };
 
+        console.log(emailData);
+
         await emailService.sendEmail(emailData);
         alert('E-mail enviado com sucesso!');
         setEmail('');

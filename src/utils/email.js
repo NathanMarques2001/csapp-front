@@ -18,7 +18,7 @@ class Email {
       const res = await this.api.post(Email.baseUrl + '/send', data);
       return res.data;
     } catch (err) {
-      throw err.response?.data?.message || "Erro ao enviar email";
+      throw err || "Erro ao enviar email";
     }
   }
 }
