@@ -25,6 +25,9 @@ export default function ResetSenha() {
     }
   }, []);
 
+  // Função para criar o delay de 1,5 segundos
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -38,6 +41,7 @@ export default function ResetSenha() {
         }
 
         const res = await api.post('/reset-senha/reset', { hash: hash, senha: password });
+        await delay(1500);
         alert(res.message || 'Senha redefinida com sucesso!');
         navigate('/');
       } else {
@@ -58,6 +62,8 @@ export default function ResetSenha() {
         };
 
         console.log(emailData);
+
+        await delay(1500);
 
         await emailService.sendEmail(emailData);
         alert('E-mail enviado com sucesso!');
