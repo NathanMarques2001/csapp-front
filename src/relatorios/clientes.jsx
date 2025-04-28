@@ -24,7 +24,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
     (!filtros.nome_fantasia || cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&
     (!filtros.tipo || cliente.tipo === filtros.tipo) &&
     (!filtros.status || cliente.status === filtros.status) &&
-    (!filtros.vendedor || usuarios[cliente.id_usuario - 1]?.nome === filtros.vendedor) &&
+    (!filtros.vendedor || usuarios[cliente.id_usuario - 2]?.nome === filtros.vendedor) &&
     (!filtros.segmento || segmentos[cliente.id_segmento - 1]?.nome === filtros.segmento)
   );
 
@@ -43,7 +43,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
       "CPF/CNPJ": cliente.cpf_cnpj,
       "Tipo": cliente.tipo.toUpperCase(),
       "Status": cliente.status,
-      "Usuário Responsável": usuarios[cliente.id_usuario - 1]?.nome,
+      "Usuário Responsável": usuarios[cliente.id_usuario - 2]?.nome,
       "Segmento": segmentos[cliente.id_segmento - 1]?.nome,
       "Valor Total dos Contratos": valorTotalContratos
     };
