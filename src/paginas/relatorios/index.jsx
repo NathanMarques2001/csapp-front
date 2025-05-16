@@ -1,96 +1,57 @@
-// Bibliotecas
-// Componentes
+// /relatorios/index.jsx
+import { useEffect, useState, useMemo } from "react";
 import Navbar from "../../componetes/navbar";
 import Loading from "../../componetes/loading";
-import RelatorioContratos from "../../relatorios/contratos";
-// Estilos, funcoes, classes, imagens e etc
-import './style.css';
-import { useEffect, useState } from "react";
-import Api from "../../utils/api";
-import { useCookies } from "react-cookie";
 import RelatorioClientes from "../../relatorios/clientes";
+import RelatorioContratos from "../../relatorios/contratos";
 import RelatorioProdutos from "../../relatorios/produtos";
+import { useCookies } from "react-cookie";
+import Api from "../../utils/api";
+import { createMapById } from "../../utils/maps";
+import "./style.css";
 
 export default function Relatorios() {
   const [loading, setLoading] = useState(false);
-  const tabelas = ['Clientes', 'Contratos', 'Produtos'];
-  const [tabelaSelecionada, setTabeleSelecionada] = useState('Contratos');
-  const api = new Api();
-  const [contratos, setContratos] = useState([]);
+  const [tabelaSelecionada, setTabelaSelecionada] = useState('');
   const [clientes, setClientes] = useState([]);
+  const [contratos, setContratos] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [segmentos, setSegmentos] = useState([]);
   const [fabricantes, setFabricantes] = useState([]);
-  const [cookies, setCookie, removeCookie] = useCookies(['tipo', 'id']);
-  const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-  const [contratosRoute, setContratosRoute] = useState("");
+  const [cookies] = useCookies(['tipo', 'id']);
 
   useEffect(() => {
-    setLoading(true);
-    setClientes([])
-    setContratos([])
-    setContratosRoute('/contratos');
-    if (cookies.tipo === "dev" || cookies.tipo === "admin") {
-      setIsAdminOrDev(true);
-      // setContratosRoute('/contratos');
-    } else {
-      setIsAdminOrDev(false);
-      // setContratosRoute(`/contratos/vendedor/${cookies.id}`);
-    }
-
-    const fetchData = async () => {
+    const fetchAll = async () => {
+      setLoading(true);
       try {
-        const contratosResponse = await api.get(contratosRoute);
-        const contratosMap = contratosResponse.contratos.reduce((map, contrato) => {
-          map[contrato.id] = contrato;
-          return map;
-        }, {});
-        setContratos(Object.values(contratosMap));
-
-        const clientesResponse = await api.get('/clientes');
-        const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
-          map[cliente.id] = cliente;
-          return map;
-        }, {});
-        setClientes(Object.values(clientesMap));
-
-        const produtosResponse = await api.get('/produtos');
-        const produtosMap = produtosResponse.produtos.reduce((map, produto) => {
-          map[produto.id] = produto;
-          return map;
-        }, {});
-        setProdutos(Object.values(produtosMap));
-
-        const vendedoresResponse = await api.get('/usuarios');
-        const vendedoresMap = vendedoresResponse.usuarios.reduce((map, vendedor) => {
-          map[vendedor.id] = vendedor;
-          return map;
-        }, {});
-        setUsuarios(Object.values(vendedoresMap));
-
-        const responseSegmentos = await api.get('/segmentos');
-        const segmentosMap = responseSegmentos.segmentos.reduce((map, segmento) => {
-          map[segmento.id] = segmento;
-          return map;
-        }, {});
-        setSegmentos(Object.values(segmentosMap));
-
-        const responseFabricantes = await api.get('/fabricantes');
-        const fabricantesMap = responseFabricantes.fabricantes.reduce((map, fabricante) => {
-          map[fabricante.id] = fabricante;
-          return map;
-        }, {});
-        setFabricantes(Object.values(fabricantesMap));
-
+        const api = new Api();
+        const [clientesRes, contratosRes, produtosRes, usuariosRes, segmentosRes, fabricantesRes] = await Promise.all([
+          api.get('/clientes'),
+          api.get(cookies.tipo === 'admin' || cookies.tipo === 'dev' ? '/contratos' : `/contratos/vendedor/${cookies.id}`),
+          api.get('/produtos'),
+          api.get('/usuarios'),
+          api.get('/segmentos'),
+          api.get('/fabricantes')
+        ]);
+        setClientes(clientesRes.clientes || []);
+        setContratos(contratosRes.contratos || []);
+        setProdutos(produtosRes.produtos || []);
+        setUsuarios(usuariosRes.usuarios || []);
+        setSegmentos(segmentosRes.segmentos || []);
+        setFabricantes(fabricantesRes.fabricantes || []);
       } catch (error) {
-        console.error("Aconteceu algo inesperado: " + error);
+        console.error("Erro ao buscar dados:", error);
       } finally {
         setLoading(false);
       }
-    }
-    fetchData();
-  }, [tabelaSelecionada, cookies.tipo, cookies.id, contratosRoute]);
+    };
+    fetchAll();
+  }, [cookies]);
+
+  const usuariosMap = useMemo(() => createMapById(usuarios), [usuarios]);
+  const segmentosMap = useMemo(() => createMapById(segmentos), [segmentos]);
+  const fabricantesMap = useMemo(() => createMapById(fabricantes), [fabricantes]);
 
   return (
     <>
@@ -99,17 +60,38 @@ export default function Relatorios() {
         <Navbar />
         <div id="clientes-container">
           <h1 id="clientes-titulo">Relatórios</h1>
-          <select onChange={e => setTabeleSelecionada(e.target.value)} name="" id="select-tabela-relatorios">
+          <select
+            id="select-tabela-relatorios"
+            onChange={(e) => setTabelaSelecionada(e.target.value)}
+          >
             <option value="">Selecione a fonte de dados</option>
-            {tabelas.map(tabela => (
-              <option key={tabela} value={tabela}>{tabela}</option>
-            ))}
+            <option value="Clientes">Clientes</option>
+            <option value="Contratos">Contratos</option>
+            <option value="Produtos">Produtos</option>
           </select>
-          {
-            tabelaSelecionada == 'Produtos' ? <RelatorioProdutos produtos={produtos} fabricantes={fabricantes} />
-              : tabelaSelecionada == 'Contratos' ? <RelatorioContratos contratos={contratos} produtos={produtos} clientes={clientes} usuarios={usuarios} />
-                : <RelatorioClientes clientes={clientes} contratos={contratos} usuarios={usuarios} segmentos={segmentos} />
-          }
+
+          {tabelaSelecionada === "Clientes" && (
+            <RelatorioClientes
+              clientes={clientes}
+              contratos={contratos}
+              usuariosMap={usuariosMap}
+              segmentosMap={segmentosMap}
+            />
+          )}
+          {tabelaSelecionada === "Contratos" && (
+            <RelatorioContratos
+              contratos={contratos}
+              produtos={produtos}
+              clientes={clientes}
+              usuariosMap={usuariosMap}
+            />
+          )}
+          {tabelaSelecionada === "Produtos" && (
+            <RelatorioProdutos
+              produtos={produtos}
+              fabricantesMap={fabricantesMap}
+            />
+          )}
         </div>
       </div>
     </>

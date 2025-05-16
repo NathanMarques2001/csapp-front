@@ -3,7 +3,7 @@ import Popup from "../componetes/pop-up";
 import DateJS from "../utils/date-js";
 import Excel from "../utils/excel";
 
-export default function RelatorioContratos({ contratos, produtos, clientes, usuarios }) {
+export default function RelatorioContratos({ contratos, produtos, clientes, usuariosMap }) {
   const dateJs = new DateJS();
   const excel = new Excel("Relatório de Contratos");
   const [abrirPopup, setAbrirPopup] = useState(false);
@@ -15,77 +15,72 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
     vendedor: '',
   });
 
-  // Mapeando arrays para facilitar o acesso por ID
-  const produtosMap = produtos.reduce((map, produto) => {
-    map[produto.id] = produto;
-    return map;
-  }, {});
+  const produtosMap = produtos.reduce((map, p) => (map[p.id] = p, map), {});
+  const clientesMap = clientes.reduce((map, c) => (map[c.id] = c, map), {});
 
-  const clientesMap = clientes.reduce((map, cliente) => {
-    map[cliente.id] = cliente;
-    return map;
-  }, {});
+  const contratosFiltrados = contratos.filter(contrato => {
+    const produto = produtosMap[contrato.id_produto];
+    const cliente = clientesMap[contrato.id_cliente];
+    const vendedor = usuariosMap[cliente?.id_usuario];
 
-  const usuariosMap = usuarios.reduce((map, usuario) => {
-    map[usuario.id] = usuario;
-    return map;
-  }, {});
+    return (
+      (!filtros.solucao || produto?.nome === filtros.solucao) &&
+      (!filtros.cliente || cliente?.nome_fantasia === filtros.cliente) &&
+      (!filtros.status || contrato.status === filtros.status) &&
+      (!filtros.vendedor || vendedor?.nome === filtros.vendedor)
+    );
+  });
 
-  // Filtrando contratos de acordo com os filtros selecionados
-  const contratosFiltrados = contratos.filter(contrato =>
-    (!filtros.solucao || produtosMap[contrato.id_produto]?.nome === filtros.solucao) &&
-    (!filtros.cliente || clientesMap[contrato.id_cliente]?.nome_fantasia === filtros.cliente) &&
-    (!filtros.status || contrato.status === filtros.status) &&
-    (!filtros.vendedor || usuariosMap[clientesMap[contrato.id_cliente]?.id_usuario]?.nome === filtros.vendedor)
-  );
-
-  // Mapeando os dados para exportação e exibição
   const data = contratosFiltrados.map(contrato => {
-    const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
+    const cliente = clientesMap[contrato.id_cliente];
+    const produto = produtosMap[contrato.id_produto];
+    const vendedor = usuariosMap[cliente?.id_usuario];
+
+    const valor = parseFloat(contrato.valor_mensal);
+    const reajuste = contrato.indice_reajuste || 0;
+    const valorFinal = valor + ((valor * reajuste) / 100);
 
     return {
-      "Solução": produtosMap[contrato.id_produto]?.nome,
-      "Cliente": clientesMap[contrato.id_cliente]?.nome_fantasia,
+      "Solução": produto?.nome || "Desconhecido",
+      "Cliente": cliente?.nome_fantasia || "Desconhecido",
       "Status": contrato.status,
-      "Vendedor": usuariosMap[clientesMap[contrato.id_cliente]?.id_usuario]?.nome,
+      "Vendedor": vendedor?.nome || "Desconhecido",
       "Reajuste": dateJs.formatDate(contrato.proximo_reajuste),
       "Expiração": `${contrato.duracao} MESES`,
-      "Valor": calculaValorImpostoMensal(parseFloat(contrato.valor_mensal), contrato.indice_reajuste),
+      "Valor": valorFinal,
     };
   });
 
-  // Função para realizar o download do relatório em Excel
-  function handleDownloadReport(e) {
+  const handleDownloadReport = (e) => {
     e.preventDefault();
     excel.exportToExcel(data);
     setAbrirPopup(false);
-  }
+  };
 
-  // Função para lidar com mudanças nos filtros
-  function handleFiltroChange(e) {
+  const handleFiltroChange = (e) => {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
-  }
+  };
 
   return (
     <>
       {abrirPopup && (
-        <Popup 
-          title="Exportar Contratos" 
-          message="Tem certeza que deseja exportar o relatório de contratos?" 
-          onConfirm={e => handleDownloadReport(e)} 
-          onCancel={e => setAbrirPopup(false)} 
+        <Popup
+          title="Exportar Contratos"
+          message="Tem certeza que deseja exportar o relatório de contratos?"
+          onConfirm={handleDownloadReport}
+          onCancel={() => setAbrirPopup(false)}
         />
       )}
 
       {openModal && (
-        <div id='filter-container'>
+        <div id="filter-container">
           <form onSubmit={e => e.preventDefault()} className="filter-form">
             <div className="form-group">
               <label>Solução:</label>
               <select name="solucao" value={filtros.solucao} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(produtosMap).map(produto => (
-                  <option key={produto.id} value={produto.nome}>{produto.nome}</option>
+                {produtos.map(p => (
+                  <option key={p.id} value={p.nome}>{p.nome}</option>
                 ))}
               </select>
             </div>
@@ -94,8 +89,8 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
               <label>Cliente:</label>
               <select name="cliente" value={filtros.cliente} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(clientesMap).map(cliente => (
-                  <option key={cliente.id} value={cliente.nome_fantasia}>{cliente.nome_fantasia}</option>
+                {clientes.map(c => (
+                  <option key={c.id} value={c.nome_fantasia}>{c.nome_fantasia}</option>
                 ))}
               </select>
             </div>
@@ -113,19 +108,21 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
               <label>Vendedor:</label>
               <select name="vendedor" value={filtros.vendedor} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {Object.values(usuariosMap).map(usuario => (
-                  <option key={usuario.id} value={usuario.nome}>{usuario.nome}</option>
+                {Object.values(usuariosMap).map(v => (
+                  <option key={v.id} value={v.nome}>{v.nome}</option>
                 ))}
               </select>
             </div>
 
-            <button type="button" onClick={() => setOpenModal(false)} id='filter-close-button' className="filter-button">Fechar</button>
+            <button type="button" onClick={() => setOpenModal(false)} className="filter-button">
+              Fechar
+            </button>
           </form>
         </div>
       )}
 
-      <button onClick={e => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">Filtrar</button>
-      <button onClick={e => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">Exportar para Excel</button>
+      <button onClick={() => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">Filtrar</button>
+      <button onClick={() => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">Exportar para Excel</button>
 
       <table className="global-tabela">
         <thead>
@@ -140,15 +137,15 @@ export default function RelatorioContratos({ contratos, produtos, clientes, usua
           </tr>
         </thead>
         <tbody>
-          {data.map((contrato, index) => (
-            <tr key={index}>
-              <td className="global-conteudo-tabela">{contrato["Solução"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Cliente"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Status"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Vendedor"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Reajuste"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Expiração"]}</td>
-              <td className="global-conteudo-tabela">{contrato["Valor"].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+          {data.map((c, i) => (
+            <tr key={i}>
+              <td className="global-conteudo-tabela">{c["Solução"]}</td>
+              <td className="global-conteudo-tabela">{c["Cliente"]}</td>
+              <td className="global-conteudo-tabela">{c["Status"]}</td>
+              <td className="global-conteudo-tabela">{c["Vendedor"]}</td>
+              <td className="global-conteudo-tabela">{c["Reajuste"]}</td>
+              <td className="global-conteudo-tabela">{c["Expiração"]}</td>
+              <td className="global-conteudo-tabela">{c["Valor"].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
             </tr>
           ))}
         </tbody>

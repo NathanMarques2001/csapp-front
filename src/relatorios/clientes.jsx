@@ -3,7 +3,7 @@ import Excel from "../utils/excel";
 import { useState } from "react";
 import Popup from "../componetes/pop-up";
 
-export default function RelatorioClientes({ clientes, contratos, usuarios, segmentos }) {
+export default function RelatorioClientes({ clientes, contratos, usuariosMap, segmentosMap }) {
   const excel = new Excel("Relatório de Clientes");
   const [cookies] = useCookies(['id', 'tipo']);
   const [filtros, setFiltros] = useState({
@@ -16,26 +16,23 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
   const [openModal, setOpenModal] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
-  // if (cookies.tipo !== 'admin' && cookies.tipo !== 'dev') {
-  //   clientes = clientes.filter(cliente => cliente.id_usuario === cookies.id);
-  // }
-
   const clientesFiltrados = clientes.filter(cliente =>
     (!filtros.nome_fantasia || cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&
     (!filtros.tipo || cliente.tipo === filtros.tipo) &&
     (!filtros.status || cliente.status === filtros.status) &&
-    (!filtros.vendedor || usuarios[cliente.id_usuario - 2]?.nome === filtros.vendedor) &&
-    (!filtros.segmento || segmentos[cliente.id_segmento - 1]?.nome === filtros.segmento)
+    (!filtros.vendedor || usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
+    (!filtros.segmento || segmentosMap[cliente.id_segmento]?.nome === filtros.segmento)
   );
 
   const data = clientesFiltrados.map(cliente => {
-    const contratosCliente = contratos.filter(contrato => contrato.id_cliente === cliente.id && contrato.status === 'ativo');
-    const calculaValorImpostoMensal = (valor, indice) => valor + ((valor * indice) / 100);
+    const contratosCliente = contratos.filter(contrato =>
+      contrato.id_cliente === cliente.id && contrato.status === 'ativo'
+    );
 
     const valorTotalContratos = contratosCliente.reduce((sum, contrato) => {
-      const valorContrato = parseFloat(contrato.valor_mensal);
-      const valorComImposto = calculaValorImpostoMensal(valorContrato, contrato.indice_reajuste);
-      return sum + valorComImposto;
+      const valor = parseFloat(contrato.valor_mensal);
+      const indice = contrato.indice_reajuste || 0;
+      return sum + valor + ((valor * indice) / 100);
     }, 0);
 
     return {
@@ -43,8 +40,8 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
       "CPF/CNPJ": cliente.cpf_cnpj,
       "Tipo": cliente.tipo.toUpperCase(),
       "Status": cliente.status,
-      "Usuário Responsável": usuarios[cliente.id_usuario - 2]?.nome,
-      "Segmento": segmentos[cliente.id_segmento - 1]?.nome,
+      "Usuário Responsável": usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
+      "Segmento": segmentosMap[cliente.id_segmento]?.nome || "Desconhecido",
       "Valor Total dos Contratos": valorTotalContratos
     };
   });
@@ -65,10 +62,11 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
         <Popup
           title="Exportar Clientes"
           message="Tem certeza que deseja exportar o relatório de clientes?"
-          onConfirm={e => handleDownloadReport(e)}
+          onConfirm={handleDownloadReport}
           onCancel={() => setAbrirPopup(false)}
         />
       )}
+
       {openModal && (
         <div id="filter-container">
           <form onSubmit={e => e.preventDefault()} className="filter-form">
@@ -106,7 +104,7 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
               <label>Vendedor:</label>
               <select name="vendedor" value={filtros.vendedor} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {usuarios.map(usuario => (
+                {Object.values(usuariosMap).map(usuario => (
                   <option key={usuario.id} value={usuario.nome}>{usuario.nome}</option>
                 ))}
               </select>
@@ -116,18 +114,22 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
               <label>Segmento:</label>
               <select name="segmento" value={filtros.segmento} onChange={handleFiltroChange}>
                 <option value="">Selecione</option>
-                {segmentos.map(segmento => (
+                {Object.values(segmentosMap).map(segmento => (
                   <option key={segmento.id} value={segmento.nome}>{segmento.nome}</option>
                 ))}
               </select>
             </div>
 
-            <button type="button" onClick={() => setOpenModal(false)} id="filter-close-button" className="filter-button">Fechar</button>
+            <button type="button" onClick={() => setOpenModal(false)} id="filter-close-button" className="filter-button">
+              Fechar
+            </button>
           </form>
         </div>
       )}
+
       <button onClick={() => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">Filtrar</button>
       <button onClick={() => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">Exportar para Excel</button>
+
       <table className="global-tabela">
         <thead>
           <tr>
@@ -149,7 +151,12 @@ export default function RelatorioClientes({ clientes, contratos, usuarios, segme
               <td className="global-conteudo-tabela">{cliente["Status"]}</td>
               <td className="global-conteudo-tabela">{cliente["Usuário Responsável"]}</td>
               <td className="global-conteudo-tabela">{cliente["Segmento"]}</td>
-              <td className="global-conteudo-tabela">{cliente["Valor Total dos Contratos"].toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+              <td className="global-conteudo-tabela">
+                {cliente["Valor Total dos Contratos"].toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                })}
+              </td>
             </tr>
           ))}
         </tbody>
