@@ -84,3 +84,7 @@
 #reset-senha:hover {
   color: var(--preto);
 }
+
+.logo-microsoft {
+  width: 10%;
+}

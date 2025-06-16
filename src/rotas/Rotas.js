@@ -2,15 +2,21 @@ import React from 'react';
 import {
     BrowserRouter as Router,
     Routes,
-    Route,
-    Navigate
-} from 'react-router-dom'
+    Route
+} from 'react-router-dom';
+
+// Componente para proteger rotas
+import PrivateRoute from './PrivateRoute'; // Ajuste o caminho se necessário
+
+// --- Páginas Públicas ---
+import Login from '../paginas/login';
+import ResetSenha from '../paginas/reset-senha';
+
+// --- Páginas Protegidas ---
 import Contratos from '../paginas/contratos';
 import Cliente from '../paginas/cliente';
 import Clientes from '../paginas/clientes';
 import Gestao from '../paginas/gestao';
-import Login from '../paginas/login';
-import { useCookies } from 'react-cookie';
 import FormSolucao from '../paginas/form-solucao';
 import FormFabricante from '../paginas/form-fabricante';
 import FormCliente from '../paginas/form-cliente';
@@ -19,39 +25,53 @@ import FormContrato from '../paginas/form-contrato';
 import Relatorios from '../paginas/relatorios';
 import FormSegmento from '../paginas/form-segmento';
 import FormFaturado from '../paginas/form-faturado';
-import ResetSenha from '../paginas/reset-senha';
-// Bibliotecas
-// Componentes
-// Estilos, funcoes, classes, imagens e etc
+import AuthCallback from '../paginas/microsoft-callback';
+
 
 export default function Rotas() {
-
-    const [cookies] = useCookies(['jwtToken', 'tipo']);
-
     return (
         <Router>
             <Routes>
-                <Route path="/" element={!cookies['jwtToken'] ? <Login /> : <Contratos />} />
-                <Route path="/contratos" element={!cookies['jwtToken'] ? <Login /> : <Contratos />} />
-                <Route path="/clientes/:id" element={!cookies['jwtToken'] ? <Login /> : <Cliente />} />
-                <Route path="/clientes" element={!cookies['jwtToken'] ? <Login /> : <Clientes />} />
-                <Route path="/relatorios" element={!cookies['jwtToken'] ? <Login /> : <Relatorios />} />
-                <Route path="/gestao" element={!cookies['jwtToken'] ? <Login /> : cookies['tipo'] === "admin" || cookies['tipo'] === "dev" ? <Gestao /> : <Navigate to="/contratos" />} />
-                <Route path="/cadastro-solucao" element={!cookies['jwtToken'] ? <Login /> : <FormSolucao mode="cadastro" />} />
-                <Route path="/edicao-solucao/:id" element={!cookies['jwtToken'] ? <Login /> : <FormSolucao mode="edicao" />} />
-                <Route path="/cadastro-fabricante" element={!cookies['jwtToken'] ? <Login /> : <FormFabricante mode="cadastro" />} />
-                <Route path="/edicao-fabricante/:id" element={!cookies['jwtToken'] ? <Login /> : <FormFabricante mode="edicao" />} />
-                <Route path="/cadastro-cliente" element={!cookies['jwtToken'] ? <Login /> : <FormCliente mode="cadastro" />} />
-                <Route path="/edicao-cliente/:id" element={!cookies['jwtToken'] ? <Login /> : <FormCliente mode="edicao" />} />
-                <Route path="/cadastro-usuario" element={!cookies['jwtToken'] ? <Login /> : <FormUsuario mode="cadastro" />} />
-                <Route path="/edicao-usuario/:id" element={!cookies['jwtToken'] ? <Login /> : <FormUsuario mode="edicao" />} />
-                <Route path="/cadastro-contrato" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="cadastro" />} />
-                <Route path="/edicao-contrato/:id" element={!cookies['jwtToken'] ? <Login /> : <FormContrato mode="edicao" />} />
-                <Route path="/cadastro-segmento" element={!cookies['jwtToken'] ? <Login /> : <FormSegmento mode="cadastro" />} />
-                <Route path="/edicao-segmento/:id" element={!cookies['jwtToken'] ? <Login /> : <FormSegmento mode="edicao" />} />
-                <Route path="/cadastro-faturado" element={!cookies['jwtToken'] ? <Login /> : <FormFaturado mode="cadastro" />} />
-                <Route path="/edicao-faturado/:id" element={!cookies['jwtToken'] ? <Login /> : <FormFaturado mode="edicao" />} />
+                {/* --- ROTAS PÚBLICAS --- */}
+                {/* Rotas que não exigem login */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Login />} />
                 <Route path="/reset-senha" element={<ResetSenha />} />
+                
+                {/* **2. ADICIONE A ROTA DE CALLBACK AQUI** */}
+                {/* Esta rota também é pública, pois o usuário ainda não tem um cookie */}
+                <Route path="/auth/callback" element={<AuthCallback />} />
+
+                {/* --- ROTAS PRIVADAS --- */}
+                {/* Todas as rotas abaixo só são acessíveis se o usuário estiver logado */}
+                
+                <Route element={<PrivateRoute />}>
+                    <Route path="/contratos" element={<Contratos />} />
+                    <Route path="/clientes/:id" element={<Cliente />} />
+                    <Route path="/clientes" element={<Clientes />} />
+                    <Route path="/relatorios" element={<Relatorios />} />
+                    <Route path="/cadastro-solucao" element={<FormSolucao mode="cadastro" />} />
+                    <Route path="/edicao-solucao/:id" element={<FormSolucao mode="edicao" />} />
+                    <Route path="/cadastro-fabricante" element={<FormFabricante mode="cadastro" />} />
+                    <Route path="/edicao-fabricante/:id" element={<FormFabricante mode="edicao" />} />
+                    <Route path="/cadastro-cliente" element={<FormCliente mode="cadastro" />} />
+                    <Route path="/edicao-cliente/:id" element={<FormCliente mode="edicao" />} />
+                    <Route path="/cadastro-usuario" element={<FormUsuario mode="cadastro" />} />
+                    <Route path="/edicao-usuario/:id" element={<FormUsuario mode="edicao" />} />
+                    <Route path="/cadastro-contrato" element={<FormContrato mode="cadastro" />} />
+                    <Route path="/edicao-contrato/:id" element={<FormContrato mode="edicao" />} />
+                    <Route path="/cadastro-segmento" element={<FormSegmento mode="cadastro" />} />
+                    <Route path="/edicao-segmento/:id" element={<FormSegmento mode="edicao" />} />
+                    <Route path="/cadastro-faturado" element={<FormFaturado mode="cadastro" />} />
+                    <Route path="/edicao-faturado/:id" element={<FormFaturado mode="edicao" />} />
+                </Route>
+
+                {/* --- ROTAS DE ADMIN --- */}
+                {/* Rota que exige um tipo de usuário específico */}
+                <Route element={<PrivateRoute allowedRoles={['admin', 'dev']} />}>
+                    <Route path="/gestao" element={<Gestao />} />
+                </Route>
+
             </Routes>
         </Router>
     );
