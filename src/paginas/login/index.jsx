@@ -85,7 +85,14 @@ export default function Login() {
                 <button onClick={e => sendForm(e)} id="login-button">Entrar</button>
 
                 <button onClick={resetSenha} id="reset-senha">Esqueci minha senha</button>
-                <a href="http://localhost:8080/api/usuarios/login-microsoft">Entrar com a Microsoft</a>
+                <button
+                  type="button"
+                  onClick={() => window.location.href = "http://localhost:8080/api/usuarios/login-microsoft"}
+                  className="login-input"
+                >
+                  Entrar com Microsoft
+                </button>
+
               </form>
             </div>
 

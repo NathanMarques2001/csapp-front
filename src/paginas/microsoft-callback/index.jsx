@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCookies } from 'react-cookie';
-import { jwtDecode } from 'jwt-decode'; // Importa a nova biblioteca
+import { jwtDecode } from 'jwt-decode';
 
 import Loading from "../../componetes/loading"; // Reutilizando seu componente de loading
 import "./style.css"; // Vamos criar um CSS simples para ele
@@ -24,21 +24,17 @@ export default function AuthCallback() {
                     throw new Error("Token de autenticação não encontrado.");
                 }
 
-                // 2. Decodifica o token para extrair as informações do usuário
                 const decodedToken = jwtDecode(token);
-                
-                // Extrai as informações do payload do token
-                // O backend precisa garantir que essas informações estão no token!
                 const { id, nome, tipo } = decodedToken;
 
                 if (!id || !nome || !tipo) {
                     throw new Error("O token recebido é inválido ou não contém as informações necessárias.");
                 }
-                
+
                 // 3. Define a data de expiração para os cookies (mesma lógica do seu Login.js)
                 const expireAt = new Date();
                 // Definindo para 8 horas a partir de agora para simplificar
-                expireAt.setHours(expireAt.getHours() + 8); 
+                expireAt.setHours(expireAt.getHours() + 8);
 
                 // 4. Salva todas as informações nos cookies
                 setCookie('jwtToken', token, { path: '/', expires: expireAt });
