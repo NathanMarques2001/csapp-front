@@ -1,6 +1,7 @@
 import "./style.css"
 import logo from "../../assets/images/logo.png"
 import imgLogin from "../../assets/images/img-login.png"
+import logoMicrosoft from "../../assets/icons/microsoft.png";
 import Auth from "../../utils/auth";
 import { useState } from "react";
 import { useCookies } from 'react-cookie';
@@ -82,17 +83,18 @@ export default function Login() {
                   onChange={e => setPassword(e.target.value)}
                 />
 
-                <button onClick={e => sendForm(e)} id="login-button">Entrar</button>
-
-                <button onClick={resetSenha} id="reset-senha">Esqueci minha senha</button>
+                <button onClick={e => sendForm(e)} className="login-button" id="login-button">Entrar</button>
                 <button
                   type="button"
                   onClick={() => window.location.href = "http://localhost:8080/api/usuarios/login-microsoft"}
-                  className="login-input"
+                  className="login-button"
+                  id="login-microsoft-button"
                 >
+                  <img src={logoMicrosoft} alt="logo microsoft" id="img-microsoft" />
                   Entrar com Microsoft
                 </button>
 
+                <button onClick={resetSenha} id="reset-senha">Esqueci minha senha</button>
               </form>
             </div>
 

@@ -58,15 +58,25 @@
   margin-bottom: 0.6rem;
 }
 
-#login-button {
+.login-button {
   margin-top: 1rem;
   width: 80%;
-  border: 1px solid var(--preto);
   border-radius: 7px;
-  background-color: var(--verde);
-  padding: 5%;
+  border: 1px solid var(--preto);
+  padding: 3%;
   cursor: pointer;
   transition: background 0.3s ease;
+}
+
+#login-button {
+  background-color: var(--verde);
+}
+
+#login-microsoft-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5%;
 }
 
 #login-button:hover {
