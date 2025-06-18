@@ -86,7 +86,7 @@ export default function Login() {
                 <button onClick={e => sendForm(e)} className="login-button" id="login-button">Entrar</button>
                 <button
                   type="button"
-                  onClick={() => window.location.href = "http://localhost:8080/api/usuarios/login-microsoft"}
+                  onClick={() => window.location.href = "https://csapp.prolinx.com.br/api/usuarios/login-microsoft"}
                   className="login-button"
                   id="login-microsoft-button"
                 >
