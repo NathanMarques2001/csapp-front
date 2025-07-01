@@ -81,6 +81,7 @@
 
 #login-button:hover {
   background-color: var(--verde-hover);
+  cursor: not-allowed;
 }
 
 #reset-senha {
