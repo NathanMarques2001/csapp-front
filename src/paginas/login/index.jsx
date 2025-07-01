@@ -83,7 +83,7 @@ export default function Login() {
                   onChange={e => setPassword(e.target.value)}
                 />
 
-                <button onClick={e => sendForm(e)} className="login-button" id="login-button">Entrar</button>
+                <button onClick={e => sendForm(e)} className="login-button" id="login-button" disabled>Entrar</button>
                 <button
                   type="button"
                   onClick={() => window.location.href = "https://csapp.prolinx.com.br/api/usuarios/login-microsoft"}
