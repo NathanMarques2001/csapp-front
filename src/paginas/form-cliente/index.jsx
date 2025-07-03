@@ -19,6 +19,7 @@ export default function FormCliente({ mode }) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
   const [segmentos, setSegmentos] = useState([]);
+  const [gruposEconomicos, setGruposEconomicos] = useState([]);
 
   const [cliente, setCliente] = useState({
     razao_social: "",
@@ -26,6 +27,7 @@ export default function FormCliente({ mode }) {
     cpf_cnpj: "",
     id_usuario: "",
     id_segmento: "",
+    id_grupo_economico: "",
     nps: "",
     gestor_contratos_nome: "",
     gestor_contratos_email: "",
@@ -113,8 +115,19 @@ export default function FormCliente({ mode }) {
       }
     };
 
+    const fetchGruposEconomicos = async () => {
+      try {
+        const response = await api.get("/grupos-economicos");
+        // const segmentosAtivos = response.segmentos.filter((segmento) => segmento.status !== 'inativo');
+        setGruposEconomicos(response);
+      } catch (error) {
+        console.error("Erro ao buscar os segmentos: " + error);
+      }
+    };
+
     fetchUsuarios();
     fetchSegmentos();
+    fetchGruposEconomicos();
   }, []);
 
   const handleChange = (e) => {
@@ -247,6 +260,15 @@ export default function FormCliente({ mode }) {
                         <option value="">Selecione...</option>
                         {segmentos.map((segmento) => (
                           <option key={segmento.id} value={segmento.id}>{segmento.nome}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="id_grupo_economico">Grupo Econômico</label>
+                      <select id="id_grupo_economico" disabled={!isAdminOrDev} name="id_grupo_economico" value={cliente.id_grupo_economico} onChange={handleChange}>
+                        <option value="">Selecione...</option>
+                        {gruposEconomicos.map((grupoEconomico) => (
+                          <option key={grupoEconomico.id} value={grupoEconomico.id}>{grupoEconomico.nome}</option>
                         ))}
                       </select>
                     </div>
