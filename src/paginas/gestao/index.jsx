@@ -7,6 +7,7 @@ import Usuarios from '../usuarios';
 import Fabricantes from '../fabricantes';
 import Segmentos from '../segmentos';
 import Faturados from '../faturados';
+import GruposEconomicos from '../grupos-economicos';
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -14,7 +15,7 @@ import Faturados from '../faturados';
 export default function Gestao() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const aba = queryParams.get("aba") || "faturados";
+    const aba = queryParams.get("aba") || "grupos-economicos";
 
     const [selectedItem, setSelectedItem] = useState(aba);
 
@@ -32,6 +33,12 @@ export default function Gestao() {
             <div id="gestao-container">
                 <h1 id='central-gestao-titulo'>Central de Gestão</h1>
                 <div id="central-gestao-switch-container">
+                    <p
+                        className={`switch-item ${selectedItem === 'grupos-economicos' ? 'active' : ''}`}
+                        onClick={() => handleClick('grupos-economicos')}
+                    >
+                        Grupos Econômicos
+                    </p>
                     <p
                         className={`switch-item ${selectedItem === 'faturados' ? 'active' : ''}`}
                         onClick={() => handleClick('faturados')}
@@ -65,6 +72,9 @@ export default function Gestao() {
                 </div>
 
                 <div>
+                    {selectedItem === 'grupos-economicos' && (
+                        <GruposEconomicos />
+                    )}
                     {selectedItem === 'usuarios' && (
                         <Usuarios />
                     )}

@@ -26,6 +26,7 @@ import Relatorios from '../paginas/relatorios';
 import FormSegmento from '../paginas/form-segmento';
 import FormFaturado from '../paginas/form-faturado';
 import AuthCallback from '../paginas/microsoft-callback';
+import FormGrupoEconomico from '../paginas/form-grupo-economico';
 
 
 export default function Rotas() {
@@ -64,6 +65,8 @@ export default function Rotas() {
                     <Route path="/edicao-segmento/:id" element={<FormSegmento mode="edicao" />} />
                     <Route path="/cadastro-faturado" element={<FormFaturado mode="cadastro" />} />
                     <Route path="/edicao-faturado/:id" element={<FormFaturado mode="edicao" />} />
+                    <Route path="/cadastro-grupo-economico" element={<FormGrupoEconomico mode="cadastro" />} />
+                    <Route path="/edicao-grupo-economico/:id" element={<FormGrupoEconomico mode="edicao" />} />
                 </Route>
 
                 {/* --- ROTAS DE ADMIN --- */}
