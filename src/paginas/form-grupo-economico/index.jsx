@@ -63,7 +63,7 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
         }
       })();
     }
-  }, [mode, id, api]);
+  }, [mode, id]);
 
   const handleCancel = e => {
     e.preventDefault();
