@@ -25,10 +25,8 @@ export default function FormCliente({ mode }) {
     razao_social: "",
     nome_fantasia: "",
     cpf_cnpj: "",
-    id_usuario: "",
-    id_segmento: "",
     id_grupo_economico: "",
-    nps: "",
+    tipo_unidade: "",
     gestor_contratos_nome: "",
     gestor_contratos_email: "",
     gestor_contratos_nascimento: null,
@@ -244,25 +242,6 @@ export default function FormCliente({ mode }) {
                       onChange={handleChange}
                     />
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="id_usuario">Relacionamento <span className="required">*</span></label>
-                    <select required id="id_usuario" disabled={!isAdminOrDev} name="id_usuario" value={cliente.id_usuario} onChange={handleChange}>
-                      <option value="">Selecione...</option>
-                      {usuarios.map((usuario) => (
-                        <option key={usuario.id} value={usuario.id}>{usuario.nome}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <div className="form-group">
-                      <label htmlFor="id_segmento">Segmento <span className="required">*</span></label>
-                      <select required id="id_segmento" disabled={!isAdminOrDev} name="id_segmento" value={cliente.id_segmento} onChange={handleChange}>
-                        <option value="">Selecione...</option>
-                        {segmentos.map((segmento) => (
-                          <option key={segmento.id} value={segmento.id}>{segmento.nome}</option>
-                        ))}
-                      </select>
-                    </div>
                     <div className="form-group">
                       <label htmlFor="id_grupo_economico">Grupo Econômico</label>
                       <select id="id_grupo_economico" disabled={!isAdminOrDev} name="id_grupo_economico" value={cliente.id_grupo_economico} onChange={handleChange}>
@@ -271,19 +250,17 @@ export default function FormCliente({ mode }) {
                           <option key={grupoEconomico.id} value={grupoEconomico.id}>{grupoEconomico.nome}</option>
                         ))}
                       </select>
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="nps">NPS</label>
-                      <input
-                        type="text"
-                        id="nps"
-                        name="nps"
-                        disabled={!isAdminOrDev}
-                        placeholder="Digite o NPS do cliente"
-                        value={cliente.nps}
-                        onChange={handleChange}
-                      />
-                    </div>
+                  </div>
+                  <div className="form-group">
+                      <label htmlFor="tipo_unidade">Tipo da Unidade</label>
+                      <select id="tipo_unidade" disabled={!isAdminOrDev} name="tipo_unidade" value={cliente.tipo_unidade} onChange={handleChange}>
+                        <option value="">Selecione...</option>
+                        {["matriz", "filial"].map((tipo) => (
+                          <option key={tipo} value={tipo}>
+                            {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                          </option>
+                        ))}
+                      </select>
                   </div>
                 </div>
                 <div id="cadastro-cliente-img-div">

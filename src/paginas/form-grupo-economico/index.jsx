@@ -1,92 +1,109 @@
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../../componetes/navbar";
-import "./style.css";
-import imgCadastroGrupoEconomico from "../../assets/images/img-cadastro-grupo-economico.png";
 import Api from "../../utils/api";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import imgCadastroGrupoEconomico from "../../assets/images/img-cadastro-grupo-economico.png";
+import "./style.css";
 import Loading from "../../componetes/loading";
 import Popup from "../../componetes/pop-up";
-// Bibliotecas
-// Componentes
-// Estilos, funcoes, classes, imagens e etc
 
 export default function FormGrupoEconomico({ mode = 'cadastro' }) {
   const api = new Api();
-  const [nomeGrupoEconomico, setNomeGrupoEconomico] = useState("");
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-  const navigate = useNavigate();
-  const { id } = useParams();
 
+  // Dados do form
+  const [nome, setNome] = useState("");
+  const [idUsuario, setIdUsuario] = useState("");
+  const [nps, setNps] = useState("");
+  const [idSegmento, setIdSegmento] = useState("");
+
+  // Opções de select
+  const [usuarios, setUsuarios] = useState([]);
+  const [segmentos, setSegmentos] = useState([]);
+
+  // Carrega usuários e segmentos
   useEffect(() => {
-    const fetchGruposEconomicos = async () => {
-      if (mode === 'edicao' && id) {
-        try {
-          setLoading(true);
-          const response = await api.get(`/grupos-economicos/${id}`);
-          const grupoEconomico = response.grupoEconomico;
-          setNomeGrupoEconomico(grupoEconomico.nome);
-        } catch (err) {
-          console.error("Error fetching grupos econômicos:", err);
-        }
-        finally {
-          setLoading(false);
-        }
+    const fetchOptions = async () => {
+      try {
+        const [uRes, sRes] = await Promise.all([
+          api.get("/usuarios"),
+          api.get("/segmentos")
+        ]);
+        setUsuarios(uRes.usuarios);
+        // só segmentos ativos
+        setSegmentos(sRes.segmentos.filter(seg => seg.status !== "inativo"));
+      } catch (err) {
+        console.error("Erro ao buscar opções:", err);
       }
     };
+    fetchOptions();
+  }, []);
 
-    fetchGruposEconomicos();
-  }, [mode, id]);
+  // Se for edição, preenche o form
+  useEffect(() => {
+    if (mode === 'edicao' && id) {
+      (async () => {
+        try {
+          setLoading(true);
+          const res = await api.get(`/grupos-economicos/${id}`);
+          const g = res.grupoEconomico;
+          setNome(g.nome);
+          setIdUsuario(g.id_usuario);
+          setNps(g.nps);
+          setIdSegmento(g.id_segmento);
+        } catch (err) {
+          console.error("Erro ao buscar grupo econômico:", err);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
+  }, [mode, id, api]);
 
-  const handleCancel = (e) => {
+  const handleCancel = e => {
     e.preventDefault();
     setPopupAction(() => confirmCancel);
     setShowPopup(true);
   };
+  const confirmCancel = () => navigate("/gestao?aba=grupos-economicos");
 
-  const confirmCancel = () => {
-    setShowPopup(false);
-    navigate("/gestao?aba=grupos-economicos");
-  };
-
-  const handleSaveGrupoEconomico = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-    setPopupAction(() => confirmSaveGrupoEconomico);
+    setPopupAction(() => confirmSubmit);
     setShowPopup(true);
   };
-
-  const confirmSaveGrupoEconomico = async () => {
+  const confirmSubmit = async () => {
     setShowPopup(false);
-    const data = {
-      nome: nomeGrupoEconomico,
+    const payload = {
+      nome,
+      id_usuario: Number(idUsuario),
+      nps: Number(nps),
+      id_segmento: Number(idSegmento)
     };
-
     try {
       setLoading(true);
-      let req;
+      let resp;
       if (mode === 'cadastro') {
-        req = await api.post('/grupos-economicos', data);
-      } else if (mode === 'edicao') {
-        req = await api.put(`/grupos-economicos/${id}`, data);
+        resp = await api.post("/grupos-economicos", payload);
+      } else {
+        resp = await api.put(`/grupos-economicos/${id}`, payload);
       }
-      if (req.message === "Grupo econômico criado com sucesso!" || req.message === "Grupo econômico atualizado com sucesso!") {
-        setNomeGrupoEconomico("");
+      if (resp.message?.includes("sucesso")) {
         navigate("/gestao?aba=grupos-economicos");
       } else {
         alert("Erro ao salvar grupo econômico.");
       }
     } catch (err) {
-      console.error("Error saving data:", err);
-      alert(err);
-    }
-    finally {
+      console.error(err);
+      alert("Erro ao salvar grupo econômico.");
+    } finally {
       setLoading(false);
     }
-  };
-
-  const cancelPopup = () => {
-    setShowPopup(false);
   };
 
   return (
@@ -94,10 +111,14 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          title={mode == "cadastro" ? "Adicionar Novo Grupo Econômico" : "Editar Grupo Econômico"}
-          message={mode == "cadastro" ? "Você está prestes a adicionar um novo grupo econômico. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste grupo econômico. Deseja continuar?"}
+          title={mode === "cadastro" ? "Adicionar Novo Grupo Econômico" : "Editar Grupo Econômico"}
+          message={
+            mode === "cadastro"
+              ? "Você está prestes a adicionar um novo grupo econômico. Deseja continuar?"
+              : "Você está prestes a salvar as alterações feitas neste grupo econômico. Deseja continuar?"
+          }
           onConfirm={popupAction}
-          onCancel={cancelPopup}
+          onCancel={() => setShowPopup(false)}
         />
       )}
       <div className="global-display">
@@ -106,29 +127,94 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
           <h2>{mode === 'cadastro' ? 'Cadastro de Grupo Econômico' : 'Edição de Grupo Econômico'}</h2>
           <p id="cadastro-grupo-economico-descricao">Campos com "*" são obrigatórios.</p>
           <div id="cadastro-grupo-economico-form-container">
-            <form id="cadastro-grupo-economico-form" onSubmit={handleSaveGrupoEconomico}>
-              <div id="cadastro-grupo-economico-input-labels">
-                <label htmlFor="nome"><b>Nome *</b></label>
+            <form id="cadastro-grupo-economico-form" onSubmit={handleSubmit}>
+              
+              {/* Nome */}
+              <div className="form-group">
+                <label htmlFor="nome">Nome <span className="required">*</span></label>
                 <input
                   type="text"
-                  id="cadastro-grupo-economico-input"
-                  className="cadastro-grupo-economico-input"
+                  id="nome"
                   name="nome"
-                  placeholder="Digite o nome do grupo econômico"
-                  value={nomeGrupoEconomico}
-                  onChange={(e) => setNomeGrupoEconomico(e.target.value)}
+                  value={nome}
+                  onChange={e => setNome(e.target.value)}
                   required
                 />
               </div>
+
+              {/* Usuário */}
+              <div className="form-group">
+                <label htmlFor="id_usuario">Responsável <span className="required">*</span></label>
+                <select
+                  id="id_usuario"
+                  name="id_usuario"
+                  value={idUsuario}
+                  onChange={e => setIdUsuario(e.target.value)}
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  {usuarios.map(u => (
+                    <option key={u.id} value={u.id}>{u.nome}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Segmento */}
+              <div className="form-group">
+                <label htmlFor="id_segmento">Segmento <span className="required">*</span></label>
+                <select
+                  id="id_segmento"
+                  name="id_segmento"
+                  value={idSegmento}
+                  onChange={e => setIdSegmento(e.target.value)}
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  {segmentos.map(s => (
+                    <option key={s.id} value={s.id}>{s.nome}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* NPS */}
+              <div className="form-group">
+                <label htmlFor="nps">NPS <span className="required">*</span></label>
+                <input
+                  type="number"
+                  id="nps"
+                  name="nps"
+                  min="0"
+                  max="10"
+                  value={nps}
+                  onChange={e => setNps(e.target.value)}
+                  required
+                />
+              </div>
+
               <div className="cadastro-grupo-economico-container-btn">
-                <button id="cadastro-grupo-economico-btn-cancelar" className="cadastro-grupo-economico-btn" onClick={() => navigate('/gestao?aba=grupos-economicos')}>Cancelar</button>
-                <button id="cadastro-grupo-economico-btn-cadastrar" className="cadastro-grupo-economico-btn">
-                  {mode === 'cadastro' ? 'Adicionar grupo econômico' : 'Salvar alterações'}
+                <button
+                  type="button"
+                  className="cadastro-grupo-economico-btn"
+                  onClick={handleCancel}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="cadastro-grupo-economico-btn"
+                  id="cadastro-grupo-economico-btn-cadastrar"
+                >
+                  {mode === 'cadastro' ? 'Adicionar' : 'Salvar'} grupo econômico
                 </button>
               </div>
             </form>
+            
             <div id="cadastro-grupo-economico-container-img">
-              <img src={imgCadastroGrupoEconomico} alt="" id="cadastro-grupo-economico-img" />
+              <img
+                src={imgCadastroGrupoEconomico}
+                alt="Cadastro Grupo Econômico"
+                id="cadastro-grupo-economico-img"
+              />
             </div>
           </div>
         </div>

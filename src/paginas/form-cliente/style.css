@@ -101,3 +101,7 @@
   width: 240px;
   margin-bottom: 5%;
 }
+
+select#tipo_unidade option {
+  text-transform: capitalize;
+}
