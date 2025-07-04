@@ -117,7 +117,7 @@ export default function FormCliente({ mode }) {
       try {
         const response = await api.get("/grupos-economicos");
         // const segmentosAtivos = response.segmentos.filter((segmento) => segmento.status !== 'inativo');
-        setGruposEconomicos(response);
+        setGruposEconomicos(response.grupoEconomico);
       } catch (error) {
         console.error("Erro ao buscar os segmentos: " + error);
       }

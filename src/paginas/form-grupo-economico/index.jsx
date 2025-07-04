@@ -178,7 +178,7 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
 
               {/* NPS */}
               <div className="form-group">
-                <label htmlFor="nps">NPS <span className="required">*</span></label>
+                <label htmlFor="nps">NPS</label>
                 <input
                   type="number"
                   id="nps"
@@ -187,7 +187,6 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
                   max="10"
                   value={nps}
                   onChange={e => setNps(e.target.value)}
-                  required
                 />
               </div>
 
