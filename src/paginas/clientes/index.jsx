@@ -1,5 +1,5 @@
 // Bibliotecas
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 // Componentes
 import Navbar from "../../componetes/navbar";
@@ -12,10 +12,8 @@ import imgQuestao from "../../assets/images/questao.png";
 
 export default function Clientes() {
   const api = new Api();
-  const [cookies, setCookie, removeCookie] = useCookies(["tipo", "id"]);
+  const [cookies] = useCookies(["tipo", "id"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-  const [clientes, setClientes] = useState([]);
-  const [gruposEconomicos, setGruposEconomicos] = useState([]);
   const [clientesGrupos, setClientesGrupos] = useState([]);
   const [contratos, setContratos] = useState([]);
   const [vendedores, setVendedores] = useState({});
@@ -36,11 +34,9 @@ export default function Clientes() {
         setLoading(true);
         const gruposEconomicosResponse = await api.get("/grupos-economicos");
         const grupos = gruposEconomicosResponse.grupoEconomico;
-        setGruposEconomicos(grupos);
 
         const clientesResponse = await api.get("/clientes");
         const clientesData = clientesResponse.clientes;
-        setClientes(clientesData);
 
         const vendedoresResponse = await api.get("/usuarios");
         const vendedoresMap = vendedoresResponse.usuarios.reduce(
@@ -90,8 +86,6 @@ export default function Clientes() {
     return resultado;
   };
 
-  console.log(clientesGrupos);
-
   const calculaValorImpostoMensal = (valor, indice) =>
     valor + (valor * indice) / 100;
 
@@ -101,7 +95,7 @@ export default function Clientes() {
         contrato.id_cliente === clienteId && contrato.status === "ativo",
     );
 
-    const total = clienteContratos.reduce((sum, contrato) => {
+    return clienteContratos.reduce((sum, contrato) => {
       const valorContrato = parseFloat(contrato.valor_mensal);
       const valorComImposto = calculaValorImpostoMensal(
         valorContrato,
@@ -109,49 +103,30 @@ export default function Clientes() {
       );
       return sum + valorComImposto;
     }, 0);
-
-    return total;
   };
 
   const detalhesCliente = (id) => {
     navigate(`/clientes/${id}`);
   };
 
-  const filtraClientes = (e) => {
-    setFilter(e.target.value);
-  };
+  const getMatriz = (grupo) =>
+    grupo.unidades.find((c) => c.tipo_unidade === "matriz") ||
+    grupo.unidades[0];
 
-  const addCliente = () => {
-    navigate("/cadastro-cliente");
-  };
-
-  // Encontra a matriz de um grupo (cliente com tipo_unidade 'matriz')
-  const getMatriz = (grupo) => {
-    return (
-      grupo.unidades.find((cliente) => cliente.tipo_unidade === "matriz") ||
-      grupo.unidades[0]
+  const calculaTotalContratosGrupo = (grupo) =>
+    grupo.unidades.reduce(
+      (total, cliente) => total + calculaValorTotalContratos(cliente.id),
+      0,
     );
-  };
 
-  // Soma o total dos contratos de todas as unidades do grupo
-  const calculaTotalContratosGrupo = (grupo) => {
-    return grupo.unidades.reduce((total, cliente) => {
-      return total + calculaValorTotalContratos(cliente.id);
-    }, 0);
-  };
-
-  // filtra os grupos conforme seu filtro
   const clientesGruposFiltrados = clientesGrupos.filter((clientesGrupo) => {
     const texto = filter.toLowerCase();
-
     const grupoPassa = clientesGrupo.grupo.nome.toLowerCase().includes(texto);
-
     const algumaUnidadePassa = clientesGrupo.unidades.some(
       (unidade) =>
         unidade.nome_fantasia.toLowerCase().includes(texto) ||
         unidade.cpf_cnpj.includes(filter),
     );
-
     return grupoPassa || algumaUnidadePassa;
   });
 
@@ -162,6 +137,8 @@ export default function Clientes() {
         <Navbar />
         <div id="clientes-container">
           <h1 id="clientes-titulo">Clientes</h1>
+
+          {/* Filtro + botão */}
           <div id="header-clientes">
             <input
               type="text"
@@ -178,7 +155,8 @@ export default function Clientes() {
             >
               Adicionar cliente
             </button>
-            {/* Tooltip explicativo */}
+
+            {/* Tooltip categorias */}
             <div id="tooltip-container">
               <img id="img-top30" src={imgQuestao} alt="imagem top 30" />
               <span id="tooltip-text">
@@ -190,98 +168,100 @@ export default function Clientes() {
             </div>
           </div>
 
-          {clientesGruposFiltrados.length > 0 ? (
+          {/* Tabela principal */}
+          {clientesGruposFiltrados.length ? (
             <table id="clientes-tabela">
               <thead>
                 <tr>
-                  <th className="clientes-titulo-tabela">Nome do Grupo</th>
-                  <th className="clientes-titulo-tabela">CPF/CNPJ da Matriz</th>
+                  <th className="clientes-titulo-tabela">Nome</th>
+                  <th className="clientes-titulo-tabela">CPF/CNPJ</th>
                   <th className="clientes-titulo-tabela">Categoria</th>
-                  <th className="clientes-titulo-tabela">
-                    Valor Total Contratos
-                  </th>
+                  <th className="clientes-titulo-tabela">Valor Contratos</th>
                   <th className="clientes-titulo-tabela">Vendedor</th>
                 </tr>
               </thead>
-              <tbody>
-                {clientesGruposFiltrados.map((grupo) => {
-                  const matriz = getMatriz(grupo);
-                  const totalContratos = calculaTotalContratosGrupo(grupo);
 
-                  return (
-                    <tr
-                      key={grupo.grupo.id}
+              {clientesGruposFiltrados.map((grupo) => {
+                const matriz = getMatriz(grupo);
+                const totalContratos = calculaTotalContratosGrupo(grupo);
+                const aberto = hoverGrupoId === grupo.grupo.id;
+
+                return (
+                  <Fragment key={grupo.grupo.id}>
+                    <tbody
+                      className={`grupo-unidades ${aberto ? "aberto" : ""}`}
                       onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
                       onMouseLeave={() => setHoverGrupoId(null)}
-                      className="clickable-row"
-                      onClick={() => detalhesCliente(matriz.id)}
                     >
-                      <td>{grupo.grupo.nome}</td>
-                      <td>{matriz.cpf_cnpj}</td>
-                      <td>{grupo.grupo.tipo?.toUpperCase() || "-"}</td>
-                      <td>
-                        {totalContratos.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
-                      </td>
-                      <td>{vendedores[grupo.grupo.id_usuario] || "-"}</td>
-                      {/* Linha de detalhes aparece abaixo */}
-                    </tr>
-                  );
-                })}
-              </tbody>
+                      {/* Linha do grupo */}
+                      <tr
+                        onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
+                        onMouseLeave={() => setHoverGrupoId(null)}
+                        className={
+                          aberto ? "clientes-conteudo-tabela-grupo-aberto" : ""
+                        }
+                        onClick={() => detalhesCliente(matriz.id)}
+                      >
+                        <td className="clientes-conteudo-tabela">
+                          {grupo.grupo.nome}
+                        </td>
+                        <td className="clientes-conteudo-tabela">
+                          {matriz.cpf_cnpj}
+                        </td>
+                        <td className="clientes-conteudo-tabela">
+                          {grupo.grupo.tipo?.toUpperCase() || "-"}
+                        </td>
+                        <td className="clientes-conteudo-tabela">
+                          {totalContratos.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                          })}
+                        </td>
+                        <td className="clientes-conteudo-tabela">
+                          {vendedores[grupo.grupo.id_usuario] || "-"}
+                        </td>
+                      </tr>
+
+                      {/* Linhas das unidades (aparecem só se hover) */}
+                      {aberto &&
+                        grupo.unidades.map((cliente) => (
+                          <tr
+                            key={cliente.id}
+                            className="clientes-conteudo-tabela-hover"
+                            onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
+                            onMouseLeave={() => setHoverGrupoId(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              detalhesCliente(cliente.id);
+                            }}
+                          >
+                            <td className="clientes-conteudo-tabela">
+                              {cliente.nome_fantasia}
+                            </td>
+                            <td className="clientes-conteudo-tabela">
+                              {cliente.cpf_cnpj}
+                            </td>
+                            <td className="clientes-conteudo-tabela">-</td>
+                            <td className="clientes-conteudo-tabela">
+                              {calculaValorTotalContratos(
+                                cliente.id,
+                              ).toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              })}
+                            </td>
+                            <td className="clientes-conteudo-tabela">-</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </Fragment>
+                );
+              })}
             </table>
           ) : (
             <p id="clientes-sem-clientes">
               Ainda não foram cadastrados clientes!
             </p>
-          )}
-
-          {/* Detalhes do grupo ao passar mouse */}
-          {hoverGrupoId && (
-            <div
-              id="detalhes-grupo-popup"
-              style={{
-                position: "absolute",
-                backgroundColor: "#fff",
-                border: "1px solid #ccc",
-                padding: "10px",
-                zIndex: 1000,
-                maxHeight: "300px",
-                overflowY: "auto",
-                boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-              }}
-            >
-              <h4>Unidades do Grupo</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Nome Fantasia</th>
-                    <th>CPF/CNPJ</th>
-                    <th>Valor Contratos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clientesGrupos
-                    .find((grupo) => grupo.grupo.id === hoverGrupoId)
-                    ?.unidades.map((cliente) => (
-                      <tr key={cliente.id}>
-                        <td>{cliente.nome_fantasia}</td>
-                        <td>{cliente.cpf_cnpj}</td>
-                        <td>
-                          {calculaValorTotalContratos(
-                            cliente.id,
-                          ).toLocaleString("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          })}
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
           )}
         </div>
       </div>

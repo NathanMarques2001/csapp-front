@@ -100,8 +100,13 @@
   margin-top: 2%;
 }
 
-.clickable-row:hover {
+.clientes-conteudo-tabela-grupo-aberto {
+  background-color: black;
+  color: white;
   cursor: pointer;
+}
+
+.clientes-conteudo-tabela-hover:hover {
   background-color: var(--azul-borda);
-  color: var(--branco);
+  cursor: pointer;
 }
