@@ -1,32 +1,32 @@
-import { useState, useEffect } from 'react';
-import './style.css';
-import Email from '../../utils/email';
-import Api from '../../utils/api';
-import MailResetSenha from '../../mail/reset-senha';
-import Loading from '../../componetes/loading';
-import imgResetSenha from '../../assets/images/img-reset-senha.png';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import "./style.css";
+import Email from "../../utils/email";
+import Api from "../../utils/api";
+import MailResetSenha from "../../mail/reset-senha";
+import Loading from "../../componetes/loading";
+import imgResetSenha from "../../assets/images/img-reset-senha.png";
+import { useNavigate } from "react-router-dom";
 
 export default function ResetSenha() {
   const emailService = new Email();
   const api = new Api();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [hash, setHash] = useState(null);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const hashParam = urlParams.get('hash');
+    const hashParam = urlParams.get("hash");
     if (hashParam) {
       setHash(hashParam);
     }
   }, []);
 
   // Função para criar o delay de 1,5 segundos
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,15 +40,18 @@ export default function ResetSenha() {
           return;
         }
 
-        const res = await api.post('/reset-senha/reset', { hash: hash, senha: password });
+        const res = await api.post("/reset-senha/reset", {
+          hash: hash,
+          senha: password,
+        });
         await delay(1500);
-        alert(res.message || 'Senha redefinida com sucesso!');
-        navigate('/');
+        alert(res.message || "Senha redefinida com sucesso!");
+        navigate("/");
       } else {
-        const res = await api.post('/reset-senha', { email: email });
+        const res = await api.post("/reset-senha", { email: email });
 
         if (!res || !res.resetSenha || !res.resetSenha.hash) {
-          throw new Error('Erro ao recuperar a hash de redefinição');
+          throw new Error("Erro ao recuperar a hash de redefinição");
         }
 
         const hash = res.resetSenha.hash;
@@ -56,9 +59,9 @@ export default function ResetSenha() {
 
         const emailData = {
           to: email,
-          subject: mailReset['reset-senha'].subject,
-          text: mailReset['reset-senha'].text,
-          html: mailReset['reset-senha'].html,
+          subject: mailReset["reset-senha"].subject,
+          text: mailReset["reset-senha"].text,
+          html: mailReset["reset-senha"].html,
         };
 
         console.log(emailData);
@@ -66,9 +69,9 @@ export default function ResetSenha() {
         await delay(1500);
 
         await emailService.sendEmail(emailData);
-        alert('E-mail enviado com sucesso!');
-        setEmail('');
-        navigate('/');
+        alert("E-mail enviado com sucesso!");
+        setEmail("");
+        navigate("/");
       }
     } catch (error) {
       console.error(error);
@@ -83,9 +86,13 @@ export default function ResetSenha() {
       {loading && <Loading />}
       <div id="reset-senha-container">
         <div className="reset-senha-container">
-          <img className="img-reset-senha" src={imgResetSenha} alt="imagem reset senha" />
+          <img
+            className="img-reset-senha"
+            src={imgResetSenha}
+            alt="imagem reset senha"
+          />
           {hash ? (
-            <div id='reset-senha-form-container'>
+            <div id="reset-senha-form-container">
               <h2>Redefinir sua senha</h2>
               <form id="reset-senha-form" onSubmit={handleSubmit}>
                 <label htmlFor="password">Nova Senha</label>
@@ -104,11 +111,13 @@ export default function ResetSenha() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <button className='reset-senha-btn' type="submit">Redefinir Senha</button>
+                <button className="reset-senha-btn" type="submit">
+                  Redefinir Senha
+                </button>
               </form>
             </div>
           ) : (
-            <div id='reset-senha-form-container'>
+            <div id="reset-senha-form-container">
               <h2>Esqueceu sua senha?</h2>
               <p>Informe seu e-mail para redefinir sua senha.</p>
               <form id="reset-senha-form" onSubmit={handleSubmit}>
@@ -120,8 +129,17 @@ export default function ResetSenha() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <button className='reset-senha-btn' type="submit">Enviar</button>
-                <button className='reset-senha-btn' id='reset-senha-btn-voltar' type="button" onClick={() => navigate("/")}>Voltar</button>
+                <button className="reset-senha-btn" type="submit">
+                  Enviar
+                </button>
+                <button
+                  className="reset-senha-btn"
+                  id="reset-senha-btn-voltar"
+                  type="button"
+                  onClick={() => navigate("/")}
+                >
+                  Voltar
+                </button>
               </form>
             </div>
           )}

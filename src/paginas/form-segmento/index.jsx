@@ -10,7 +10,7 @@ import Popup from "../../componetes/pop-up";
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
 
-export default function FormSegmento({ mode = 'cadastro' }) {
+export default function FormSegmento({ mode = "cadastro" }) {
   const api = new Api();
   const [nomeSegmento, setNomeSegmento] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ export default function FormSegmento({ mode = 'cadastro' }) {
 
   useEffect(() => {
     const fetchSegmento = async () => {
-      if (mode === 'edicao' && id) {
+      if (mode === "edicao" && id) {
         try {
           setLoading(true);
           const response = await api.get(`/segmentos/${id}`);
@@ -29,8 +29,7 @@ export default function FormSegmento({ mode = 'cadastro' }) {
           setNomeSegmento(segmento.nome);
         } catch (err) {
           console.error("Error fetching segmentos:", err);
-        }
-        finally {
+        } finally {
           setLoading(false);
         }
       }
@@ -65,12 +64,15 @@ export default function FormSegmento({ mode = 'cadastro' }) {
     try {
       setLoading(true);
       let req;
-      if (mode === 'cadastro') {
-        req = await api.post('/segmentos', data);
-      } else if (mode === 'edicao') {
+      if (mode === "cadastro") {
+        req = await api.post("/segmentos", data);
+      } else if (mode === "edicao") {
         req = await api.put(`/segmentos/${id}`, data);
       }
-      if (req.message === "Segmento criado com sucesso!" || req.message === "Segmento atualizado com sucesso!") {
+      if (
+        req.message === "Segmento criado com sucesso!" ||
+        req.message === "Segmento atualizado com sucesso!"
+      ) {
         setNomeSegmento("");
         navigate("/gestao?aba=segmentos");
       } else {
@@ -79,8 +81,7 @@ export default function FormSegmento({ mode = 'cadastro' }) {
     } catch (err) {
       console.error("Error saving data:", err);
       alert(err);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -94,8 +95,14 @@ export default function FormSegmento({ mode = 'cadastro' }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          title={mode == "cadastro" ? "Adicionar Novo Segmento" : "Editar Segmento"}
-          message={mode == "cadastro" ? "Você está prestes a adicionar um novo segmento. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste segmento. Deseja continuar?"}
+          title={
+            mode == "cadastro" ? "Adicionar Novo Segmento" : "Editar Segmento"
+          }
+          message={
+            mode == "cadastro"
+              ? "Você está prestes a adicionar um novo segmento. Deseja continuar?"
+              : "Você está prestes a salvar as alterações feitas neste segmento. Deseja continuar?"
+          }
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />
@@ -103,12 +110,20 @@ export default function FormSegmento({ mode = 'cadastro' }) {
       <div className="global-display">
         <Navbar />
         <div className="global-container">
-          <h2>{mode === 'cadastro' ? 'Cadastro de Segmento' : 'Edição de Segmento'}</h2>
-          <p id="cadastro-segmento-descricao">Campos com "*" são obrigatórios.</p>
+          <h2>
+            {mode === "cadastro"
+              ? "Cadastro de Segmento"
+              : "Edição de Segmento"}
+          </h2>
+          <p id="cadastro-segmento-descricao">
+            Campos com "*" são obrigatórios.
+          </p>
           <div id="cadastro-segmento-form-container">
             <form id="cadastro-segmento-form" onSubmit={handleSaveSegmento}>
               <div id="cadastro-segmento-input-labels">
-                <label htmlFor="nome"><b>Nome *</b></label>
+                <label htmlFor="nome">
+                  <b>Nome *</b>
+                </label>
                 <input
                   type="text"
                   id="cadastro-segmento-input"
@@ -121,14 +136,29 @@ export default function FormSegmento({ mode = 'cadastro' }) {
                 />
               </div>
               <div className="cadastro-segmento-container-btn">
-                <button id="cadastro-segmento-btn-cancelar" className="cadastro-segmento-btn" onClick={() => navigate('/gestao?aba=segmentos')}>Cancelar</button>
-                <button id="cadastro-segmento-btn-cadastrar" className="cadastro-segmento-btn">
-                  {mode === 'cadastro' ? 'Adicionar segmento' : 'Salvar alterações'}
+                <button
+                  id="cadastro-segmento-btn-cancelar"
+                  className="cadastro-segmento-btn"
+                  onClick={() => navigate("/gestao?aba=segmentos")}
+                >
+                  Cancelar
+                </button>
+                <button
+                  id="cadastro-segmento-btn-cadastrar"
+                  className="cadastro-segmento-btn"
+                >
+                  {mode === "cadastro"
+                    ? "Adicionar segmento"
+                    : "Salvar alterações"}
                 </button>
               </div>
             </form>
             <div id="cadastro-segmento-container-img">
-              <img src={imgCadastroSegmento} alt="" id="cadastro-segmento-img" />
+              <img
+                src={imgCadastroSegmento}
+                alt=""
+                id="cadastro-segmento-img"
+              />
             </div>
           </div>
         </div>

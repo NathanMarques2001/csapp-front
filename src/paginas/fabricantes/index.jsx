@@ -47,7 +47,8 @@ export default function Fabricantes() {
     setLoading(true);
     try {
       const response = await api.get(`/fabricantes/${id}`);
-      const newStatus = response.fabricante.status === "ativo" ? "inativo" : "ativo";
+      const newStatus =
+        response.fabricante.status === "ativo" ? "inativo" : "ativo";
       await api.put(`/fabricantes/${id}`, { status: newStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {
@@ -85,7 +86,7 @@ export default function Fabricantes() {
   };
 
   const filteredFabricantes = fabricantes.filter((fabricante) =>
-    fabricante.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    fabricante.nome.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalFabricantes = filteredFabricantes.length;
@@ -102,7 +103,9 @@ export default function Fabricantes() {
         />
       )}
       <div>
-        <h3 className="gestao-section-subtitulo">Fornecedores ({totalFabricantes})</h3>
+        <h3 className="gestao-section-subtitulo">
+          Fornecedores ({totalFabricantes})
+        </h3>
         <input
           type="text"
           placeholder="Procure pelo nome"

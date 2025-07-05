@@ -45,7 +45,8 @@ export default function Segmentos() {
     setLoading(true);
     try {
       const response = await api.get(`/segmentos/${id}`);
-      const newStatus = response.segmento.status === "ativo" ? "inativo" : "ativo";
+      const newStatus =
+        response.segmento.status === "ativo" ? "inativo" : "ativo";
       await api.put(`/segmentos/${id}`, { status: newStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {
@@ -75,7 +76,7 @@ export default function Segmentos() {
   };
 
   const filteredSegmentos = segmentos.filter(({ nome }) =>
-    nome.toLowerCase().includes(searchTerm.toLowerCase())
+    nome.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalSegmentos = filteredSegmentos.length;
@@ -88,9 +89,7 @@ export default function Segmentos() {
           title={popupConfig.title}
           message={popupConfig.message}
           onConfirm={handleChangeStatus}
-          onCancel={() =>
-            setPopupConfig((prev) => ({ ...prev, open: false }))
-          }
+          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
         />
       )}
       <div>
@@ -133,10 +132,8 @@ export default function Segmentos() {
                         <img src={editIcon} alt="Editar" />
                       </button>
                       <button
-                        className={`${status === 'ativo' ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
-                        onClick={() =>
-                          handleStatusChange(id, status)
-                        }
+                        className={`${status === "ativo" ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
+                        onClick={() => handleStatusChange(id, status)}
                       >
                         <img
                           src={status === "ativo" ? iconeInativar : iconeAtivar}

@@ -46,7 +46,7 @@ export default function FormCliente({ mode }) {
 
   const [usuarios, setUsuarios] = useState([]);
 
-  const [cookies, setCookie, removeCookie] = useCookies(['tipo']);
+  const [cookies, setCookie, removeCookie] = useCookies(["tipo"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
   useEffect(() => {
@@ -66,20 +66,30 @@ export default function FormCliente({ mode }) {
           const response = await api.get(`/clientes/${id}`);
 
           const formatDate = (dateString) => {
-            if (!dateString || dateString === "" || dateString === "Invalid date") return null;
+            if (
+              !dateString ||
+              dateString === "" ||
+              dateString === "Invalid date"
+            )
+              return null;
             const date = new Date(dateString);
             if (isNaN(date.getTime())) return null; // Verifica se é uma data válida
             const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
             return `${year}-${month}-${day}`;
           };
 
-
           const clienteData = response.cliente;
-          clienteData.gestor_contratos_nascimento = formatDate(clienteData.gestor_contratos_nascimento);
-          clienteData.gestor_chamados_nascimento = formatDate(clienteData.gestor_chamados_nascimento);
-          clienteData.gestor_financeiro_nascimento = formatDate(clienteData.gestor_financeiro_nascimento);
+          clienteData.gestor_contratos_nascimento = formatDate(
+            clienteData.gestor_contratos_nascimento,
+          );
+          clienteData.gestor_chamados_nascimento = formatDate(
+            clienteData.gestor_chamados_nascimento,
+          );
+          clienteData.gestor_financeiro_nascimento = formatDate(
+            clienteData.gestor_financeiro_nascimento,
+          );
 
           setCliente(clienteData);
         } catch (error) {
@@ -91,7 +101,6 @@ export default function FormCliente({ mode }) {
       fetchCliente();
     }
   }, [mode, id]);
-
 
   useEffect(() => {
     const fetchUsuarios = async () => {
@@ -106,7 +115,9 @@ export default function FormCliente({ mode }) {
     const fetchSegmentos = async () => {
       try {
         const response = await api.get("/segmentos");
-        const segmentosAtivos = response.segmentos.filter((segmento) => segmento.status !== 'inativo');
+        const segmentosAtivos = response.segmentos.filter(
+          (segmento) => segmento.status !== "inativo",
+        );
         setSegmentos(segmentosAtivos);
       } catch (error) {
         console.error("Erro ao buscar os segmentos: " + error);
@@ -162,8 +173,7 @@ export default function FormCliente({ mode }) {
     } catch (error) {
       console.error("Error submitting client data:", error);
       alert(error);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -182,8 +192,14 @@ export default function FormCliente({ mode }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          title={mode == "cadastro" ? "Adicionar Novo Cliente" : "Editar Cliente"}
-          message={mode == "cadastro" ? "Você está prestes a adicionar um novo Cliente. Deseja continuar?" : "Você está prestes a salvar as alterações feitas neste Cliente. Deseja continuar?"}
+          title={
+            mode == "cadastro" ? "Adicionar Novo Cliente" : "Editar Cliente"
+          }
+          message={
+            mode == "cadastro"
+              ? "Você está prestes a adicionar um novo Cliente. Deseja continuar?"
+              : "Você está prestes a salvar as alterações feitas neste Cliente. Deseja continuar?"
+          }
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />
@@ -191,8 +207,12 @@ export default function FormCliente({ mode }) {
       <div className="global-display">
         <Navbar />
         <div className="global-container">
-          <h2>{mode === "cadastro" ? "Cadastro de Cliente" : "Edição de Cliente"}</h2>
-          <p id="cadastro-solucao-descricao">Campos com "*" são obrigatórios.</p>
+          <h2>
+            {mode === "cadastro" ? "Cadastro de Cliente" : "Edição de Cliente"}
+          </h2>
+          <p id="cadastro-solucao-descricao">
+            Campos com "*" são obrigatórios.
+          </p>
           <div id="cadastro-solucao-form-container">
             <form className="form" onSubmit={handleSubmit}>
               <div className="form-cliente-container">
@@ -242,29 +262,50 @@ export default function FormCliente({ mode }) {
                       onChange={handleChange}
                     />
                   </div>
-                    <div className="form-group">
-                      <label htmlFor="id_grupo_economico">Grupo Econômico</label>
-                      <select id="id_grupo_economico" disabled={!isAdminOrDev} name="id_grupo_economico" value={cliente.id_grupo_economico} onChange={handleChange}>
-                        <option value="">Selecione...</option>
-                        {gruposEconomicos.map((grupoEconomico) => (
-                          <option key={grupoEconomico.id} value={grupoEconomico.id}>{grupoEconomico.nome}</option>
-                        ))}
-                      </select>
+                  <div className="form-group">
+                    <label htmlFor="id_grupo_economico">Grupo Econômico</label>
+                    <select
+                      id="id_grupo_economico"
+                      disabled={!isAdminOrDev}
+                      name="id_grupo_economico"
+                      value={cliente.id_grupo_economico}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecione...</option>
+                      {gruposEconomicos.map((grupoEconomico) => (
+                        <option
+                          key={grupoEconomico.id}
+                          value={grupoEconomico.id}
+                        >
+                          {grupoEconomico.nome}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="form-group">
-                      <label htmlFor="tipo_unidade">Tipo da Unidade</label>
-                      <select id="tipo_unidade" disabled={!isAdminOrDev} name="tipo_unidade" value={cliente.tipo_unidade} onChange={handleChange}>
-                        <option value="">Selecione...</option>
-                        {["matriz", "filial"].map((tipo) => (
-                          <option key={tipo} value={tipo}>
-                            {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
-                          </option>
-                        ))}
-                      </select>
+                    <label htmlFor="tipo_unidade">Tipo da Unidade</label>
+                    <select
+                      id="tipo_unidade"
+                      disabled={!isAdminOrDev}
+                      name="tipo_unidade"
+                      value={cliente.tipo_unidade}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecione...</option>
+                      {["matriz", "filial"].map((tipo) => (
+                        <option key={tipo} value={tipo}>
+                          {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div id="cadastro-cliente-img-div">
-                  <img id="cadastro-cliente-img" src={imgCadastroCliente} alt="" />
+                  <img
+                    id="cadastro-cliente-img"
+                    src={imgCadastroCliente}
+                    alt=""
+                  />
                 </div>
               </div>
               <div className="form-cliente-container form-cliente-container-border">
@@ -302,7 +343,9 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div className="date-container">
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_contratos_nascimento">Aniversário</label>
+                      <label htmlFor="gestor_contratos_nascimento">
+                        Aniversário
+                      </label>
                       <input
                         type="date"
                         id="gestor_contratos_nascimento"
@@ -313,7 +356,9 @@ export default function FormCliente({ mode }) {
                       />
                     </div>
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_contratos_telefone_1">Telefone 1 <span className="required">*</span></label>
+                      <label htmlFor="gestor_contratos_telefone_1">
+                        Telefone 1 <span className="required">*</span>
+                      </label>
                       <input
                         type="text"
                         id="gestor_contratos_telefone_1"
@@ -326,7 +371,9 @@ export default function FormCliente({ mode }) {
                       />
                     </div>
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_contratos_telefone_2">Telefone 2</label>
+                      <label htmlFor="gestor_contratos_telefone_2">
+                        Telefone 2
+                      </label>
                       <input
                         type="text"
                         id="gestor_contratos_telefone_2"
@@ -342,9 +389,7 @@ export default function FormCliente({ mode }) {
                 <div id="form-cliente-container-2">
                   <h2>Gestor de Chamados</h2>
                   <div className="form-group">
-                    <label htmlFor="gestor_chamados_nome">
-                      Nome
-                    </label>
+                    <label htmlFor="gestor_chamados_nome">Nome</label>
                     <input
                       type="text"
                       id="gestor_chamados_nome"
@@ -356,9 +401,7 @@ export default function FormCliente({ mode }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="gestor_chamados_email">
-                      Email
-                    </label>
+                    <label htmlFor="gestor_chamados_email">Email</label>
                     <input
                       type="email"
                       id="gestor_chamados_email"
@@ -371,7 +414,9 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div className="date-container">
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_chamados_nascimento">Aniversário</label>
+                      <label htmlFor="gestor_chamados_nascimento">
+                        Aniversário
+                      </label>
                       <input
                         type="date"
                         id="gestor_chamados_nascimento"
@@ -396,7 +441,9 @@ export default function FormCliente({ mode }) {
                       />
                     </div>
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_chamados_telefone_2">Telefone 2</label>
+                      <label htmlFor="gestor_chamados_telefone_2">
+                        Telefone 2
+                      </label>
                       <input
                         type="text"
                         id="gestor_chamados_telefone_2"
@@ -414,9 +461,7 @@ export default function FormCliente({ mode }) {
                 <div id="form-cliente-container-2">
                   <h2>Gestor Financeiro</h2>
                   <div className="form-group">
-                    <label htmlFor="gestor_financeiro_nome">
-                      Nome
-                    </label>
+                    <label htmlFor="gestor_financeiro_nome">Nome</label>
                     <input
                       type="text"
                       id="gestor_financeiro_nome"
@@ -428,9 +473,7 @@ export default function FormCliente({ mode }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="gestor_financeiro_email">
-                      Email
-                    </label>
+                    <label htmlFor="gestor_financeiro_email">Email</label>
                     <input
                       type="email"
                       id="gestor_financeiro_email"
@@ -443,7 +486,9 @@ export default function FormCliente({ mode }) {
                   </div>
                   <div className="date-container">
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_financeiro_nascimento">Aniversário</label>
+                      <label htmlFor="gestor_financeiro_nascimento">
+                        Aniversário
+                      </label>
                       <input
                         type="date"
                         id="gestor_financeiro_nascimento"
@@ -468,7 +513,9 @@ export default function FormCliente({ mode }) {
                       />
                     </div>
                     <div className="form-group form-group-3">
-                      <label htmlFor="gestor_financeiro_telefone_2">Telefone 2</label>
+                      <label htmlFor="gestor_financeiro_telefone_2">
+                        Telefone 2
+                      </label>
                       <input
                         type="text"
                         id="gestor_financeiro_telefone_2"
@@ -483,12 +530,25 @@ export default function FormCliente({ mode }) {
                 </div>
               </div>
               <div className="form-buttons">
-                <button type="button" className="form-cliente-btn-cancelar" onClick={() => navigate('/clientes')}>
+                <button
+                  type="button"
+                  className="form-cliente-btn-cancelar"
+                  onClick={() => navigate("/clientes")}
+                >
                   {!isAdminOrDev ? "Voltar" : "Cancelar"}
                 </button>
-                {!isAdminOrDev ? <></> : <button type="submit" className="global-btn-verde form-cliente-btn-enviar">
-                  {mode === "cadastro" ? "Adicionar cliente" : "Salvar alterações"}
-                </button>}
+                {!isAdminOrDev ? (
+                  <></>
+                ) : (
+                  <button
+                    type="submit"
+                    className="global-btn-verde form-cliente-btn-enviar"
+                  >
+                    {mode === "cadastro"
+                      ? "Adicionar cliente"
+                      : "Salvar alterações"}
+                  </button>
+                )}
               </div>
             </form>
           </div>

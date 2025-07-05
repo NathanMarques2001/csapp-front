@@ -1,10 +1,10 @@
 // Estilos, funcoes, classes, imagens e etc
-import './style.css';
+import "./style.css";
 
 export default function Loading() {
-    return (
-        <div className="loading-container">
-            <div className="spinner"></div>
-        </div>
-    );
+  return (
+    <div className="loading-container">
+      <div className="spinner"></div>
+    </div>
+  );
 }

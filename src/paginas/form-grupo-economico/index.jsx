@@ -7,7 +7,7 @@ import "./style.css";
 import Loading from "../../componetes/loading";
 import Popup from "../../componetes/pop-up";
 
-export default function FormGrupoEconomico({ mode = 'cadastro' }) {
+export default function FormGrupoEconomico({ mode = "cadastro" }) {
   const api = new Api();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,11 +32,11 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
       try {
         const [uRes, sRes] = await Promise.all([
           api.get("/usuarios"),
-          api.get("/segmentos")
+          api.get("/segmentos"),
         ]);
         setUsuarios(uRes.usuarios);
         // só segmentos ativos
-        setSegmentos(sRes.segmentos.filter(seg => seg.status !== "inativo"));
+        setSegmentos(sRes.segmentos.filter((seg) => seg.status !== "inativo"));
       } catch (err) {
         console.error("Erro ao buscar opções:", err);
       }
@@ -46,7 +46,7 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
 
   // Se for edição, preenche o form
   useEffect(() => {
-    if (mode === 'edicao' && id) {
+    if (mode === "edicao" && id) {
       (async () => {
         try {
           setLoading(true);
@@ -65,14 +65,14 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
     }
   }, [mode, id]);
 
-  const handleCancel = e => {
+  const handleCancel = (e) => {
     e.preventDefault();
     setPopupAction(() => confirmCancel);
     setShowPopup(true);
   };
   const confirmCancel = () => navigate("/gestao?aba=grupos-economicos");
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setPopupAction(() => confirmSubmit);
     setShowPopup(true);
@@ -83,12 +83,12 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
       nome,
       id_usuario: Number(idUsuario),
       nps: Number(nps),
-      id_segmento: Number(idSegmento)
+      id_segmento: Number(idSegmento),
     };
     try {
       setLoading(true);
       let resp;
-      if (mode === 'cadastro') {
+      if (mode === "cadastro") {
         resp = await api.post("/grupos-economicos", payload);
       } else {
         resp = await api.put(`/grupos-economicos/${id}`, payload);
@@ -111,7 +111,11 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          title={mode === "cadastro" ? "Adicionar Novo Grupo Econômico" : "Editar Grupo Econômico"}
+          title={
+            mode === "cadastro"
+              ? "Adicionar Novo Grupo Econômico"
+              : "Editar Grupo Econômico"
+          }
           message={
             mode === "cadastro"
               ? "Você está prestes a adicionar um novo grupo econômico. Deseja continuar?"
@@ -124,54 +128,69 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
       <div className="global-display">
         <Navbar />
         <div className="global-container">
-          <h2>{mode === 'cadastro' ? 'Cadastro de Grupo Econômico' : 'Edição de Grupo Econômico'}</h2>
-          <p id="cadastro-grupo-economico-descricao">Campos com "*" são obrigatórios.</p>
+          <h2>
+            {mode === "cadastro"
+              ? "Cadastro de Grupo Econômico"
+              : "Edição de Grupo Econômico"}
+          </h2>
+          <p id="cadastro-grupo-economico-descricao">
+            Campos com "*" são obrigatórios.
+          </p>
           <div id="cadastro-grupo-economico-form-container">
             <form id="cadastro-grupo-economico-form" onSubmit={handleSubmit}>
-              
               {/* Nome */}
               <div className="form-group">
-                <label htmlFor="nome">Nome <span className="required">*</span></label>
+                <label htmlFor="nome">
+                  Nome <span className="required">*</span>
+                </label>
                 <input
                   type="text"
                   id="nome"
                   name="nome"
                   value={nome}
-                  onChange={e => setNome(e.target.value)}
+                  onChange={(e) => setNome(e.target.value)}
                   required
                 />
               </div>
 
               {/* Usuário */}
               <div className="form-group">
-                <label htmlFor="id_usuario">Responsável <span className="required">*</span></label>
+                <label htmlFor="id_usuario">
+                  Responsável <span className="required">*</span>
+                </label>
                 <select
                   id="id_usuario"
                   name="id_usuario"
                   value={idUsuario}
-                  onChange={e => setIdUsuario(e.target.value)}
+                  onChange={(e) => setIdUsuario(e.target.value)}
                   required
                 >
                   <option value="">Selecione...</option>
-                  {usuarios.map(u => (
-                    <option key={u.id} value={u.id}>{u.nome}</option>
+                  {usuarios.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.nome}
+                    </option>
                   ))}
                 </select>
               </div>
 
               {/* Segmento */}
               <div className="form-group">
-                <label htmlFor="id_segmento">Segmento <span className="required">*</span></label>
+                <label htmlFor="id_segmento">
+                  Segmento <span className="required">*</span>
+                </label>
                 <select
                   id="id_segmento"
                   name="id_segmento"
                   value={idSegmento}
-                  onChange={e => setIdSegmento(e.target.value)}
+                  onChange={(e) => setIdSegmento(e.target.value)}
                   required
                 >
                   <option value="">Selecione...</option>
-                  {segmentos.map(s => (
-                    <option key={s.id} value={s.id}>{s.nome}</option>
+                  {segmentos.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.nome}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -186,7 +205,7 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
                   min="0"
                   max="10"
                   value={nps}
-                  onChange={e => setNps(e.target.value)}
+                  onChange={(e) => setNps(e.target.value)}
                 />
               </div>
 
@@ -203,11 +222,11 @@ export default function FormGrupoEconomico({ mode = 'cadastro' }) {
                   className="cadastro-grupo-economico-btn"
                   id="cadastro-grupo-economico-btn-cadastrar"
                 >
-                  {mode === 'cadastro' ? 'Adicionar' : 'Salvar'} grupo econômico
+                  {mode === "cadastro" ? "Adicionar" : "Salvar"} grupo econômico
                 </button>
               </div>
             </form>
-            
+
             <div id="cadastro-grupo-economico-container-img">
               <img
                 src={imgCadastroGrupoEconomico}

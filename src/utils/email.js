@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 class Email {
   // PRD
@@ -10,12 +10,12 @@ class Email {
     this.api = axios.create({
       baseURL: Email.baseUrl,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         // Adicione cabeçalhos de segurança (se necessário)
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains', // HSTS
-        'X-Content-Type-Options': 'nosniff', // Evita tipo de conteúdo não esperado
-        'X-Frame-Options': 'DENY', // Previne ataques de clickjacking
-        'X-XSS-Protection': '1; mode=block', // Protege contra XSS
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains", // HSTS
+        "X-Content-Type-Options": "nosniff", // Evita tipo de conteúdo não esperado
+        "X-Frame-Options": "DENY", // Previne ataques de clickjacking
+        "X-XSS-Protection": "1; mode=block", // Protege contra XSS
         // 'Authorization': `Bearer ${your_token_here}`, // Se necessário para autenticação via token
       },
     });
@@ -26,11 +26,11 @@ class Email {
     try {
       // Verifique se os dados necessários estão presentes
       if (!data.to || !data.subject || !data.text || !data.html) {
-        throw new Error('Dados incompletos para envio de e-mail');
+        throw new Error("Dados incompletos para envio de e-mail");
       }
 
       // Enviar o e-mail
-      const res = await this.api.post('/send', data);
+      const res = await this.api.post("/send", data);
 
       // Verifique se a resposta é bem-sucedida
       if (res.status !== 200) {
@@ -40,7 +40,10 @@ class Email {
       return res.data;
     } catch (err) {
       // Erro ao enviar e-mail
-      console.error('Erro ao enviar e-mail:', err.response ? err.response.data : err.message);
+      console.error(
+        "Erro ao enviar e-mail:",
+        err.response ? err.response.data : err.message,
+      );
       throw err.response ? err.response.data : "Erro ao enviar e-mail";
     }
   }

@@ -11,5 +11,5 @@ export default class Excel {
     XLSX.utils.book_append_sheet(workbook, worksheet, this.nomeRelatorio);
 
     XLSX.writeFile(workbook, `${this.nomeRelatorio}.xlsx`);
-  };
+  }
 }

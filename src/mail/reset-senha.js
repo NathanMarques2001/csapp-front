@@ -2,8 +2,8 @@ function MailResetSenha(hash) {
   const resetLink = `https://csapp.prolinx.com.br/reset-senha?hash=${hash}`;
   const emailContent = {
     "reset-senha": {
-      "subject": "Redefinição de Senha",
-      "html": `
+      subject: "Redefinição de Senha",
+      html: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -64,8 +64,8 @@ function MailResetSenha(hash) {
         </body>
         </html>
       `,
-      "text": `Olá, detectamos uma solicitação de alteração de senha para sua conta. Para garantir sua segurança, acesse o link para redefinir sua senha: ${resetLink}`
-    }
+      text: `Olá, detectamos uma solicitação de alteração de senha para sua conta. Para garantir sua segurança, acesse o link para redefinir sua senha: ${resetLink}`,
+    },
   };
   return emailContent;
 }

@@ -75,7 +75,7 @@ export default function GruposEconomicos() {
   // };
 
   const filteredGruposEconomicos = gruposEconomicos.filter(({ nome }) =>
-    nome.toLowerCase().includes(searchTerm.toLowerCase())
+    nome.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const totalGruposEconomicos = filteredGruposEconomicos.length;

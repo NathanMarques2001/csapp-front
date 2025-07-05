@@ -13,7 +13,6 @@ class DateJS {
     const newDate = new Date(date);
     return newDate.toLocaleDateString(this.location, this.options);
   }
-
 }
 
 export default DateJS;

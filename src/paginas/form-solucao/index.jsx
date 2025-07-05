@@ -10,7 +10,7 @@ import Popup from "../../componetes/pop-up";
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
 
-export default function FormSolucao({ mode = 'cadastro' }) {
+export default function FormSolucao({ mode = "cadastro" }) {
   const api = new Api();
   const [fabricantes, setFabricantes] = useState([]);
   const [selectedFabricante, setSelectedFabricante] = useState("");
@@ -25,19 +25,20 @@ export default function FormSolucao({ mode = 'cadastro' }) {
     const fetchFabricantes = async () => {
       try {
         setLoading(true);
-        const data = await api.get('/fabricantes');
-        const fabricantesAitovs = data.fabricantes.filter((fab) => fab.status !== "inativo");
+        const data = await api.get("/fabricantes");
+        const fabricantesAitovs = data.fabricantes.filter(
+          (fab) => fab.status !== "inativo",
+        );
         setFabricantes(fabricantesAitovs);
       } catch (err) {
         console.error("Error fetching data:", err);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     };
 
     const fetchProduto = async () => {
-      if (mode === 'edicao' && id) {
+      if (mode === "edicao" && id) {
         try {
           setLoading(true);
           const response = await api.get(`/produtos/${id}`);
@@ -46,8 +47,7 @@ export default function FormSolucao({ mode = 'cadastro' }) {
           setSelectedFabricante(produto.id_fabricante);
         } catch (err) {
           console.error("Error fetching product:", err);
-        }
-        finally {
+        } finally {
           setLoading(false);
         }
       }
@@ -82,17 +82,20 @@ export default function FormSolucao({ mode = 'cadastro' }) {
     setShowPopup(false);
     const data = {
       nome: nomeProduto,
-      id_fabricante: selectedFabricante
+      id_fabricante: selectedFabricante,
     };
     try {
       setLoading(true);
       let req;
-      if (mode === 'cadastro') {
-        req = await api.post('/produtos', data);
-      } else if (mode === 'edicao') {
+      if (mode === "cadastro") {
+        req = await api.post("/produtos", data);
+      } else if (mode === "edicao") {
         req = await api.put(`/produtos/${id}`, data);
       }
-      if (req.message === "Produto criado com sucesso!" || req.message === "Produto atualizado com sucesso!") {
+      if (
+        req.message === "Produto criado com sucesso!" ||
+        req.message === "Produto atualizado com sucesso!"
+      ) {
         setNomeProduto("");
         setSelectedFabricante("");
         navigate("/gestao?aba=solucoes");
@@ -102,8 +105,7 @@ export default function FormSolucao({ mode = 'cadastro' }) {
     } catch (err) {
       console.error("Error posting data:", err);
       alert(err);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -121,8 +123,14 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       {loading && <Loading />}
       {showPopup && (
         <Popup
-          title={mode == "cadastro" ? "Adicionar Nova Solução" : "Editar Solução"}
-          message={mode == "cadastro" ? "Você está prestes a adicionar uma nova solução. Deseja continuar?" : "Você está prestes a salvar as alterações feitas nesta solução. Deseja continuar?"}
+          title={
+            mode == "cadastro" ? "Adicionar Nova Solução" : "Editar Solução"
+          }
+          message={
+            mode == "cadastro"
+              ? "Você está prestes a adicionar uma nova solução. Deseja continuar?"
+              : "Você está prestes a salvar as alterações feitas nesta solução. Deseja continuar?"
+          }
           onConfirm={popupAction}
           onCancel={cancelPopup}
         />
@@ -130,12 +138,18 @@ export default function FormSolucao({ mode = 'cadastro' }) {
       <div className="global-display">
         <Navbar />
         <div className="global-container">
-          <h2>{mode === 'cadastro' ? 'Cadastro de Solução' : 'Edição de Solução'}</h2>
-          <p id="cadastro-solucao-descricao">Campos com "*" são obrigatórios.</p>
+          <h2>
+            {mode === "cadastro" ? "Cadastro de Solução" : "Edição de Solução"}
+          </h2>
+          <p id="cadastro-solucao-descricao">
+            Campos com "*" são obrigatórios.
+          </p>
           <div id="cadastro-solucao-form-container">
             <form id="cadastro-solucao-form" onSubmit={handleAddProduct}>
               <div id="cadastro-solucao-input-labels">
-                <label htmlFor="nome"><b>Nome *</b></label>
+                <label htmlFor="nome">
+                  <b>Nome *</b>
+                </label>
                 <input
                   type="text"
                   id="cadastro-solucao-input"
@@ -146,7 +160,9 @@ export default function FormSolucao({ mode = 'cadastro' }) {
                   placeholder="Digite o nome da solução"
                   className="cadastro-solucao-input"
                 />
-                <label htmlFor="fabricante"><b>Fornecedor *</b></label>
+                <label htmlFor="fabricante">
+                  <b>Fornecedor *</b>
+                </label>
                 <select
                   name="fabricante"
                   id="cadastro-solucao-select"
@@ -156,15 +172,29 @@ export default function FormSolucao({ mode = 'cadastro' }) {
                   className="cadastro-solucao-input"
                 >
                   <option value="s/ fabricante"></option>
-                  {fabricantes.length > 0 && fabricantes.map(fabricante => (
-                    <option key={fabricante.id} value={fabricante.id}>{fabricante.nome}</option>
-                  ))}
+                  {fabricantes.length > 0 &&
+                    fabricantes.map((fabricante) => (
+                      <option key={fabricante.id} value={fabricante.id}>
+                        {fabricante.nome}
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="cadastro-solucao-container-btn">
-                <button id="cadastro-solucao-btn-cancelar" className="cadastro-solucao-btn" onClick={() => navigate('/gestao?aba=solucoes')}>Cancelar</button>
-                <button id="cadastro-solucao-btn-cadastrar" className="cadastro-solucao-btn">
-                  {mode === 'cadastro' ? 'Adicionar solução' : 'Salvar alterações'}
+                <button
+                  id="cadastro-solucao-btn-cancelar"
+                  className="cadastro-solucao-btn"
+                  onClick={() => navigate("/gestao?aba=solucoes")}
+                >
+                  Cancelar
+                </button>
+                <button
+                  id="cadastro-solucao-btn-cadastrar"
+                  className="cadastro-solucao-btn"
+                >
+                  {mode === "cadastro"
+                    ? "Adicionar solução"
+                    : "Salvar alterações"}
                 </button>
               </div>
             </form>

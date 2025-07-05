@@ -12,27 +12,38 @@ import "./style.css";
 
 export default function Relatorios() {
   const [loading, setLoading] = useState(false);
-  const [tabelaSelecionada, setTabelaSelecionada] = useState('');
+  const [tabelaSelecionada, setTabelaSelecionada] = useState("");
   const [clientes, setClientes] = useState([]);
   const [contratos, setContratos] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [segmentos, setSegmentos] = useState([]);
   const [fabricantes, setFabricantes] = useState([]);
-  const [cookies] = useCookies(['tipo', 'id']);
+  const [cookies] = useCookies(["tipo", "id"]);
 
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
       try {
         const api = new Api();
-        const [clientesRes, contratosRes, produtosRes, usuariosRes, segmentosRes, fabricantesRes] = await Promise.all([
-          api.get('/clientes'),
-          api.get(cookies.tipo === 'admin' || cookies.tipo === 'dev' ? '/contratos' : `/contratos/vendedor/${cookies.id}`),
-          api.get('/produtos'),
-          api.get('/usuarios'),
-          api.get('/segmentos'),
-          api.get('/fabricantes')
+        const [
+          clientesRes,
+          contratosRes,
+          produtosRes,
+          usuariosRes,
+          segmentosRes,
+          fabricantesRes,
+        ] = await Promise.all([
+          api.get("/clientes"),
+          api.get(
+            cookies.tipo === "admin" || cookies.tipo === "dev"
+              ? "/contratos"
+              : `/contratos/vendedor/${cookies.id}`,
+          ),
+          api.get("/produtos"),
+          api.get("/usuarios"),
+          api.get("/segmentos"),
+          api.get("/fabricantes"),
         ]);
         setClientes(clientesRes.clientes || []);
         setContratos(contratosRes.contratos || []);
@@ -51,7 +62,10 @@ export default function Relatorios() {
 
   const usuariosMap = useMemo(() => createMapById(usuarios), [usuarios]);
   const segmentosMap = useMemo(() => createMapById(segmentos), [segmentos]);
-  const fabricantesMap = useMemo(() => createMapById(fabricantes), [fabricantes]);
+  const fabricantesMap = useMemo(
+    () => createMapById(fabricantes),
+    [fabricantes],
+  );
 
   return (
     <>
