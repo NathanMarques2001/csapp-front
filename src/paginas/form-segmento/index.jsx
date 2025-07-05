@@ -38,17 +38,6 @@ export default function FormSegmento({ mode = "cadastro" }) {
     fetchSegmento();
   }, [mode, id]);
 
-  const handleCancel = (e) => {
-    e.preventDefault();
-    setPopupAction(() => confirmCancel);
-    setShowPopup(true);
-  };
-
-  const confirmCancel = () => {
-    setShowPopup(false);
-    navigate("/gestao?aba=segmentos");
-  };
-
   const handleSaveSegmento = (e) => {
     e.preventDefault();
     setPopupAction(() => confirmSaveSegmento);

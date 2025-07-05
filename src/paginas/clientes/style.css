@@ -101,12 +101,19 @@
 }
 
 .clientes-conteudo-tabela-grupo-aberto {
-  background-color: black;
-  color: white;
+  background-color: var(--preto);
+  color: var(--branco);
   cursor: pointer;
 }
 
-.clientes-conteudo-tabela-hover:hover {
+.clientes-conteudo-tabela-hover {
   background-color: var(--azul-borda);
   cursor: pointer;
+  color: var(--branco);
+  border-bottom: 2px solid var(--preto);
+}
+
+.clientes-conteudo-tabela-hover:hover {
+  background-color: var(--verde);
+  color: var(--preto);
 }

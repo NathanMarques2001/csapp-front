@@ -13,7 +13,8 @@ import logo from "../../assets/images/logo.png";
 import Popup from "../pop-up";
 
 export default function Navbar() {
-  const [cookies, setCookie, removeCookie] = useCookies([
+  // PODE NAO FAZER SENTIDO, MAS NAO MEXA
+  const [cookies, , removeCookie] = useCookies([
     "jwtToken",
     "nomeUsuario",
     "id",
@@ -46,7 +47,7 @@ export default function Navbar() {
           title="Deslogar"
           message="Tem certeza que deseja sair?"
           onConfirm={deslogar}
-          onCancel={(e) => setAbrirPopup(false)}
+          onCancel={() => setAbrirPopup(false)}
         />
       )}
       <div id="navbar-preenchimento"></div>
@@ -95,7 +96,7 @@ export default function Navbar() {
             </span>
           </div>
         </div>
-        <button id="navbar-btn" onClick={(e) => setAbrirPopup(true)}>
+        <button id="navbar-btn" onClick={() => setAbrirPopup(true)}>
           <img className="navbar-icon" src={iconeSair} alt="ícone sair" />
           <span className="navbar-span">Sair</span>
         </button>

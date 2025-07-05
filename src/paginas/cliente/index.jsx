@@ -35,7 +35,7 @@ export default function Cliente() {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
 
-  const [cookies, setCookie, removeCookie] = useCookies(["tipo"]);
+  const [cookies] = useCookies(["tipo"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
   useEffect(() => {
@@ -62,9 +62,6 @@ export default function Cliente() {
 
         const fabricantesData = await api.get("/fabricantes");
         setFabricantes(fabricantesData.fabricantes);
-
-        // const contratosAtivos = contratosData.contratos.filter(contrato => contrato.status === 'ativo');
-        // setContratos(contratosAtivos);
 
         const contatosComerciaisData = await api.get(
           `/contatos-comerciais/${id}`,
@@ -199,7 +196,7 @@ export default function Cliente() {
             <div id="cliente-btn-div">
               <button
                 disabled={!isAdminOrDev}
-                onClick={(e) => editar(cliente.id)}
+                onClick={() => editar(cliente.id)}
                 id="cliente-botao-editar"
                 className={!isAdminOrDev ? "disabled" : ""}
               >
@@ -207,7 +204,7 @@ export default function Cliente() {
               </button>
               <button
                 disabled={!isAdminOrDev}
-                onClick={(e) => {
+                onClick={() => {
                   cliente.status === "ativo"
                     ? setMessage(
                         "Tem certeza que deseja inativar esse cliente? Todos os contratos serão inativados também.",
@@ -264,7 +261,7 @@ export default function Cliente() {
                   </td>
                   <td>
                     {contrato.duracao == 12000
-                      ? `INDETERMINADO`
+                      ? "INDETERMINADO"
                       : `${contrato.duracao} MESES`}
                   </td>
                   <td>{getFabricanteNome(contrato.id_produto)}</td>

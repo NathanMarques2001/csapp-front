@@ -39,40 +39,41 @@ export default function GruposEconomicos() {
 
   const handleEdit = (id) => navigate(`/edicao-grupo-economico/${id}`);
 
-  // const handleChangeStatus = async () => {
-  //   const { id } = popupConfig;
-  //   setPopupConfig((prev) => ({ ...prev, open: false }));
-  //   setLoading(true);
-  //   try {
-  //     const response = await api.get(`/grupos-economicos/${id}`);
-  //     const newStatus = response.segmento.status === "ativo" ? "inativo" : "ativo";
-  //     await api.put(`/grupos-economicos/${id}`, { status: newStatus });
-  //     setAtualizar((prev) => prev + 1);
-  //   } catch (e) {
-  //     console.error(e);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const handleChangeStatus = async () => {
+    const { id } = popupConfig;
+    setPopupConfig((prev) => ({ ...prev, open: false }));
+    setLoading(true);
+    try {
+      const response = await api.get(`/grupos-economicos/${id}`);
+      const newStatus =
+        response.segmento.status === "ativo" ? "inativo" : "ativo";
+      await api.put(`/grupos-economicos/${id}`, { status: newStatus });
+      setAtualizar((prev) => prev + 1);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // const handleStatusChange = (id, status) => {
-  //   const titles = {
-  //     ativo: "Inativar Segmento",
-  //     inativo: "Ativar Segmento",
-  //   };
-  //   const messages = {
-  //     ativo:
-  //       "Tem certeza que deseja inativar este segmento? Após isso, não será possível criar clientes com o mesmo.",
-  //     inativo:
-  //       "Tem certeza que deseja ativar este segmento? Após isso, será possível criar clientes com o mesmo.",
-  //   };
-  //   setPopupConfig({
-  //     open: true,
-  //     title: titles[status],
-  //     message: messages[status],
-  //     id,
-  //   });
-  // };
+  const handleStatusChange = (id, status) => {
+    const titles = {
+      ativo: "Inativar Segmento",
+      inativo: "Ativar Segmento",
+    };
+    const messages = {
+      ativo:
+        "Tem certeza que deseja inativar este segmento? Após isso, não será possível criar clientes com o mesmo.",
+      inativo:
+        "Tem certeza que deseja ativar este segmento? Após isso, será possível criar clientes com o mesmo.",
+    };
+    setPopupConfig({
+      open: true,
+      title: titles[status],
+      message: messages[status],
+      id,
+    });
+  };
 
   const filteredGruposEconomicos = gruposEconomicos.filter(({ nome }) =>
     nome.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -83,16 +84,14 @@ export default function GruposEconomicos() {
   return (
     <>
       {loading && <Loading />}
-      {/* {popupConfig.open && (
+      {popupConfig.open && (
         <Popup
           title={popupConfig.title}
           message={popupConfig.message}
           onConfirm={handleChangeStatus}
-          onCancel={() =>
-            setPopupConfig((prev) => ({ ...prev, open: false }))
-          }
+          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
         />
-      )} */}
+      )}
       <div>
         <h3 className="gestao-section-subtitulo">
           Grupos Econômicos ({totalGruposEconomicos})
@@ -132,17 +131,15 @@ export default function GruposEconomicos() {
                       >
                         <img src={editIcon} alt="Editar" />
                       </button>
-                      {/* <button
-                        className={`${status === 'ativo' ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
-                        onClick={() =>
-                          handleStatusChange(id, status)
-                        }
+                      <button
+                        className={`${status === "ativo" ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
+                        onClick={() => handleStatusChange(id, status)}
                       >
                         <img
                           src={status === "ativo" ? iconeInativar : iconeAtivar}
                           alt={status === "ativo" ? "Inativar" : "Ativar"}
                         />
-                      </button> */}
+                      </button>
                     </div>
                   </td>
                 </tr>

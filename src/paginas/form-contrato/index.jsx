@@ -53,7 +53,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [descricao, setDescricao] = useState("");
   const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
 
-  const [cookies, setCookie, removeCookie] = useCookies(["tipo"]);
+  const [cookies] = useCookies(["tipo"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
   useEffect(() => {
@@ -264,7 +264,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         req.message === "Contrato criado com sucesso!" ||
         req.message === "Contrato atualizado com sucesso!"
       ) {
-        navigate(`/contratos`);
+        navigate("/contratos");
       } else {
         alert("Erro ao salvar contrato.");
       }
@@ -290,7 +290,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         req = await api.put(`/contratos/${id}`, { status: "ativo" });
       }
       if (req.message === "Contrato atualizado com sucesso!") {
-        navigate(`/contratos`);
+        navigate("/contratos");
       } else {
         alert("Erro ao inativar contrato.");
       }

@@ -38,17 +38,6 @@ export default function FormFabricante({ mode = "cadastro" }) {
     fetchFabricante();
   }, [mode, id]);
 
-  const handleCancel = (e) => {
-    e.preventDefault();
-    setPopupAction(() => confirmCancel);
-    setShowPopup(true);
-  };
-
-  const confirmCancel = () => {
-    setShowPopup(false);
-    navigate("/gestao?aba=fabricantes");
-  };
-
   const handleSaveFabricante = (e) => {
     e.preventDefault();
     setPopupAction(() => confirmSaveFabricante);

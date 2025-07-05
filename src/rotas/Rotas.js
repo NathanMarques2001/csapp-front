@@ -23,6 +23,7 @@ import FormSegmento from "../paginas/form-segmento";
 import FormFaturado from "../paginas/form-faturado";
 import AuthCallback from "../paginas/microsoft-callback";
 import FormGrupoEconomico from "../paginas/form-grupo-economico";
+import GrupoEconomico from "../paginas/grupo-economico";
 
 export default function Rotas() {
   return (
@@ -110,6 +111,7 @@ export default function Rotas() {
             path="/edicao-grupo-economico/:id"
             element={<FormGrupoEconomico mode="edicao" />}
           />
+          <Route path="/grupo-economico/:id" element={<GrupoEconomico />} />
         </Route>
 
         {/* --- ROTAS DE ADMIN --- */}

@@ -16,12 +16,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [cookies, setCookie] = useCookies([
-    "jwtToken",
-    "nomeUsuario",
-    "id",
-    "tipo",
-  ]);
+  const [, setCookie] = useCookies(["jwtToken", "nomeUsuario", "id", "tipo"]);
   const navigate = useNavigate();
 
   async function sendForm(event) {
@@ -38,8 +33,6 @@ export default function Login() {
       }
 
       const expirationTime = expireAt.getTime() - now.getTime(); // Calcula o tempo restante em milissegundos
-
-      console.log(email, password);
 
       const response = await auth.login("/usuarios/login", {
         email: email,

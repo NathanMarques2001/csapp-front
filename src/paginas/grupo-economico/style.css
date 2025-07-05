@@ -1,14 +1,14 @@
-#cliente-display {
+#grupo-economico-display {
   display: flex;
   margin-bottom: 4%;
 }
 
-#cliente-container {
+#grupo-economico-container {
   margin: 2% 4% 0 0;
   width: 75%;
 }
 
-#cliente-cabecalho {
+#grupo-economico-cabecalho {
   display: flex;
   justify-content: space-between;
   padding-bottom: 1rem;
@@ -16,23 +16,23 @@
   margin-bottom: 2rem;
 }
 
-#cliente-titulo-nome {
+#grupo-economico-titulo-nome {
   font-size: 1.75rem;
   text-transform: capitalize;
 }
 
-#cliente-titulo-razao {
+#grupo-economico-titulo-razao {
   font-size: 1.25rem;
   color: var(--cinza);
   text-transform: capitalize;
 }
 
-#cliente-btn-div {
+#grupo-economico-btn-div {
   display: flex;
   gap: 8%;
 }
 
-#cliente-botao-editar {
+#grupo-economico-botao-editar {
   border: 1px solid var(--preto);
   height: 30px;
   width: 60px;
@@ -41,7 +41,7 @@
   background-color: var(--verde);
 }
 
-#cliente-botao-inativar {
+#grupo-economico-botao-inativar {
   border: 1px solid var(--preto);
   height: 30px;
   width: 60px;
@@ -53,7 +53,7 @@
   align-items: center;
 }
 
-#cliente-botao-ativar {
+#grupo-economico-botao-ativar {
   border: 1px solid var(--preto);
   height: 30px;
   width: 60px;
@@ -65,29 +65,29 @@
   align-items: center;
 }
 
-#cliente-botao-ativar:hover {
+#grupo-economico-botao-ativar:hover {
   background-color: var(--verde-hover);
 }
 
-#cliente-botao-editar:hover {
+#grupo-economico-botao-editar:hover {
   background-color: var(--verde-hover);
 }
 
-#cliente-botao-inativar:hover {
+#grupo-economico-botao-inativar:hover {
   background-color: var(--vermelho-hover);
 }
 
-#cliente-botao-editar.disabled {
+#grupo-economico-botao-editar.disabled {
   cursor: not-allowed;
   background-color: #ccc;
   color: #666;
 }
 
-#cliente-subtitulo-contratos {
+#grupo-economico-subtitulo-contratos {
   font-size: 1.25rem;
 }
 
-#cliente-tabela {
+#grupo-economico-tabela {
   margin-top: 1.5rem;
   width: 100%;
   border-collapse: collapse;
@@ -95,24 +95,24 @@
   overflow: hidden;
 }
 
-#cliente-tabela th,
-#cliente-tabela td {
+#grupo-economico-tabela th,
+#grupo-economico-tabela td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid var(--preto);
 }
 
-#cliente-tabela th {
+#grupo-economico-tabela th {
   background-color: var(--preto);
   color: var(--branco);
 }
 
-#cliente-tabela tbody {
+#grupo-economico-tabela tbody {
   max-height: 20rem;
   overflow-y: scroll;
 }
 
-#cliente-faturamento-mensal {
+#grupo-economico-faturamento-mensal {
   width: 100%;
   background-color: var(--verde);
   padding: 1%;
@@ -122,14 +122,14 @@
   border-radius: 0 0 7px 7px;
 }
 
-#cliente-card-container {
+#grupo-economico-card-container {
   display: flex;
   width: 100%;
   justify-content: space-between;
   margin: 2rem 0;
 }
 
-.cliente-contatos-container {
+.grupo-economico-contatos-container {
   display: flex;
   justify-content: space-between;
 }
@@ -144,10 +144,10 @@
   background-color: var(--cinza);
 }
 
-#cliente-contatos-container-img {
+#grupo-economico-contatos-container-img {
   margin-top: 2.5rem;
 }
 
-#cliente-img {
+#grupo-economico-img {
   width: 40%;
 }

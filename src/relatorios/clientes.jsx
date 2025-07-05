@@ -1,4 +1,3 @@
-import { useCookies } from "react-cookie";
 import Excel from "../utils/excel";
 import { useState } from "react";
 import Popup from "../componetes/pop-up";
@@ -10,7 +9,6 @@ export default function RelatorioClientes({
   segmentosMap,
 }) {
   const excel = new Excel("Relatório de Clientes");
-  const [cookies] = useCookies(["id", "tipo"]);
   const [filtros, setFiltros] = useState({
     nome_fantasia: "",
     tipo: "",

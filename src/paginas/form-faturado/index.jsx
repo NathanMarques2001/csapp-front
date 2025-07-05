@@ -38,17 +38,6 @@ export default function FormFaturado({ mode = "cadastro" }) {
     fetchFaturado();
   }, [mode, id]);
 
-  const handleCancel = (e) => {
-    e.preventDefault();
-    setPopupAction(() => confirmCancel);
-    setShowPopup(true);
-  };
-
-  const confirmCancel = () => {
-    setShowPopup(false);
-    navigate("/gestao?aba=faturados");
-  };
-
   const handleSaveFaturado = (e) => {
     e.preventDefault();
     setPopupAction(() => confirmSaveFaturado);

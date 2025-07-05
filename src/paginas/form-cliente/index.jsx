@@ -18,7 +18,6 @@ export default function FormCliente({ mode }) {
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
-  const [segmentos, setSegmentos] = useState([]);
   const [gruposEconomicos, setGruposEconomicos] = useState([]);
 
   const [cliente, setCliente] = useState({
@@ -44,9 +43,7 @@ export default function FormCliente({ mode }) {
     gestor_financeiro_telefone_2: "",
   });
 
-  const [usuarios, setUsuarios] = useState([]);
-
-  const [cookies, setCookie, removeCookie] = useCookies(["tipo"]);
+  const [cookies] = useCookies(["tipo"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
   useEffect(() => {
@@ -103,39 +100,18 @@ export default function FormCliente({ mode }) {
   }, [mode, id]);
 
   useEffect(() => {
-    const fetchUsuarios = async () => {
-      try {
-        const response = await api.get("/usuarios");
-        setUsuarios(response.usuarios);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
-    const fetchSegmentos = async () => {
-      try {
-        const response = await api.get("/segmentos");
-        const segmentosAtivos = response.segmentos.filter(
-          (segmento) => segmento.status !== "inativo",
-        );
-        setSegmentos(segmentosAtivos);
-      } catch (error) {
-        console.error("Erro ao buscar os segmentos: " + error);
-      }
-    };
-
     const fetchGruposEconomicos = async () => {
       try {
         const response = await api.get("/grupos-economicos");
-        // const segmentosAtivos = response.segmentos.filter((segmento) => segmento.status !== 'inativo');
-        setGruposEconomicos(response.grupoEconomico);
+        const gruposEconomicosAtivos = response.grupoEconomico.filter(
+          (grupoEconomico) => grupoEconomico.status !== "inativo",
+        );
+        setGruposEconomicos(gruposEconomicosAtivos);
       } catch (error) {
         console.error("Erro ao buscar os segmentos: " + error);
       }
     };
 
-    fetchUsuarios();
-    fetchSegmentos();
     fetchGruposEconomicos();
   }, []);
 
@@ -153,11 +129,6 @@ export default function FormCliente({ mode }) {
     setShowPopup(true);
   };
 
-  const handleCancel = () => {
-    setPopupAction(() => confirmCancel);
-    setShowPopup(true);
-  };
-
   const confirmSubmit = async () => {
     setShowPopup(false);
     try {
@@ -165,7 +136,7 @@ export default function FormCliente({ mode }) {
       console.log(cliente);
       if (mode === "cadastro") {
         await api.post("/clientes", cliente);
-        navigate(`/clientes`);
+        navigate("/clientes");
       } else if (mode === "edicao" && id) {
         await api.put(`/clientes/${id}`, cliente);
         navigate(`/clientes/${cliente.id}`);
@@ -176,11 +147,6 @@ export default function FormCliente({ mode }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const confirmCancel = () => {
-    setShowPopup(false);
-    navigate(`/clientes/${cliente.id}`);
   };
 
   const cancelPopup = () => {

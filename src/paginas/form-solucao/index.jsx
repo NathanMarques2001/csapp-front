@@ -57,17 +57,6 @@ export default function FormSolucao({ mode = "cadastro" }) {
     fetchProduto();
   }, [mode, id]);
 
-  const handleCancel = (e) => {
-    e.preventDefault();
-    setPopupAction(() => confirmCancel);
-    setShowPopup(true);
-  };
-
-  const confirmCancel = () => {
-    setShowPopup(false);
-    navigate("/gestao?aba=solucoes");
-  };
-
   const handleAddProduct = async (e) => {
     e.preventDefault();
     if (selectedFabricante === "s/ fabricante") {

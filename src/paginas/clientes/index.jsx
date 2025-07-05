@@ -109,6 +109,10 @@ export default function Clientes() {
     navigate(`/clientes/${id}`);
   };
 
+  const detalhesGrupo = (id) => {
+    navigate(`/grupo-economico/${id}`);
+  };
+
   const getMatriz = (grupo) =>
     grupo.unidades.find((c) => c.tipo_unidade === "matriz") ||
     grupo.unidades[0];
@@ -200,7 +204,7 @@ export default function Clientes() {
                         className={
                           aberto ? "clientes-conteudo-tabela-grupo-aberto" : ""
                         }
-                        onClick={() => detalhesCliente(matriz.id)}
+                        onClick={() => detalhesGrupo(grupo.grupo.id)}
                       >
                         <td className="clientes-conteudo-tabela">
                           {grupo.grupo.nome}

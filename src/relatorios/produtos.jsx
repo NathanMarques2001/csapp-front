@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { useCookies } from "react-cookie";
 import Excel from "../utils/excel";
 import Popup from "../componetes/pop-up";
 
 export default function RelatorioProdutos({ produtos, fabricantesMap }) {
   const excel = new Excel("Relatório de Produtos");
-  const [cookies] = useCookies(["id", "tipo"]);
   const [filtros, setFiltros] = useState({
     nome: "",
     fabricante: "",

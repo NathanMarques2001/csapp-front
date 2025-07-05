@@ -9,7 +9,7 @@ import { useCookies } from "react-cookie";
 
 export default function Contratos() {
   const api = new Api();
-  const [cookies, setCookie, removeCookie] = useCookies(["tipo", "id"]);
+  const [cookies] = useCookies(["tipo", "id"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
   const [clientesRoute, setClientesRoute] = useState("");
   const [contratosRoute, setContratosRoute] = useState("");

@@ -64,7 +64,7 @@ export default function PopUpMigrate({ id_antigo, fechar, reload }) {
           title="Migrar Clientes"
           message={`Tem certeza que deseja apagar o usuário '${vendedorAntigo.nome}' e migrar seus clientes para o usuário '${nomeNovoVendedor}'? Essa operação é irreversível.`}
           onConfirm={handleSubmit}
-          onCancel={(e) => setAbrirPopup(false)}
+          onCancel={() => setAbrirPopup(false)}
         />
       )}
       <div id="migrate-container">
