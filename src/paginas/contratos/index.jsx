@@ -11,31 +11,28 @@ export default function Contratos() {
   const api = new Api();
   const [cookies] = useCookies(["tipo", "id"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-  const [clientesRoute, setClientesRoute] = useState("");
-  const [contratosRoute, setContratosRoute] = useState("");
   const [contratos, setContratos] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [vendedores, setVendedores] = useState([]);
-  const [produtos, setProdutos] = useState([]);
+  const [clientes, setClientes] = useState({});
+  const [vendedores, setVendedores] = useState({});
+  const [produtos, setProdutos] = useState({});
+  const [gruposEconomicos, setGruposEconomicos] = useState({});
   const [filter, setFilter] = useState("");
-  const [filters, setFilters] = useState({ status: "ativo" }); // Filtro padrão para contratos ativos
+  const [filters, setFilters] = useState({ status: "ativo" });
   const [loading, setLoading] = useState(false);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
-    setClientesRoute("/clientes");
-    setContratosRoute("/contratos");
-    if (cookies.tipo === "dev" || cookies.tipo === "admin") {
-      setIsAdminOrDev(true);
-    } else {
-      setIsAdminOrDev(false);
-    }
-
     const fetchData = async () => {
+      setLoading(true);
       try {
-        const contratosResponse = await api.get(contratosRoute);
+        if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+          setIsAdminOrDev(true);
+        } else {
+          setIsAdminOrDev(false);
+        }
+
+        const contratosResponse = await api.get("/contratos");
         const contratosMap = contratosResponse.contratos.reduce(
           (map, contrato) => {
             map[contrato.id] = contrato;
@@ -45,7 +42,7 @@ export default function Contratos() {
         );
         setContratos(Object.values(contratosMap));
 
-        const clientesResponse = await api.get(clientesRoute);
+        const clientesResponse = await api.get("/clientes");
         const clientesMap = clientesResponse.clientes.reduce((map, cliente) => {
           map[cliente.id] = cliente;
           return map;
@@ -67,7 +64,15 @@ export default function Contratos() {
           map[produto.id] = produto;
           return map;
         }, {});
-        setProdutos(Object.values(produtosMap));
+        setProdutos(produtosMap);
+
+        const gruposEconomicosResponse = await api.get("/grupos-economicos");
+        const gruposEconomicosMap =
+          gruposEconomicosResponse.grupoEconomico.reduce((map, grupoEconom) => {
+            map[grupoEconom.id] = grupoEconom;
+            return map;
+          }, {});
+        setGruposEconomicos(gruposEconomicosMap);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -76,7 +81,7 @@ export default function Contratos() {
     };
 
     fetchData();
-  }, [cookies.tipo, cookies.id, clientesRoute, contratosRoute]);
+  }, [cookies.tipo, cookies.id]);
 
   const detalhesContrato = (id) => {
     navigate(`/edicao-contrato/${id}`);
@@ -96,13 +101,15 @@ export default function Contratos() {
   };
 
   const limparFiltros = () => {
-    setFilters({ status: "ativo" }); // Resetar para o filtro padrão
+    setFilters({ status: "ativo" });
   };
 
   const filteredContratos = contratos.filter((contrato) => {
-    const clienteNome = clientes[contrato.id_cliente]?.nome_fantasia || "";
-    const clienteRazao = clientes[contrato.id_cliente]?.razao_social || "";
-    const produtoNome = produtos[contrato.id_produto - 1]?.nome || "";
+    const cliente = clientes[contrato.id_cliente];
+    const produto = produtos[contrato.id_produto];
+    const clienteNome = cliente?.nome_fantasia || "";
+    const clienteRazao = cliente?.razao_social || "";
+    const produtoNome = produto?.nome || "";
 
     const filterConditions = [
       filters.id_cliente
@@ -114,7 +121,7 @@ export default function Contratos() {
       filters.faturado
         ? contrato.faturado.toString().includes(filters.faturado)
         : true,
-      filters.status ? contrato.status === filters.status : true, // Verificação de igualdade exata
+      filters.status ? contrato.status === filters.status : true,
       filters.duracao
         ? contrato.duracao.toString().includes(filters.duracao)
         : true,
@@ -191,10 +198,9 @@ export default function Contratos() {
                 {Object.entries(filters).map(
                   ([key, value]) =>
                     value && (
-                      <span
-                        className="active-filters-current"
-                        key={key}
-                      >{`${key.replace(/_/g, " ")}: ${value}`}</span>
+                      <span className="active-filters-current" key={key}>
+                        {`${key.replace(/_/g, " ")}: ${value}`}
+                      </span>
                     ),
                 )}
               </p>
@@ -219,41 +225,43 @@ export default function Contratos() {
                 </tr>
               </thead>
               <tbody>
-                {filteredContratos.map((contrato) => (
-                  <tr
-                    key={contrato.id}
-                    onClick={() => detalhesContrato(contrato.id)}
-                    className="clickable-row"
-                  >
-                    <td className="contratos-conteudo-tabela">
-                      {clientes[contrato.id_cliente]?.nome_fantasia ||
-                        "Carregando..."}
-                    </td>
-                    <td className="contratos-conteudo-tabela">
-                      {clientes[contrato.id_cliente]?.cpf_cnpj ||
-                        "Carregando..."}
-                    </td>
-                    <td className="contratos-conteudo-tabela">
-                      {produtos[contrato.id_produto - 1]?.nome ||
-                        "Carregando..."}
-                    </td>
-                    <td className="contratos-conteudo-tabela">
-                      {calculaValorImpostoMensal(
-                        parseFloat(contrato.valor_mensal),
-                        contrato.indice_reajuste,
-                      ).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </td>
-                    <td className="contratos-conteudo-tabela">
-                      {
-                        vendedores[clientes[contrato.id_cliente]?.id_usuario]
-                          ?.nome
-                      }
-                    </td>
-                  </tr>
-                ))}
+                {filteredContratos.map((contrato) => {
+                  const cliente = clientes[contrato.id_cliente];
+                  const produto = produtos[contrato.id_produto];
+                  const grupoEconomico =
+                    gruposEconomicos[cliente?.id_grupo_economico];
+                  const vendedor = vendedores[grupoEconomico?.id_usuario];
+
+                  return (
+                    <tr
+                      key={contrato.id}
+                      onClick={() => detalhesContrato(contrato.id)}
+                      className="clickable-row"
+                    >
+                      <td className="contratos-conteudo-tabela">
+                        {cliente?.nome_fantasia || "Carregando..."}
+                      </td>
+                      <td className="contratos-conteudo-tabela">
+                        {cliente?.cpf_cnpj || "Carregando..."}
+                      </td>
+                      <td className="contratos-conteudo-tabela">
+                        {produto?.nome || "Carregando..."}
+                      </td>
+                      <td className="contratos-conteudo-tabela">
+                        {calculaValorImpostoMensal(
+                          parseFloat(contrato.valor_mensal),
+                          contrato.indice_reajuste,
+                        ).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </td>
+                      <td className="contratos-conteudo-tabela">
+                        {vendedor?.nome || "Carregando..."}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           ) : (
