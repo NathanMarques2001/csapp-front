@@ -7,7 +7,7 @@ export default function RelatorioContratos({
   contratos,
   produtos,
   clientes,
-  usuariosMap,
+  // usuariosMap,
 }) {
   const dateJs = new DateJS();
   const excel = new Excel("Relatório de Contratos");
@@ -17,7 +17,7 @@ export default function RelatorioContratos({
     solucao: "",
     cliente: "",
     status: "",
-    vendedor: "",
+    // vendedor: "",
   });
 
   const produtosMap = produtos.reduce((map, p) => ((map[p.id] = p), map), {});
@@ -26,20 +26,20 @@ export default function RelatorioContratos({
   const contratosFiltrados = contratos.filter((contrato) => {
     const produto = produtosMap[contrato.id_produto];
     const cliente = clientesMap[contrato.id_cliente];
-    const vendedor = usuariosMap[cliente?.id_usuario];
+    // const vendedor = usuariosMap[cliente?.id_usuario];
 
     return (
       (!filtros.solucao || produto?.nome === filtros.solucao) &&
       (!filtros.cliente || cliente?.nome_fantasia === filtros.cliente) &&
-      (!filtros.status || contrato.status === filtros.status) &&
-      (!filtros.vendedor || vendedor?.nome === filtros.vendedor)
+      (!filtros.status || contrato.status === filtros.status) //&&
+      // (!filtros.vendedor || vendedor?.nome === filtros.vendedor)
     );
   });
 
   const data = contratosFiltrados.map((contrato) => {
     const cliente = clientesMap[contrato.id_cliente];
     const produto = produtosMap[contrato.id_produto];
-    const vendedor = usuariosMap[cliente?.id_usuario];
+    // const vendedor = usuariosMap[cliente?.id_usuario];
 
     const valor = parseFloat(contrato.valor_mensal);
     const reajuste = contrato.indice_reajuste || 0;
@@ -49,7 +49,7 @@ export default function RelatorioContratos({
       Solução: produto?.nome || "Desconhecido",
       Cliente: cliente?.nome_fantasia || "Desconhecido",
       Status: contrato.status,
-      Vendedor: vendedor?.nome || "Desconhecido",
+      // Vendedor: vendedor?.nome || "Desconhecido",
       Reajuste: dateJs.formatDate(contrato.proximo_reajuste),
       Expiração: `${contrato.duracao} MESES`,
       Valor: valorFinal,
@@ -125,7 +125,7 @@ export default function RelatorioContratos({
               </select>
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
               <label>Vendedor:</label>
               <select
                 name="vendedor"
@@ -139,7 +139,7 @@ export default function RelatorioContratos({
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
 
             <button
               type="button"
@@ -173,7 +173,7 @@ export default function RelatorioContratos({
             <th className="global-titulo-tabela">Solução</th>
             <th className="global-titulo-tabela">Cliente</th>
             <th className="global-titulo-tabela">Status</th>
-            <th className="global-titulo-tabela">Vendedor</th>
+            {/* <th className="global-titulo-tabela">Vendedor</th> */}
             <th className="global-titulo-tabela">Reajuste</th>
             <th className="global-titulo-tabela">Expiração</th>
             <th className="global-titulo-tabela">Valor</th>
@@ -185,7 +185,7 @@ export default function RelatorioContratos({
               <td className="global-conteudo-tabela">{c["Solução"]}</td>
               <td className="global-conteudo-tabela">{c["Cliente"]}</td>
               <td className="global-conteudo-tabela">{c["Status"]}</td>
-              <td className="global-conteudo-tabela">{c["Vendedor"]}</td>
+              {/* <td className="global-conteudo-tabela">{c["Vendedor"]}</td> */}
               <td className="global-conteudo-tabela">{c["Reajuste"]}</td>
               <td className="global-conteudo-tabela">{c["Expiração"]}</td>
               <td className="global-conteudo-tabela">
