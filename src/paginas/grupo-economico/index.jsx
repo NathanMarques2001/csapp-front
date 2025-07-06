@@ -2,20 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../componetes/navbar";
 import Loading from "../../componetes/loading";
+import botaoInativar from "../../assets/icons/icon-inativar.png";
+import botaoAtivar from "../../assets/icons/icon-ativar.png";
 import "./style.css";
 import Api from "../../utils/api";
 import imgGrupoEconomico from "../../assets/images/img-grupo-economico.png";
+import { useCookies } from "react-cookie";
+import Popup from "../../componetes/pop-up";
 
 export default function GrupoEconomico() {
   const api = new Api();
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [contratos, setContratos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [fabricantes, setFabricantes] = useState([]);
   const [grupoEconomico, setGrupoEconomico] = useState({});
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const [popUpAction, setPopUpAction] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const [cookies] = useCookies(["tipo"]);
+  const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+
+  useEffect(() => {
+    if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+      setIsAdminOrDev(true);
+    } else {
+      setIsAdminOrDev(false);
+    }
+  }, [cookies.tipo]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,9 +118,33 @@ export default function GrupoEconomico() {
       .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   };
 
+  const ativarOuInativar = async (id) => {
+    setLoading(true);
+    try {
+      await api.put(`/grupos-economicos/active-inactive/${id}`);
+      setShowModal(false);
+      navigate("/clientes");
+    } catch (err) {
+      console.error("Erro ao inativar grupo econômico:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelPopup = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
       {loading && <Loading />}
+      {showModal && (
+        <Popup
+          message={message}
+          onConfirm={popUpAction}
+          onCancel={cancelPopup}
+        />
+      )}
       <div id="grupo-economico-display">
         <Navbar />
 
@@ -112,11 +154,32 @@ export default function GrupoEconomico() {
             <h1 id="grupo-economico-titulo-nome">
               Grupo Econômico – {grupoEconomico.nome}
             </h1>
-            <p id="cliente-titulo-razao">
-              {clientes
-                .filter((c) => c.tipo_unidade === "matriz")
-                .map((c) => `${c.razao_social} - ${c.cpf_cnpj}`)}
-            </p>
+            <button
+              disabled={!isAdminOrDev}
+              onClick={() => {
+                grupoEconomico.status === "ativo"
+                  ? setMessage(
+                      "Tem certeza que deseja inativar esse grupo econômico? Todos os clientes e contratos serão inativados também.",
+                    )
+                  : setMessage(
+                      "Tem certeza que deseja ativar esse grupo econômico?",
+                    );
+                setPopUpAction(() => () => ativarOuInativar(grupoEconomico.id));
+                setShowModal(true);
+              }}
+              id={
+                grupoEconomico.status === "ativo"
+                  ? "cliente-botao-inativar"
+                  : "cliente-botao-ativar"
+              }
+              className={!isAdminOrDev ? "disabled" : ""}
+            >
+              {grupoEconomico.status === "ativo" ? (
+                <img src={botaoInativar} alt="icone inativar" />
+              ) : (
+                <img src={botaoAtivar} alt="icone ativar" />
+              )}
+            </button>
           </header>
 
           <h2 id="grupo-economico-subtitulo-contratos">Contratos</h2>

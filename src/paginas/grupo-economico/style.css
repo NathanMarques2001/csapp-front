@@ -21,12 +21,6 @@
   text-transform: capitalize;
 }
 
-#cliente-titulo-razao {
-  font-size: 1.25rem;
-  color: var(--cinza);
-  text-transform: capitalize;
-}
-
 #grupo-economico-subtitulo-contratos {
   font-size: 1.25rem;
 }
