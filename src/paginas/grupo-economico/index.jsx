@@ -105,70 +105,81 @@ export default function GrupoEconomico() {
       {loading && <Loading />}
       <div id="grupo-economico-display">
         <Navbar />
+
         <div id="grupo-economico-container">
-          <div id="grupo-economico-cabecalho">
-            <div>
-              <h1 id="grupo-economico-titulo-nome">
-                Grupo Econômico - {grupoEconomico.nome}
-              </h1>
-              <p id="cliente-titulo-razao">
-                {clientes.map((cliente) =>
-                  cliente.tipo_unidade === "matriz"
-                    ? `${cliente.razao_social} - ${cliente.cpf_cnpj}`
-                    : null,
-                )}
-              </p>
-            </div>
-          </div>
+          {/* Cabeçalho do grupo */}
+          <header id="grupo-economico-cabecalho">
+            <h1 id="grupo-economico-titulo-nome">
+              Grupo Econômico – {grupoEconomico.nome}
+            </h1>
+            <p id="cliente-titulo-razao">
+              {clientes
+                .filter((c) => c.tipo_unidade === "matriz")
+                .map((c) => `${c.razao_social} - ${c.cpf_cnpj}`)}
+            </p>
+          </header>
+
           <h2 id="grupo-economico-subtitulo-contratos">Contratos</h2>
-          <table id="grupo-economico-tabela">
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Solução</th>
-                <th>Contratação</th>
-                <th>Valor</th>
-                <th>Recorrência</th>
-                <th>Fabricante</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientes.map((cliente) => {
-                const contratosCliente = contratos.filter(
-                  (contrato) => contrato.id_cliente === cliente.id,
-                );
 
-                const valorTotalCliente = contratosCliente.reduce(
-                  (total, contrato) =>
-                    total +
-                    calculaValorImpostoMensal(
-                      parseFloat(contrato.valor_mensal),
-                      contrato.indice_reajuste,
-                    ),
-                  0,
-                );
+          {/* === UMA TABELA POR CLIENTE === */}
+          {clientes.map((cliente) => {
+            const contratosCliente = contratos.filter(
+              (ctr) => ctr.id_cliente === cliente.id,
+            );
 
-                return (
-                  <React.Fragment key={cliente.id}>
-                    {/* Linha do cliente */}
-                    <tr className="linha-cliente">
-                      <td colSpan="6" className="cliente-header">
-                        <span>{cliente.tipo_unidade}</span> -{" "}
-                        {cliente.nome_fantasia} - {cliente.cpf_cnpj} - Total:{" "}
-                        {valorTotalCliente.toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
-                      </td>
+            const contratosAtivos = contratosCliente.filter(
+              (ctr) => ctr.status === "ativo",
+            );
+
+            const valorTotalCliente = contratosAtivos.reduce(
+              (total, ctr) =>
+                total +
+                calculaValorImpostoMensal(
+                  parseFloat(ctr.valor_mensal),
+                  ctr.indice_reajuste,
+                ),
+              0,
+            );
+
+            return (
+              <section key={cliente.id} className="cliente-bloco">
+                {/* Cabeçalho do cliente */}
+                <div className="cliente-info">
+                  <strong>
+                    {cliente.tipo_unidade.toUpperCase()} –{" "}
+                    {cliente.nome_fantasia}
+                  </strong>{" "}
+                  {/* POR ALGUM MOTIVO O CPF/CNPJ SOME QUANDO TIRA ESSE ESPAÇO. ENTAO NAO MEXA */}
+                  {cliente.cpf_cnpj}
+                  <span className="fat">
+                    Faturamento mensal:{" "}
+                    {valorTotalCliente.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </span>
+                </div>
+
+                {/* Tabela de contratos desse cliente */}
+                <table className="tabela-contratos">
+                  <thead>
+                    <tr>
+                      <th>Status</th>
+                      <th>Solução</th>
+                      <th>Contratação</th>
+                      <th>Valor</th>
+                      <th>Recorrência</th>
+                      <th>Fabricante</th>
                     </tr>
-
-                    {/* Contratos da unidade */}
+                  </thead>
+                  <tbody>
                     {contratosCliente.map((contrato) => (
                       <tr
                         key={contrato.id}
-                        className={`clickable-row ${
+                        id="grupo-economico-detalhe-contrato"
+                        className={
                           contrato.status !== "ativo" ? "inactive-contract" : ""
-                        }`}
+                        }
                         onClick={() => editarContato(contrato.id)}
                       >
                         <td>{contrato.status}</td>
@@ -186,27 +197,29 @@ export default function GrupoEconomico() {
                           })}
                         </td>
                         <td>
-                          {contrato.duracao == 12000
+                          {contrato.duracao === 12000
                             ? "INDETERMINADO"
                             : `${contrato.duracao} MESES`}
                         </td>
                         <td>{getFabricanteNome(contrato.id_produto)}</td>
                       </tr>
                     ))}
-                  </React.Fragment>
-                );
-              })}
-            </tbody>
-          </table>
-          <div id="grupo-economico-faturamento-mensal">
-            Faturamento mensal: <b>{calculaValorTotalContratos()}</b>
-          </div>
+                  </tbody>
+                </table>
+              </section>
+            );
+          })}
 
+          {/* Imagem decorativa e Total geral do grupo */}
           <div
             className="grupo-economico-contatos-container"
             id="grupo-economico-contatos-container-img"
           >
             <img src={imgGrupoEconomico} alt="" id="grupo-economico-img" />
+            <div id="grupo-economico-faturamento-mensal">
+              Faturamento mensal total do grupo:{" "}
+              <b>{calculaValorTotalContratos()}</b>
+            </div>
           </div>
         </div>
       </div>
