@@ -210,7 +210,7 @@ export default function Clientes() {
                           {grupo.grupo.nome}
                         </td>
                         <td className="clientes-conteudo-tabela">
-                          {matriz.cpf_cnpj}
+                          {matriz?.cpf_cnpj || "-"}
                         </td>
                         <td className="clientes-conteudo-tabela">
                           {grupo.grupo.tipo?.toUpperCase() || "-"}

@@ -78,6 +78,24 @@ export default function GrupoEconomico() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (clientes.length === 0) return;
+
+    const qtdMatrizes = clientes.filter(
+      (cliente) => cliente.tipo_unidade === "matriz",
+    ).length;
+
+    if (qtdMatrizes === 0) {
+      alert(
+        "Erro: Este grupo econômico não possui nenhuma unidade matriz. Algumas funcionalidades podem não funcionar corretamente por conta disso!",
+      );
+    } else if (qtdMatrizes > 1) {
+      alert(
+        "Erro: Este grupo econômico possui mais de uma unidade matriz. Algumas funcionalidades podem não funcionar corretamente por conta disso!",
+      );
+    }
+  }, [clientes]);
+
   const getProdutoNome = (produtoId) => {
     const produto = produtos.find((p) => p.id === produtoId);
     return produto ? produto.nome : "Desconhecido";
