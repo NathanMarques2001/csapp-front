@@ -79,13 +79,13 @@ export default function FormCliente({ mode }) {
 
           const clienteData = response.cliente;
           clienteData.gestor_contratos_nascimento = formatDate(
-            clienteData.gestor_contratos_nascimento,
+            clienteData.gestor_contratos_nascimento
           );
           clienteData.gestor_chamados_nascimento = formatDate(
-            clienteData.gestor_chamados_nascimento,
+            clienteData.gestor_chamados_nascimento
           );
           clienteData.gestor_financeiro_nascimento = formatDate(
-            clienteData.gestor_financeiro_nascimento,
+            clienteData.gestor_financeiro_nascimento
           );
 
           setCliente(clienteData);
@@ -104,7 +104,7 @@ export default function FormCliente({ mode }) {
       try {
         const response = await api.get("/grupos-economicos");
         const gruposEconomicosAtivos = response.grupoEconomico.filter(
-          (grupoEconomico) => grupoEconomico.status !== "inativo",
+          (grupoEconomico) => grupoEconomico.status !== "inativo"
         );
         setGruposEconomicos(gruposEconomicosAtivos);
       } catch (error) {
@@ -229,13 +229,16 @@ export default function FormCliente({ mode }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="id_grupo_economico">Grupo Econômico</label>
+                    <label htmlFor="id_grupo_economico">
+                      Grupo Econômico <span className="required">*</span>
+                    </label>
                     <select
                       id="id_grupo_economico"
                       disabled={!isAdminOrDev}
                       name="id_grupo_economico"
                       value={cliente.id_grupo_economico}
                       onChange={handleChange}
+                      required
                     >
                       <option value="">Selecione...</option>
                       {gruposEconomicos.map((grupoEconomico) => (
@@ -249,13 +252,16 @@ export default function FormCliente({ mode }) {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="tipo_unidade">Tipo da Unidade</label>
+                    <label htmlFor="tipo_unidade">
+                      Tipo da Unidade <span className="required">*</span>
+                    </label>
                     <select
                       id="tipo_unidade"
                       disabled={!isAdminOrDev}
                       name="tipo_unidade"
                       value={cliente.tipo_unidade}
                       onChange={handleChange}
+                      required
                     >
                       <option value="">Selecione...</option>
                       {["matriz", "filial"].map((tipo) => (
