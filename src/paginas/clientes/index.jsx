@@ -44,7 +44,7 @@ export default function Clientes() {
             map[vendedor.id] = vendedor.nome;
             return map;
           },
-          {},
+          {}
         );
         setVendedores(vendedoresMap);
 
@@ -92,14 +92,14 @@ export default function Clientes() {
   const calculaValorTotalContratos = (clienteId) => {
     const clienteContratos = contratos.filter(
       (contrato) =>
-        contrato.id_cliente === clienteId && contrato.status === "ativo",
+        contrato.id_cliente === clienteId && contrato.status === "ativo"
     );
 
     return clienteContratos.reduce((sum, contrato) => {
       const valorContrato = parseFloat(contrato.valor_mensal);
       const valorComImposto = calculaValorImpostoMensal(
         valorContrato,
-        contrato.indice_reajuste,
+        contrato.indice_reajuste
       );
       return sum + valorComImposto;
     }, 0);
@@ -120,7 +120,7 @@ export default function Clientes() {
   const calculaTotalContratosGrupo = (grupo) =>
     grupo.unidades.reduce(
       (total, cliente) => total + calculaValorTotalContratos(cliente.id),
-      0,
+      0
     );
 
   const clientesGruposFiltrados = clientesGrupos.filter((clientesGrupo) => {
@@ -129,7 +129,7 @@ export default function Clientes() {
     const algumaUnidadePassa = clientesGrupo.unidades.some(
       (unidade) =>
         unidade.nome_fantasia.toLowerCase().includes(texto) ||
-        unidade.cpf_cnpj.includes(filter),
+        unidade.cpf_cnpj.includes(filter)
     );
     return grupoPassa || algumaUnidadePassa;
   });
@@ -166,8 +166,8 @@ export default function Clientes() {
               <span id="tooltip-text">
                 Categoria TOP 30: 30 Maiores faturamentos <br /> Categoria A:
                 Faturamento acima de R$ 3.000,00 <br />
-                Categoria B: Faturamento acima de R$ 1.000,00 <br />
-                Categoria C: Faturamento até R$ 999,00
+                Categoria B: Faturamento acima de R$ 2.000,00 <br />
+                Categoria C: Faturamento até R$ 1.999,00
               </span>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function Clientes() {
                             <td className="clientes-conteudo-tabela">-</td>
                             <td className="clientes-conteudo-tabela">
                               {calculaValorTotalContratos(
-                                cliente.id,
+                                cliente.id
                               ).toLocaleString("pt-BR", {
                                 style: "currency",
                                 currency: "BRL",
