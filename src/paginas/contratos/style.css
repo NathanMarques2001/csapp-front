@@ -75,6 +75,10 @@
   border-bottom: 1px solid var(--cinza);
 }
 
+.contratos-tipo-faturamento {
+  text-transform: capitalize;
+}
+
 #contratos-sem-contratos,
 .active-filters {
   margin-top: 2%;

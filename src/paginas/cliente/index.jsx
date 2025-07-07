@@ -237,6 +237,7 @@ export default function Cliente() {
                 <th>Contratação</th>
                 <th>Valor</th>
                 <th>Recorrência</th>
+                <th>Faturamento</th>
                 <th>Fabricante</th>
               </tr>
             </thead>
@@ -263,6 +264,9 @@ export default function Cliente() {
                     {contrato.duracao == 12000
                       ? "INDETERMINADO"
                       : `${contrato.duracao} MESES`}
+                  </td>
+                  <td className="cliente-tipo-faturamento">
+                    {contrato.tipo_faturamento}
                   </td>
                   <td>{getFabricanteNome(contrato.id_produto)}</td>
                 </tr>

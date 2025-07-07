@@ -17,6 +17,7 @@ export default function RelatorioContratos({
     solucao: "",
     cliente: "",
     status: "",
+    tipo_faturamento: "",
     // vendedor: "",
   });
 
@@ -31,8 +32,10 @@ export default function RelatorioContratos({
     return (
       (!filtros.solucao || produto?.nome === filtros.solucao) &&
       (!filtros.cliente || cliente?.nome_fantasia === filtros.cliente) &&
-      (!filtros.status || contrato.status === filtros.status) //&&
-      // (!filtros.vendedor || vendedor?.nome === filtros.vendedor)
+      (!filtros.status || contrato.status === filtros.status) &&
+      (!filtros.tipo_faturamento ||
+        contrato.tipo_faturamento === filtros.tipo_faturamento)
+      //&& (!filtros.vendedor || vendedor?.nome === filtros.vendedor)
     );
   });
 
@@ -53,6 +56,7 @@ export default function RelatorioContratos({
       Reajuste: dateJs.formatDate(contrato.proximo_reajuste),
       Expiração: `${contrato.duracao} MESES`,
       Valor: valorFinal,
+      Faturamento: contrato.tipo_faturamento,
     };
   });
 
@@ -125,6 +129,19 @@ export default function RelatorioContratos({
               </select>
             </div>
 
+            <div className="form-group">
+              <label>Tipo Faturamento:</label>
+              <select
+                name="tipo_faturamento"
+                value={filtros.tipo_faturamento}
+                onChange={handleFiltroChange}
+              >
+                <option value="">Selecione</option>
+                <option value="mensal">Mensal</option>
+                <option value="anual">Anual</option>
+              </select>
+            </div>
+
             {/* <div className="form-group">
               <label>Vendedor:</label>
               <select
@@ -144,6 +161,7 @@ export default function RelatorioContratos({
             <button
               type="button"
               onClick={() => setOpenModal(false)}
+              id="filter-close-button"
               className="filter-button"
             >
               Fechar
@@ -176,6 +194,7 @@ export default function RelatorioContratos({
             {/* <th className="global-titulo-tabela">Vendedor</th> */}
             <th className="global-titulo-tabela">Reajuste</th>
             <th className="global-titulo-tabela">Expiração</th>
+            <th className="global-titulo-tabela">Faturamento</th>
             <th className="global-titulo-tabela">Valor</th>
           </tr>
         </thead>
@@ -188,6 +207,9 @@ export default function RelatorioContratos({
               {/* <td className="global-conteudo-tabela">{c["Vendedor"]}</td> */}
               <td className="global-conteudo-tabela">{c["Reajuste"]}</td>
               <td className="global-conteudo-tabela">{c["Expiração"]}</td>
+              <td className="global-conteudo-tabela global-conteudo-captalize">
+                {c["Faturamento"]}
+              </td>
               <td className="global-conteudo-tabela">
                 {c["Valor"].toLocaleString("pt-BR", {
                   style: "currency",

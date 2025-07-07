@@ -112,6 +112,10 @@
   overflow-y: scroll;
 }
 
+.cliente-tipo-faturamento {
+  text-transform: capitalize;
+}
+
 #cliente-faturamento-mensal {
   width: 100%;
   background-color: var(--verde);

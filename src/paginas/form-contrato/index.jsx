@@ -51,7 +51,9 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [dataInicio, setDataInicio] = useState(null);
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [tipoFaturamento, setTipoFaturamento] = useState("");
   const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
+  const tiposFaturamento = ["mensal", "anual"];
 
   const [cookies] = useCookies(["tipo"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
@@ -166,6 +168,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setEmail(contrato.email_envio);
           setDescricao(contrato.descricao);
           setStatus(contrato.status);
+          setTipoFaturamento(contrato.tipo_faturamento);
         } catch (err) {
           console.error("Erro ao buscar contrato:", err);
         } finally {
@@ -249,6 +252,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         email_envio: email,
         descricao: descricao,
         data_inicio: formatDate(dataInicio),
+        tipo_faturamento: tipoFaturamento,
       };
 
       console.log(formData);
@@ -519,7 +523,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                 <div className="form-contrato-label-input-container tres-inputs">
                   <label htmlFor="valor-mensal" className="label-form-contrato">
                     <b>
-                      Valor mensal <span className="required">*</span>
+                      Valor <span className="required">*</span>
                     </b>
                   </label>
                   <input
@@ -566,7 +570,36 @@ export default function FormContrato({ mode = "cadastro" }) {
                 </div>
               </div>
               <div className="form-contrato-cliente-tres-inputs-container">
-                <img id="form-contrato-img" src={imgCadastroContrato} alt="" />
+                <div className="form-contrato-label-input-container tres-inputs">
+                  <label htmlFor="">
+                    <b>
+                      Tipo faturamento <span className="required">*</span>
+                    </b>
+                  </label>
+                  <select
+                    name="tipo-faturamento"
+                    id="form-contrato-select-tipo-faturamento"
+                    className="form-contrato-input form-contrato-select"
+                    value={tipoFaturamento}
+                    onChange={(e) => setTipoFaturamento(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>
+                      Selecione
+                    </option>
+                    {tiposFaturamento.map((tipo) => (
+                      <option key={tipo} value={tipo}>
+                        {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+
+                  <img
+                    id="form-contrato-img"
+                    src={imgCadastroContrato}
+                    alt=""
+                  />
+                </div>
                 <div
                   className="form-contrato-label-input-container"
                   id="form-cliente-container-input-descricao"

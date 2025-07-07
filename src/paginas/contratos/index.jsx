@@ -221,6 +221,7 @@ export default function Contratos() {
                   <th className="contratos-titulo-tabela">CPF/CNPJ</th>
                   <th className="contratos-titulo-tabela">Solução</th>
                   <th className="contratos-titulo-tabela">Valor Contrato</th>
+                  <th className="contratos-titulo-tabela">Faturamento</th>
                   <th className="contratos-titulo-tabela">Vendedor</th>
                 </tr>
               </thead>
@@ -255,6 +256,9 @@ export default function Contratos() {
                           style: "currency",
                           currency: "BRL",
                         })}
+                      </td>
+                      <td className="contratos-conteudo-tabela contratos-tipo-faturamento">
+                        {contrato?.tipo_faturamento || "Carregando..."}
                       </td>
                       <td className="contratos-conteudo-tabela">
                         {vendedor?.nome || "Carregando..."}

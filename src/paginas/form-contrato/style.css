@@ -121,7 +121,7 @@
 }
 
 #form-contrato-img {
-  width: 30%;
+  width: 80%;
   margin-right: 5%;
 }
 
@@ -130,4 +130,12 @@
   width: 100%;
   justify-content: end;
   gap: 3%;
+}
+
+#form-contrato-select-tipo-faturamento {
+  margin-bottom: 3rem;
+}
+
+#form-contrato-select-tipo-faturamento option {
+  text-transform: capitalize;
 }

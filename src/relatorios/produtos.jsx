@@ -98,6 +98,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
             <button
               type="button"
               onClick={() => setOpenModal(false)}
+              id="filter-close-button"
               className="filter-button"
             >
               Fechar
