@@ -30,11 +30,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: fit-content;
   background-color: var(--branco);
   border-radius: 15px;
   width: 39%;
   gap: 8%;
   padding-top: 2rem;
+}
+
+#form-container h1 {
+  margin: 5% 0;
 }
 
 #form {
@@ -76,15 +81,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: var(--preto);
+  color: var(--branco);
   gap: 5%;
+  margin-bottom: 10%;
+  border: 2px solid var(--azul-borda);
 }
 
 #login-button:hover {
   background-color: var(--verde-hover);
-  cursor: not-allowed;
 }
 
-#reset-senha {
+#login-microsoft-button:hover {
+  background-color: var(--preto-hover);
+}
+
+/* #reset-senha {
   color: var(--cinza);
   text-decoration: underline;
   cursor: pointer;
@@ -94,7 +106,7 @@
 
 #reset-senha:hover {
   color: var(--preto);
-}
+} */
 
 .logo-microsoft {
   width: 10%;

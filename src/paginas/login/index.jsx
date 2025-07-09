@@ -16,6 +16,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const isDev = ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const [, setCookie] = useCookies(["jwtToken", "nomeUsuario", "id", "tipo"]);
   const navigate = useNavigate();
 
@@ -58,9 +59,9 @@ export default function Login() {
     }
   }
 
-  const resetSenha = () => {
-    navigate("/reset-senha");
-  };
+  // const resetSenha = () => {
+  //   navigate("/reset-senha");
+  // };
 
   return (
     <>
@@ -93,13 +94,16 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
 
-                <button
-                  onClick={(e) => sendForm(e)}
-                  className="login-button"
-                  id="login-button"
-                >
-                  Entrar
-                </button>
+                {isDev && (
+                  <button
+                    onClick={(e) => sendForm(e)}
+                    className="login-button"
+                    id="login-button"
+                  >
+                    Entrar
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={() =>
@@ -117,9 +121,9 @@ export default function Login() {
                   Entrar com Microsoft
                 </button>
 
-                <button onClick={resetSenha} id="reset-senha">
+                {/* <button onClick={resetSenha} id="reset-senha">
                   Esqueci minha senha
-                </button>
+                </button> */}
               </form>
             </div>
 
