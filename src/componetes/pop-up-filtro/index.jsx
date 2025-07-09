@@ -79,7 +79,7 @@ export default function PopUpFiltro({
             onChange={handleChange}
           >
             <option value="">Selecione</option>
-            {produtos.map((produto) => (
+            {Object.values(produtos).map((produto) => (
               <option key={produto.id} value={produto.nome}>
                 {produto.nome}
               </option>

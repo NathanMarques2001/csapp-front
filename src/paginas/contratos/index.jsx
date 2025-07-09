@@ -12,9 +12,9 @@ export default function Contratos() {
   const [cookies] = useCookies(["tipo", "id"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
   const [contratos, setContratos] = useState([]);
-  const [clientes, setClientes] = useState({});
-  const [vendedores, setVendedores] = useState({});
-  const [produtos, setProdutos] = useState({});
+  const [clientes, setClientes] = useState([]);
+  const [vendedores, setVendedores] = useState([]);
+  const [produtos, setProdutos] = useState([]);
   const [filter, setFilter] = useState("");
   const [filters, setFilters] = useState({ status: "ativo" });
   const [loading, setLoading] = useState(false);
