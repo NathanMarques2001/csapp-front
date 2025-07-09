@@ -71,10 +71,10 @@ export default function Rotas() {
             path="/edicao-cliente/:id"
             element={<FormCliente mode="edicao" />}
           />
-          <Route
+          {/* <Route
             path="/cadastro-usuario"
             element={<FormUsuario mode="cadastro" />}
-          />
+          /> */}
           <Route
             path="/edicao-usuario/:id"
             element={<FormUsuario mode="edicao" />}

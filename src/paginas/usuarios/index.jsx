@@ -73,9 +73,9 @@ export default function Usuarios() {
 
   const totalUsuarios = filteredUsuarios.length;
 
-  const handleAddUser = () => {
-    navigate("/cadastro-usuario");
-  };
+  // const handleAddUser = () => {
+  //   navigate("/cadastro-usuario");
+  // };
 
   return (
     <>
@@ -96,12 +96,12 @@ export default function Usuarios() {
           onChange={handleSearch}
           className="gestao-section-input"
         />
-        <button
+        {/* <button
           onClick={handleAddUser}
           className="gestao-section-btn gestao-section-btn-verde"
         >
           Adicionar Usuário
-        </button>
+        </button> */}
         {response && response.usuarios ? (
           <table className="gestao-section-tabela">
             <thead>
