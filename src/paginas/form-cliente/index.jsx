@@ -19,13 +19,18 @@ export default function FormCliente({ mode }) {
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
   const [gruposEconomicos, setGruposEconomicos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [segmentos, setSegmentos] = useState([]);
 
   const [cliente, setCliente] = useState({
     razao_social: "",
     nome_fantasia: "",
     cpf_cnpj: "",
+    id_usuario: "",
+    id_segmento: "",
     id_grupo_economico: "",
     tipo_unidade: "",
+    nps: "",
     gestor_contratos_nome: "",
     gestor_contratos_email: "",
     gestor_contratos_nascimento: null,
@@ -100,6 +105,32 @@ export default function FormCliente({ mode }) {
   }, [mode, id]);
 
   useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const response = await api.get("/usuarios");
+        setUsuarios(response.usuarios);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    const fetchSegmentos = async () => {
+      try {
+        const response = await api.get("/segmentos");
+        const segmentosAtivos = response.segmentos.filter(
+          (segmento) => segmento.status !== "inativo",
+        );
+        setSegmentos(segmentosAtivos);
+      } catch (error) {
+        console.error("Erro ao buscar os segmentos: " + error);
+      }
+    };
+
+    fetchUsuarios();
+    fetchSegmentos();
+  }, []);
+
+  useEffect(() => {
     const fetchGruposEconomicos = async () => {
       try {
         const response = await api.get("/grupos-economicos");
@@ -133,12 +164,21 @@ export default function FormCliente({ mode }) {
     setShowPopup(false);
     try {
       setLoading(true);
-      console.log(cliente);
+
+      const clienteEnviar = {
+        ...cliente,
+        id_grupo_economico:
+          cliente.id_grupo_economico === ""
+            ? null
+            : Number(cliente.id_grupo_economico),
+        tipo_unidade: cliente.tipo_unidade === "" ? null : cliente.tipo_unidade,
+      };
+
       if (mode === "cadastro") {
-        await api.post("/clientes", cliente);
+        await api.post("/clientes", clienteEnviar);
         navigate("/clientes");
       } else if (mode === "edicao" && id) {
-        await api.put(`/clientes/${id}`, cliente);
+        await api.put(`/clientes/${id}`, clienteEnviar);
         navigate(`/clientes/${cliente.id}`);
       }
     } catch (error) {
@@ -229,16 +269,53 @@ export default function FormCliente({ mode }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="id_grupo_economico">
-                      Grupo Econômico <span className="required">*</span>
+                    <label htmlFor="id_usuario">
+                      Relacionamento <span className="required">*</span>
                     </label>
+                    <select
+                      required
+                      id="id_usuario"
+                      disabled={!isAdminOrDev}
+                      name="id_usuario"
+                      value={cliente.id_usuario}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecione...</option>
+                      {usuarios.map((usuario) => (
+                        <option key={usuario.id} value={usuario.id}>
+                          {usuario.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="id_segmento">
+                      Segmento <span className="required">*</span>
+                    </label>
+                    <select
+                      required
+                      id="id_segmento"
+                      disabled={!isAdminOrDev}
+                      name="id_segmento"
+                      value={cliente.id_segmento}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecione...</option>
+                      {segmentos.map((segmento) => (
+                        <option key={segmento.id} value={segmento.id}>
+                          {segmento.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="id_grupo_economico">Grupo Econômico</label>
                     <select
                       id="id_grupo_economico"
                       disabled={!isAdminOrDev}
                       name="id_grupo_economico"
                       value={cliente.id_grupo_economico}
                       onChange={handleChange}
-                      required
                     >
                       <option value="">Selecione...</option>
                       {gruposEconomicos.map((grupoEconomico) => (
@@ -252,24 +329,33 @@ export default function FormCliente({ mode }) {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="tipo_unidade">
-                      Tipo da Unidade <span className="required">*</span>
-                    </label>
+                    <label htmlFor="tipo_unidade">Tipo da Unidade</label>
                     <select
                       id="tipo_unidade"
                       disabled={!isAdminOrDev}
                       name="tipo_unidade"
                       value={cliente.tipo_unidade}
                       onChange={handleChange}
-                      required
                     >
                       <option value="">Selecione...</option>
-                      {["matriz", "filial"].map((tipo) => (
+                      {["pai", "filha"].map((tipo) => (
                         <option key={tipo} value={tipo}>
                           {tipo.charAt(0).toUpperCase() + tipo.slice(1)}
                         </option>
                       ))}
                     </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="nps">NPS</label>
+                    <input
+                      type="text"
+                      id="nps"
+                      name="nps"
+                      disabled={!isAdminOrDev}
+                      placeholder="Digite o NPS do cliente"
+                      value={cliente.nps}
+                      onChange={handleChange}
+                    />
                   </div>
                 </div>
                 <div id="cadastro-cliente-img-div">

@@ -18,31 +18,6 @@ export default function FormGrupoEconomico({ mode = "cadastro" }) {
 
   // Dados do form
   const [nome, setNome] = useState("");
-  const [idUsuario, setIdUsuario] = useState("");
-  const [nps, setNps] = useState("");
-  const [idSegmento, setIdSegmento] = useState("");
-
-  // Opções de select
-  const [usuarios, setUsuarios] = useState([]);
-  const [segmentos, setSegmentos] = useState([]);
-
-  // Carrega usuários e segmentos
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [uRes, sRes] = await Promise.all([
-          api.get("/usuarios"),
-          api.get("/segmentos"),
-        ]);
-        setUsuarios(uRes.usuarios);
-        // só segmentos ativos
-        setSegmentos(sRes.segmentos.filter((seg) => seg.status !== "inativo"));
-      } catch (err) {
-        console.error("Erro ao buscar opções:", err);
-      }
-    };
-    fetchOptions();
-  }, []);
 
   // Se for edição, preenche o form
   useEffect(() => {
@@ -53,9 +28,6 @@ export default function FormGrupoEconomico({ mode = "cadastro" }) {
           const res = await api.get(`/grupos-economicos/${id}`);
           const g = res.grupoEconomico;
           setNome(g.nome);
-          setIdUsuario(g.id_usuario);
-          setNps(g.nps);
-          setIdSegmento(g.id_segmento);
         } catch (err) {
           console.error("Erro ao buscar grupo econômico:", err);
         } finally {
@@ -81,9 +53,6 @@ export default function FormGrupoEconomico({ mode = "cadastro" }) {
     setShowPopup(false);
     const payload = {
       nome,
-      id_usuario: Number(idUsuario),
-      nps: Number(nps),
-      id_segmento: Number(idSegmento),
     };
     try {
       setLoading(true);
@@ -150,62 +119,6 @@ export default function FormGrupoEconomico({ mode = "cadastro" }) {
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   required
-                />
-              </div>
-
-              {/* Usuário */}
-              <div className="form-group">
-                <label htmlFor="id_usuario">
-                  Responsável <span className="required">*</span>
-                </label>
-                <select
-                  id="id_usuario"
-                  name="id_usuario"
-                  value={idUsuario}
-                  onChange={(e) => setIdUsuario(e.target.value)}
-                  required
-                >
-                  <option value="">Selecione...</option>
-                  {usuarios.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.nome}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Segmento */}
-              <div className="form-group">
-                <label htmlFor="id_segmento">
-                  Segmento <span className="required">*</span>
-                </label>
-                <select
-                  id="id_segmento"
-                  name="id_segmento"
-                  value={idSegmento}
-                  onChange={(e) => setIdSegmento(e.target.value)}
-                  required
-                >
-                  <option value="">Selecione...</option>
-                  {segmentos.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.nome}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* NPS */}
-              <div className="form-group">
-                <label htmlFor="nps">NPS</label>
-                <input
-                  type="number"
-                  id="nps"
-                  name="nps"
-                  min="0"
-                  max="10"
-                  value={nps}
-                  onChange={(e) => setNps(e.target.value)}
                 />
               </div>
 

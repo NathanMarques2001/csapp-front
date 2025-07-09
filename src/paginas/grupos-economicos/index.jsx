@@ -46,7 +46,7 @@ export default function GruposEconomicos() {
     try {
       const response = await api.get(`/grupos-economicos/${id}`);
       const newStatus =
-        response.segmento.status === "ativo" ? "inativo" : "ativo";
+        response.grupoEconomico.status === "ativo" ? "inativo" : "ativo";
       await api.put(`/grupos-economicos/${id}`, { status: newStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {

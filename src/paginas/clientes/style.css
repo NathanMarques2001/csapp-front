@@ -90,10 +90,17 @@
 }
 
 .clientes-titulo-tabela,
-.clientes-conteudo-tabela {
+.clientes-conteudo-tabela,
+.clientes-conteudo-tabela-sem-grupo {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid var(--cinza);
+  cursor: pointer;
+}
+
+.clientes-conteudo-tabela-sem-grupo:hover {
+  background-color: var(--azul-borda);
+  color: var(--branco);
 }
 
 #clientes-sem-clientes {

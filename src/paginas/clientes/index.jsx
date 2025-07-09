@@ -21,6 +21,7 @@ export default function Clientes() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [hoverGrupoId, setHoverGrupoId] = useState(null);
+  const [clientesSemGrupo, setClientesSemGrupo] = useState([]);
 
   useEffect(() => {
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
@@ -51,8 +52,12 @@ export default function Clientes() {
         const contratosResponse = await api.get("/contratos");
         setContratos(contratosResponse.contratos);
 
-        const agrupados = agruparClientesPorGrupo(clientesData, grupos);
+        const { agrupados, semGrupo } = agruparClientesPorGrupo(
+          clientesData,
+          grupos,
+        );
         setClientesGrupos(agrupados);
+        setClientesSemGrupo(semGrupo);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -69,21 +74,19 @@ export default function Clientes() {
       return acc;
     }, {});
 
-    const semGrupo = { grupo: { id: 0, nome: "Sem grupo" }, unidades: [] };
+    const semGrupo = [];
 
     clientes.forEach((cliente) => {
       const grupo = cliente.id_grupo_economico;
       if (grupo && gruposIndex[grupo]) {
         gruposIndex[grupo].unidades.push(cliente);
       } else {
-        semGrupo.unidades.push(cliente);
+        semGrupo.push(cliente);
       }
     });
 
-    const resultado = Object.values(gruposIndex);
-    if (semGrupo.unidades.length) resultado.push(semGrupo);
-
-    return resultado;
+    const agrupados = Object.values(gruposIndex);
+    return { agrupados, semGrupo };
   };
 
   const calculaValorImpostoMensal = (valor, indice) =>
@@ -173,7 +176,7 @@ export default function Clientes() {
           </div>
 
           {/* Tabela principal */}
-          {clientesGruposFiltrados.length ? (
+          {clientesGruposFiltrados.length || clientesSemGrupo.length ? (
             <table id="clientes-tabela">
               <thead>
                 <tr>
@@ -185,6 +188,7 @@ export default function Clientes() {
                 </tr>
               </thead>
 
+              {/* Grupos econômicos com unidades */}
               {clientesGruposFiltrados.map((grupo) => {
                 const matriz = getMatriz(grupo);
                 const totalContratos = calculaTotalContratosGrupo(grupo);
@@ -199,8 +203,6 @@ export default function Clientes() {
                     >
                       {/* Linha do grupo */}
                       <tr
-                        onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
-                        onMouseLeave={() => setHoverGrupoId(null)}
                         className={
                           aberto ? "clientes-conteudo-tabela-grupo-aberto" : ""
                         }
@@ -222,18 +224,16 @@ export default function Clientes() {
                           })}
                         </td>
                         <td className="clientes-conteudo-tabela">
-                          {vendedores[grupo.grupo.id_usuario] || "-"}
+                          {vendedores[matriz?.id_usuario] || "-"}
                         </td>
                       </tr>
 
-                      {/* Linhas das unidades (aparecem só se hover) */}
+                      {/* Unidades visíveis apenas no hover */}
                       {aberto &&
                         grupo.unidades.map((cliente) => (
                           <tr
                             key={cliente.id}
                             className="clientes-conteudo-tabela-hover"
-                            onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
-                            onMouseLeave={() => setHoverGrupoId(null)}
                             onClick={(e) => {
                               e.stopPropagation();
                               detalhesCliente(cliente.id);
@@ -245,7 +245,9 @@ export default function Clientes() {
                             <td className="clientes-conteudo-tabela">
                               {cliente.cpf_cnpj}
                             </td>
-                            <td className="clientes-conteudo-tabela">-</td>
+                            <td className="clientes-conteudo-tabela">
+                              {cliente.tipo || "-"}
+                            </td>
                             <td className="clientes-conteudo-tabela">
                               {calculaValorTotalContratos(
                                 cliente.id,
@@ -254,13 +256,56 @@ export default function Clientes() {
                                 currency: "BRL",
                               })}
                             </td>
-                            <td className="clientes-conteudo-tabela">-</td>
+                            <td className="clientes-conteudo-tabela">
+                              {vendedores[cliente?.id_usuario] || "-"}
+                            </td>
                           </tr>
                         ))}
                     </tbody>
                   </Fragment>
                 );
               })}
+
+              {/* Clientes sem grupo aparecem normalmente na listagem */}
+              <tbody>
+                {clientesSemGrupo
+                  .filter((cliente) => {
+                    const texto = filter.toLowerCase();
+                    return (
+                      cliente.nome_fantasia.toLowerCase().includes(texto) ||
+                      cliente.cpf_cnpj.includes(filter)
+                    );
+                  })
+                  .map((cliente) => (
+                    <tr
+                      key={`semgrupo-${cliente.id}`}
+                      className="clientes-conteudo-tabela-sem-grupo"
+                      onClick={() => detalhesCliente(cliente.id)}
+                    >
+                      <td className="clientes-conteudo-tabela">
+                        {cliente.nome_fantasia}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {cliente.cpf_cnpj}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {cliente.tipo?.toUpperCase() || "-"}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {calculaValorTotalContratos(cliente.id).toLocaleString(
+                          "pt-BR",
+                          {
+                            style: "currency",
+                            currency: "BRL",
+                          },
+                        )}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {vendedores[cliente.id_usuario] || "-"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
             </table>
           ) : (
             <p id="clientes-sem-clientes">
