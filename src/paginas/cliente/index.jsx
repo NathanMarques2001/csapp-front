@@ -123,21 +123,24 @@ export default function Cliente() {
   const calculaValorImpostoMensal = (valor, indice) =>
     valor + (valor * indice) / 100;
 
-  const calculaValorTotalContratos = () => {
-    const vendedorContratosAtivos = contratos.filter(
-      (contrato) => contrato.status === "ativo",
+  const calculaFaturamentoPorTipo = (tipo) => {
+    const contratosFiltrados = contratos.filter(
+      (contrato) =>
+        contrato.status === "ativo" &&
+        contrato.tipo_faturamento?.toLowerCase() === tipo,
     );
-    return vendedorContratosAtivos
-      .reduce(
-        (total, contrato) =>
-          total +
-          calculaValorImpostoMensal(
-            parseFloat(contrato.valor_mensal),
-            contrato.indice_reajuste,
-          ),
-        0,
-      )
-      .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    const total = contratosFiltrados.reduce((soma, contrato) => {
+      const valor = parseFloat(contrato.valor_mensal || 0);
+      return (
+        soma + calculaValorImpostoMensal(valor, contrato.indice_reajuste || 0)
+      );
+    }, 0);
+
+    return total.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
   const abrirPopUp = async (e, titulo, conteudo = "", cardID = "") => {
@@ -274,8 +277,14 @@ export default function Cliente() {
             </tbody>
           </table>
           <div id="cliente-faturamento-mensal">
-            Faturamento mensal: <b>{calculaValorTotalContratos()}</b>
+            <div>
+              Faturamento mensal: <b>{calculaFaturamentoPorTipo("mensal")}</b>
+            </div>
+            <div>
+              Faturamento anual: <b>{calculaFaturamentoPorTipo("anual")}</b>
+            </div>
           </div>
+
           <div id="cliente-card-container">
             <CardGestor
               titulo={"Gestor de Contratos"}

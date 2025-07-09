@@ -121,9 +121,10 @@
   background-color: var(--verde);
   padding: 1%;
   display: flex;
-  justify-content: end;
+  align-items: end;
   border: 1px solid var(--preto);
   border-radius: 0 0 7px 7px;
+  flex-direction: column;
 }
 
 #cliente-card-container {

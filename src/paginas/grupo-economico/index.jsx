@@ -119,21 +119,24 @@ export default function GrupoEconomico() {
   const calculaValorImpostoMensal = (valor, indice) =>
     valor + (valor * indice) / 100;
 
-  const calculaValorTotalContratos = () => {
-    const vendedorContratosAtivos = contratos.filter(
-      (contrato) => contrato.status === "ativo",
+  const calculaFaturamentoPorTipo = (tipo) => {
+    const contratosFiltrados = contratos.filter(
+      (contrato) =>
+        contrato.status === "ativo" &&
+        contrato.tipo_faturamento?.toLowerCase() === tipo,
     );
-    return vendedorContratosAtivos
-      .reduce(
-        (total, contrato) =>
-          total +
-          calculaValorImpostoMensal(
-            parseFloat(contrato.valor_mensal),
-            contrato.indice_reajuste,
-          ),
-        0,
-      )
-      .toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    const total = contratosFiltrados.reduce((soma, contrato) => {
+      const valor = parseFloat(contrato.valor_mensal || 0);
+      return (
+        soma + calculaValorImpostoMensal(valor, contrato.indice_reajuste || 0)
+      );
+    }, 0);
+
+    return total.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
   const ativarOuInativar = async (id) => {
@@ -212,15 +215,29 @@ export default function GrupoEconomico() {
               (ctr) => ctr.status === "ativo",
             );
 
-            const valorTotalCliente = contratosAtivos.reduce(
-              (total, ctr) =>
-                total +
-                calculaValorImpostoMensal(
-                  parseFloat(ctr.valor_mensal),
-                  ctr.indice_reajuste,
-                ),
-              0,
-            );
+            const valorTotalMensalCliente = contratosAtivos
+              .filter((ctr) => ctr.tipo_faturamento?.toLowerCase() === "mensal")
+              .reduce(
+                (total, ctr) =>
+                  total +
+                  calculaValorImpostoMensal(
+                    parseFloat(ctr.valor_mensal),
+                    ctr.indice_reajuste || 0,
+                  ),
+                0,
+              );
+
+            const valorTotalAnualCliente = contratosAtivos
+              .filter((ctr) => ctr.tipo_faturamento?.toLowerCase() === "anual")
+              .reduce(
+                (total, ctr) =>
+                  total +
+                  calculaValorImpostoMensal(
+                    parseFloat(ctr.valor_mensal),
+                    ctr.indice_reajuste || 0,
+                  ),
+                0,
+              );
 
             return (
               <section key={cliente.id} className="cliente-bloco">
@@ -232,13 +249,27 @@ export default function GrupoEconomico() {
                   </strong>{" "}
                   {/* POR ALGUM MOTIVO O CPF/CNPJ SOME QUANDO TIRA ESSE ESPAÇO. ENTAO NAO MEXA */}
                   {cliente.cpf_cnpj}
-                  <span className="fat">
-                    Faturamento mensal:{" "}
-                    {valorTotalCliente.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </span>
+                  <div>
+                    <span>
+                      Faturamento mensal:{" "}
+                      <b>
+                        {valorTotalMensalCliente.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </b>
+                    </span>
+                    <br />
+                    <span>
+                      Faturamento anual:{" "}
+                      <b>
+                        {valorTotalAnualCliente.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </b>
+                    </span>
+                  </div>
                 </div>
 
                 {/* Tabela de contratos desse cliente */}
@@ -298,8 +329,14 @@ export default function GrupoEconomico() {
           >
             <img src={imgGrupoEconomico} alt="" id="grupo-economico-img" />
             <div id="grupo-economico-faturamento-mensal">
-              Faturamento mensal total do grupo:{" "}
-              <b>{calculaValorTotalContratos()}</b>
+              <div>
+                Faturamento mensal total do grupo:{" "}
+                <b>{calculaFaturamentoPorTipo("mensal")}</b>
+              </div>
+              <div>
+                Faturamento anual total do grupo:{" "}
+                <b>{calculaFaturamentoPorTipo("anual")}</b>
+              </div>
             </div>
           </div>
         </div>
