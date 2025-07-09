@@ -15,7 +15,6 @@ export default function Contratos() {
   const [clientes, setClientes] = useState({});
   const [vendedores, setVendedores] = useState({});
   const [produtos, setProdutos] = useState({});
-  const [gruposEconomicos, setGruposEconomicos] = useState({});
   const [filter, setFilter] = useState("");
   const [filters, setFilters] = useState({ status: "ativo" });
   const [loading, setLoading] = useState(false);
@@ -65,14 +64,6 @@ export default function Contratos() {
           return map;
         }, {});
         setProdutos(produtosMap);
-
-        const gruposEconomicosResponse = await api.get("/grupos-economicos");
-        const gruposEconomicosMap =
-          gruposEconomicosResponse.grupoEconomico.reduce((map, grupoEconom) => {
-            map[grupoEconom.id] = grupoEconom;
-            return map;
-          }, {});
-        setGruposEconomicos(gruposEconomicosMap);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -229,9 +220,7 @@ export default function Contratos() {
                 {filteredContratos.map((contrato) => {
                   const cliente = clientes[contrato.id_cliente];
                   const produto = produtos[contrato.id_produto];
-                  const grupoEconomico =
-                    gruposEconomicos[cliente?.id_grupo_economico];
-                  const vendedor = vendedores[grupoEconomico?.id_usuario];
+                  const vendedor = vendedores[cliente?.id_usuario];
 
                   return (
                     <tr

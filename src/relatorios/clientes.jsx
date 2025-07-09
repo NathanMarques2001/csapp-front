@@ -5,16 +5,16 @@ import Popup from "../componetes/pop-up";
 export default function RelatorioClientes({
   clientes,
   contratos,
-  // usuariosMap,
-  // segmentosMap,
+  usuariosMap,
+  segmentosMap,
 }) {
   const excel = new Excel("Relatório de Clientes");
   const [filtros, setFiltros] = useState({
     nome_fantasia: "",
-    // tipo: "",
+    tipo: "",
     status: "",
-    // vendedor: "",
-    // segmento: "",
+    vendedor: "",
+    segmento: "",
   });
   const [openModal, setOpenModal] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
@@ -23,12 +23,12 @@ export default function RelatorioClientes({
     (cliente) =>
       (!filtros.nome_fantasia ||
         cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&
-      // (!filtros.tipo || cliente.tipo === filtros.tipo) &&
-      (!filtros.status || cliente.status === filtros.status), //&&
-    // (!filtros.vendedor ||
-    //   usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
-    // (!filtros.segmento ||
-    //   segmentosMap[cliente.id_segmento]?.nome === filtros.segmento),
+      (!filtros.tipo || cliente.tipo === filtros.tipo) &&
+      (!filtros.status || cliente.status === filtros.status) &&
+      (!filtros.vendedor ||
+        usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
+      (!filtros.segmento ||
+        segmentosMap[cliente.id_segmento]?.nome === filtros.segmento),
   );
 
   const data = clientesFiltrados.map((cliente) => {
@@ -46,11 +46,11 @@ export default function RelatorioClientes({
     return {
       "Nome Fantasia": cliente.nome_fantasia,
       "CPF/CNPJ": cliente.cpf_cnpj,
-      // Tipo: cliente.tipo.toUpperCase(),
+      Tipo: cliente.tipo || "-",
       Status: cliente.status,
-      // "Usuário Responsável":
-      //   usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
-      // Segmento: segmentosMap[cliente.id_segmento]?.nome || "Desconhecido",
+      "Usuário Responsável":
+        usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
+      Segmento: segmentosMap[cliente.id_segmento]?.nome || "Desconhecido",
       "Valor Total dos Contratos": valorTotalContratos,
     };
   });
@@ -95,7 +95,7 @@ export default function RelatorioClientes({
               </select>
             </div>
 
-            {/* <div className="form-group">
+            <div className="form-group">
               <label>Tipo:</label>
               <select
                 name="tipo"
@@ -108,7 +108,7 @@ export default function RelatorioClientes({
                 <option value="b">B</option>
                 <option value="c">C</option>
               </select>
-            </div> */}
+            </div>
 
             <div className="form-group">
               <label>Status:</label>
@@ -123,7 +123,7 @@ export default function RelatorioClientes({
               </select>
             </div>
 
-            {/* <div className="form-group">
+            <div className="form-group">
               <label>Vendedor:</label>
               <select
                 name="vendedor"
@@ -153,7 +153,7 @@ export default function RelatorioClientes({
                   </option>
                 ))}
               </select>
-            </div> */}
+            </div>
 
             <button
               type="button"
@@ -187,10 +187,10 @@ export default function RelatorioClientes({
           <tr>
             <th className="global-titulo-tabela">Nome</th>
             <th className="global-titulo-tabela">CPF/CNPJ</th>
-            {/* <th className="global-titulo-tabela">Tipo</th> */}
+            <th className="global-titulo-tabela">Tipo</th>
             <th className="global-titulo-tabela">Status</th>
-            {/* <th className="global-titulo-tabela">Vendedor</th>
-            <th className="global-titulo-tabela">Segmento</th> */}
+            <th className="global-titulo-tabela">Vendedor</th>
+            <th className="global-titulo-tabela">Segmento</th>
             <th className="global-titulo-tabela">Valor dos Contratos</th>
           </tr>
         </thead>
@@ -201,12 +201,14 @@ export default function RelatorioClientes({
                 {cliente["Nome Fantasia"]}
               </td>
               <td className="global-conteudo-tabela">{cliente["CPF/CNPJ"]}</td>
-              {/* <td className="global-conteudo-tabela">{cliente["Tipo"]}</td> */}
+              <td className="global-conteudo-tabela">
+                {cliente["Tipo"].toUpperCase()}
+              </td>
               <td className="global-conteudo-tabela">{cliente["Status"]}</td>
-              {/* <td className="global-conteudo-tabela">
+              <td className="global-conteudo-tabela">
                 {cliente["Usuário Responsável"]}
               </td>
-              <td className="global-conteudo-tabela">{cliente["Segmento"]}</td> */}
+              <td className="global-conteudo-tabela">{cliente["Segmento"]}</td>
               <td className="global-conteudo-tabela">
                 {cliente["Valor Total dos Contratos"].toLocaleString("pt-BR", {
                   style: "currency",
