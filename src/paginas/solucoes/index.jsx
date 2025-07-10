@@ -11,6 +11,7 @@ export default function Solucoes() {
   const api = new Api();
   const [produtos, setProdutos] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
+  const [categorias, setCategorias] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [atualizar, setAtualizar] = useState(0);
@@ -38,6 +39,16 @@ export default function Solucoes() {
           {}
         );
         setFabricantes(fabricantesMap);
+
+        const categoriasResponse = await api.get("/categorias-produtos");
+        const categoriasMap = categoriasResponse.categorias.reduce(
+          (map, categoria) => {
+            map[categoria.id] = categoria.nome;
+            return map;
+          },
+          {}
+        );
+        setCategorias(categoriasMap);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -135,6 +146,7 @@ export default function Solucoes() {
                 <th className="gestao-section-titulo-tabela">Nome</th>
                 <th className="gestao-section-titulo-tabela">Fornecedor</th>
                 <th className="gestao-section-titulo-tabela">Status</th>
+                <th className="gestao-section-titulo-tabela">Categoria</th>
                 <th className="gestao-section-titulo-tabela">Ações</th>
               </tr>
             </thead>
@@ -149,6 +161,9 @@ export default function Solucoes() {
                   </td>
                   <td className="gestao-section-conteudo-tabela">
                     {produto.status}
+                  </td>
+                  <td className="gestao-section-conteudo-tabela">
+                    {categorias[produto.id_categoria_produto] || "-"}
                   </td>
                   <td className="gestao-section-conteudo-tabela">
                     <div className="gestao-section-container-btn">

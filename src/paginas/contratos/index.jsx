@@ -229,13 +229,13 @@ export default function Contratos() {
                       className="clickable-row"
                     >
                       <td className="contratos-conteudo-tabela">
-                        {cliente?.nome_fantasia || "Carregando..."}
+                        {cliente?.nome_fantasia || "-"}
                       </td>
                       <td className="contratos-conteudo-tabela">
-                        {cliente?.cpf_cnpj || "Carregando..."}
+                        {cliente?.cpf_cnpj || "-"}
                       </td>
                       <td className="contratos-conteudo-tabela">
-                        {produto?.nome || "Carregando..."}
+                        {produto?.nome || "-"}
                       </td>
                       <td className="contratos-conteudo-tabela">
                         {calculaValorImpostoMensal(
@@ -247,10 +247,10 @@ export default function Contratos() {
                         })}
                       </td>
                       <td className="contratos-conteudo-tabela contratos-tipo-faturamento">
-                        {contrato?.tipo_faturamento || "Carregando..."}
+                        {contrato?.tipo_faturamento || "-"}
                       </td>
                       <td className="contratos-conteudo-tabela">
-                        {vendedor?.nome || "Carregando..."}
+                        {vendedor?.nome || "-"}
                       </td>
                     </tr>
                   );

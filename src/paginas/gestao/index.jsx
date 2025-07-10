@@ -41,7 +41,7 @@ export default function Gestao() {
           >
             Categorias
             <br />
-            Soluções
+            Produtos/Serviços
           </p>
           <p
             className={`switch-item ${selectedItem === "classificacoes-clientes" ? "active" : ""}`}
@@ -81,7 +81,7 @@ export default function Gestao() {
             className={`switch-item ${selectedItem === "solucoes" ? "active" : ""}`}
             onClick={() => handleClick("solucoes")}
           >
-            Soluções
+            Produtos/Serviços
           </p>
           <p
             className={`switch-item ${selectedItem === "usuarios" ? "active" : ""}`}
