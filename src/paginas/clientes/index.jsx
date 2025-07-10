@@ -17,6 +17,7 @@ export default function Clientes() {
   const [clientesGrupos, setClientesGrupos] = useState([]);
   const [contratos, setContratos] = useState([]);
   const [vendedores, setVendedores] = useState({});
+  const [classificacoesClientes, setClassificacoesClientes] = useState([]);
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -58,6 +59,19 @@ export default function Clientes() {
         );
         setClientesGrupos(agrupados);
         setClientesSemGrupo(semGrupo);
+
+        const classificacoesClientesResponse = await api.get(
+          "/classificacoes-clientes",
+        );
+        const classificacoesClientesMap =
+          classificacoesClientesResponse.classificacoes.reduce(
+            (map, classificacao) => {
+              map[classificacao.id] = classificacao;
+              return map;
+            },
+            {},
+          );
+        setClassificacoesClientes(classificacoesClientesMap);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
@@ -215,7 +229,9 @@ export default function Clientes() {
                           {matriz?.cpf_cnpj || "-"}
                         </td>
                         <td className="clientes-conteudo-tabela">
-                          {grupo.grupo.tipo?.toUpperCase() || "-"}
+                          {classificacoesClientes[
+                            grupo.grupo?.id_classificacao_cliente
+                          ]?.nome || "-"}
                         </td>
                         <td className="clientes-conteudo-tabela">
                           {totalContratos.toLocaleString("pt-BR", {
@@ -289,7 +305,9 @@ export default function Clientes() {
                         {cliente.cpf_cnpj}
                       </td>
                       <td className="clientes-conteudo-tabela">
-                        {cliente.tipo?.toUpperCase() || "-"}
+                        {classificacoesClientes[
+                          cliente?.id_classificacao_cliente
+                        ]?.nome || "-"}
                       </td>
                       <td className="clientes-conteudo-tabela">
                         {calculaValorTotalContratos(cliente.id).toLocaleString(

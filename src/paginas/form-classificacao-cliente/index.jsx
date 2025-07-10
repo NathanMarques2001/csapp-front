@@ -49,11 +49,22 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
 
   const confirmSaveClassificacao = async () => {
     setShowPopup(false);
+
     const data = {
       nome,
       tipo_categoria: tipoCategoria,
-      quantidade: tipoCategoria === "quantidade" ? quantidade : null,
-      valor: tipoCategoria === "valor" ? valor : null,
+      quantidade:
+        tipoCategoria === "quantidade"
+          ? quantidade !== ""
+            ? parseInt(quantidade, 10)
+            : null
+          : null,
+      valor:
+        tipoCategoria === "valor"
+          ? valor !== ""
+            ? parseFloat(valor)
+            : null
+          : null,
     };
 
     try {
@@ -64,9 +75,12 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
       } else if (mode === "edicao") {
         req = await api.put(`/classificacoes-clientes/${id}`, data);
       }
+      console.log("Resposta da API:", req);
+
+      // Ajuste a verificação conforme o formato real da resposta
       if (
-        req.message === "Classificação criada com sucesso!" ||
-        req.message === "Classificação atualizada com sucesso!"
+        req?.message === "Classificação criada com sucesso!" ||
+        req?.message === "Classificação atualizada com sucesso!"
       ) {
         navigate("/gestao?aba=classificacoes-clientes");
       } else {
@@ -74,7 +88,12 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
       }
     } catch (err) {
       console.error("Erro ao salvar:", err);
-      alert(err);
+      console.error("Resposta de erro detalhada:", err?.response?.data);
+      alert(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Erro inesperado ao salvar a classificação.",
+      );
     } finally {
       setLoading(false);
     }
