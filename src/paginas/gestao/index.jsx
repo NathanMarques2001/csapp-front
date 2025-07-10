@@ -9,6 +9,7 @@ import Segmentos from "../segmentos";
 import Faturados from "../faturados";
 import GruposEconomicos from "../grupos-economicos";
 import ClassificacoesClientes from "../classificacoes-clientes";
+import CategoriasProdutos from "../categorias-produtos";
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -16,7 +17,7 @@ import ClassificacoesClientes from "../classificacoes-clientes";
 export default function Gestao() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const aba = queryParams.get("aba") || "classificacoes-clientes";
+  const aba = queryParams.get("aba") || "categorias-produtos";
 
   const [selectedItem, setSelectedItem] = useState(aba);
 
@@ -35,16 +36,28 @@ export default function Gestao() {
         <h1 id="central-gestao-titulo">Central de Gestão</h1>
         <div id="central-gestao-switch-container">
           <p
+            className={`switch-item ${selectedItem === "categorias-produtos" ? "active" : ""}`}
+            onClick={() => handleClick("categorias-produtos")}
+          >
+            Categorias
+            <br />
+            Soluções
+          </p>
+          <p
             className={`switch-item ${selectedItem === "classificacoes-clientes" ? "active" : ""}`}
             onClick={() => handleClick("classificacoes-clientes")}
           >
-            Classificações Clientes
+            Classificações
+            <br />
+            Clientes
           </p>
           <p
             className={`switch-item ${selectedItem === "grupos-economicos" ? "active" : ""}`}
             onClick={() => handleClick("grupos-economicos")}
           >
-            Grupos Econômicos
+            Grupos
+            <br />
+            Econômicos
           </p>
           <p
             className={`switch-item ${selectedItem === "faturados" ? "active" : ""}`}
@@ -79,6 +92,7 @@ export default function Gestao() {
         </div>
 
         <div>
+          {selectedItem === "categorias-produtos" && <CategoriasProdutos />}
           {selectedItem === "classificacoes-clientes" && (
             <ClassificacoesClientes />
           )}

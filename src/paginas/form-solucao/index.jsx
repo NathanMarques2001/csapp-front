@@ -15,6 +15,8 @@ export default function FormSolucao({ mode = "cadastro" }) {
   const [fabricantes, setFabricantes] = useState([]);
   const [selectedFabricante, setSelectedFabricante] = useState("");
   const [nomeProduto, setNomeProduto] = useState("");
+  const [categorias, setCategorias] = useState([]);
+  const [selectedCategoria, setSelectedCategoria] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupAction, setPopupAction] = useState(null);
@@ -45,6 +47,7 @@ export default function FormSolucao({ mode = "cadastro" }) {
           const produto = response.produto;
           setNomeProduto(produto.nome);
           setSelectedFabricante(produto.id_fabricante);
+          setSelectedCategoria(produto.id_categoria_produto);
         } catch (err) {
           console.error("Error fetching product:", err);
         } finally {
@@ -53,8 +56,21 @@ export default function FormSolucao({ mode = "cadastro" }) {
       }
     };
 
+    const fetchCategorias = async () => {
+      try {
+        const data = await api.get("/categorias-produtos");
+        const categoriasAtivas = data.categorias.filter(
+          (cat) => cat.status !== "inativo",
+        );
+        setCategorias(categoriasAtivas);
+      } catch (err) {
+        console.error("Erro ao buscar categorias:", err);
+      }
+    };
+
     fetchFabricantes();
     fetchProduto();
+    fetchCategorias();
   }, [mode, id]);
 
   const handleAddProduct = async (e) => {
@@ -72,6 +88,7 @@ export default function FormSolucao({ mode = "cadastro" }) {
     const data = {
       nome: nomeProduto,
       id_fabricante: selectedFabricante,
+      id_categoria_produto: selectedCategoria,
     };
     try {
       setLoading(true);
@@ -165,6 +182,25 @@ export default function FormSolucao({ mode = "cadastro" }) {
                     fabricantes.map((fabricante) => (
                       <option key={fabricante.id} value={fabricante.id}>
                         {fabricante.nome}
+                      </option>
+                    ))}
+                </select>
+                <label htmlFor="categoria">
+                  <b>Categoria *</b>
+                </label>
+                <select
+                  name="categoria"
+                  id="cadastro-solucao-select"
+                  value={selectedCategoria}
+                  onChange={(e) => setSelectedCategoria(e.target.value)}
+                  required
+                  className="cadastro-solucao-input"
+                >
+                  <option value="">Selecione uma categoria</option>
+                  {categorias.length > 0 &&
+                    categorias.map((categoria) => (
+                      <option key={categoria.id} value={categoria.id}>
+                        {categoria.nome}
                       </option>
                     ))}
                 </select>
