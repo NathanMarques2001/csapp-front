@@ -24,6 +24,7 @@ import FormFaturado from "../paginas/form-faturado";
 import AuthCallback from "../paginas/microsoft-callback";
 import FormGrupoEconomico from "../paginas/form-grupo-economico";
 import GrupoEconomico from "../paginas/grupo-economico";
+import FormClassificacaoClientes from "../paginas/form-classificacao-cliente";
 
 export default function Rotas() {
   return (
@@ -112,6 +113,14 @@ export default function Rotas() {
             element={<FormGrupoEconomico mode="edicao" />}
           />
           <Route path="/grupo-economico/:id" element={<GrupoEconomico />} />
+          <Route
+            path="/cadastro-classificacao"
+            element={<FormClassificacaoClientes mode="cadastro" />}
+          />
+          <Route
+            path="/edicao-classificacao/:id"
+            element={<FormClassificacaoClientes mode="edicao" />}
+          />
         </Route>
 
         {/* --- ROTAS DE ADMIN --- */}
