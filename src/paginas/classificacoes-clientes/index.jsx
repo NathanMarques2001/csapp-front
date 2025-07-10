@@ -76,7 +76,7 @@ export default function ClassificacoesClientes() {
   };
 
   const filteredClassificacoes = classificacoes.filter(({ nome }) =>
-    nome.toLowerCase().includes(searchTerm.toLowerCase()),
+    nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalClassificacoes = filteredClassificacoes.length;
@@ -158,7 +158,7 @@ export default function ClassificacoesClientes() {
                       </div>
                     </td>
                   </tr>
-                ),
+                )
               )}
             </tbody>
           </table>

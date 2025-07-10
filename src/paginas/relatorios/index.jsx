@@ -38,7 +38,7 @@ export default function Relatorios() {
           api.get(
             cookies.tipo === "admin" || cookies.tipo === "dev"
               ? "/contratos"
-              : `/contratos/vendedor/${cookies.id}`,
+              : `/contratos/vendedor/${cookies.id}`
           ),
           api.get("/produtos"),
           api.get("/usuarios"),
@@ -64,7 +64,7 @@ export default function Relatorios() {
   const segmentosMap = useMemo(() => createMapById(segmentos), [segmentos]);
   const fabricantesMap = useMemo(
     () => createMapById(fabricantes),
-    [fabricantes],
+    [fabricantes]
   );
 
   return (

@@ -37,7 +37,7 @@ export default function Contratos() {
             map[contrato.id] = contrato;
             return map;
           },
-          {},
+          {}
         );
         setContratos(Object.values(contratosMap));
 
@@ -54,7 +54,7 @@ export default function Contratos() {
             map[vendedor.id] = vendedor;
             return map;
           },
-          {},
+          {}
         );
         setVendedores(vendedoresMap);
 
@@ -192,7 +192,7 @@ export default function Contratos() {
                       <span className="active-filters-current" key={key}>
                         {`${key.replace(/_/g, " ")}: ${value}`}
                       </span>
-                    ),
+                    )
                 )}
               </p>
               <button
@@ -240,7 +240,7 @@ export default function Contratos() {
                       <td className="contratos-conteudo-tabela">
                         {calculaValorImpostoMensal(
                           parseFloat(contrato.valor_mensal),
-                          contrato.indice_reajuste,
+                          contrato.indice_reajuste
                         ).toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",

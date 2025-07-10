@@ -17,7 +17,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
       (!filtros.nome || produto.nome.includes(filtros.nome)) &&
       (!filtros.fabricante ||
         fabricantesMap[produto.id_fabricante]?.nome === filtros.fabricante) &&
-      (!filtros.status || produto.status === filtros.status),
+      (!filtros.status || produto.status === filtros.status)
   );
 
   const data = produtosFiltrados.map((produto) => ({

@@ -29,7 +29,7 @@ export default function FormSolucao({ mode = "cadastro" }) {
         setLoading(true);
         const data = await api.get("/fabricantes");
         const fabricantesAitovs = data.fabricantes.filter(
-          (fab) => fab.status !== "inativo",
+          (fab) => fab.status !== "inativo"
         );
         setFabricantes(fabricantesAitovs);
       } catch (err) {
@@ -60,7 +60,7 @@ export default function FormSolucao({ mode = "cadastro" }) {
       try {
         const data = await api.get("/categorias-produtos");
         const categoriasAtivas = data.categorias.filter(
-          (cat) => cat.status !== "inativo",
+          (cat) => cat.status !== "inativo"
         );
         setCategorias(categoriasAtivas);
       } catch (err) {

@@ -92,7 +92,7 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
       alert(
         err?.response?.data?.message ||
           err?.message ||
-          "Erro inesperado ao salvar a classificação.",
+          "Erro inesperado ao salvar a classificação."
       );
     } finally {
       setLoading(false);

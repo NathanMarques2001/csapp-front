@@ -64,7 +64,7 @@ export default function Cliente() {
         setFabricantes(fabricantesData.fabricantes);
 
         const contatosComerciaisData = await api.get(
-          `/contatos-comerciais/${id}`,
+          `/contatos-comerciais/${id}`
         );
         setContatoComercial(contatosComerciaisData.contatos_comerciais);
 
@@ -92,7 +92,7 @@ export default function Cliente() {
     const produto = produtos.find((p) => p.id === produtoId);
     if (produto) {
       const fabricante = fabricantes.find(
-        (f) => f.id === produto.id_fabricante,
+        (f) => f.id === produto.id_fabricante
       );
       return fabricante ? fabricante.nome : "Desconhecido";
     }
@@ -127,7 +127,7 @@ export default function Cliente() {
     const contratosFiltrados = contratos.filter(
       (contrato) =>
         contrato.status === "ativo" &&
-        contrato.tipo_faturamento?.toLowerCase() === tipo,
+        contrato.tipo_faturamento?.toLowerCase() === tipo
     );
 
     const total = contratosFiltrados.reduce((soma, contrato) => {
@@ -210,7 +210,7 @@ export default function Cliente() {
                 onClick={() => {
                   cliente.status === "ativo"
                     ? setMessage(
-                        "Tem certeza que deseja inativar esse cliente? Todos os contratos serão inativados também.",
+                        "Tem certeza que deseja inativar esse cliente? Todos os contratos serão inativados também."
                       )
                     : setMessage("Tem certeza que deseja ativar esse cliente?");
                   setPopUpAction(() => () => ativarOuInativar(cliente.id));
@@ -257,7 +257,7 @@ export default function Cliente() {
                   <td>
                     {calculaValorImpostoMensal(
                       parseFloat(contrato.valor_mensal),
-                      contrato.indice_reajuste,
+                      contrato.indice_reajuste
                     ).toLocaleString("pt-BR", {
                       style: "currency",
                       currency: "BRL",

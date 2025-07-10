@@ -16,7 +16,7 @@ const formatDateForInput = (dateString) => {
   const date = parseISO(dateString);
   // Ajusta a data para o fuso horário local
   const adjustedDate = new Date(
-    date.getTime() + date.getTimezoneOffset() * 60000,
+    date.getTime() + date.getTimezoneOffset() * 60000
   );
   return format(adjustedDate, "yyyy-MM-dd");
 };
@@ -81,7 +81,7 @@ export default function FormContrato({ mode = "cadastro" }) {
       try {
         const response = await api.get("/produtos");
         const produtosAtivos = response.produtos.filter(
-          (produto) => produto.status !== "inativo",
+          (produto) => produto.status !== "inativo"
         );
         setProdutos(produtosAtivos);
       } catch (err) {
@@ -93,7 +93,7 @@ export default function FormContrato({ mode = "cadastro" }) {
       try {
         const response = await api.get("/faturados");
         const faturadosAtivos = response.faturados.filter(
-          (faturado) => faturado.status !== "inativo",
+          (faturado) => faturado.status !== "inativo"
         );
         setFaturados(faturadosAtivos);
       } catch (err) {
@@ -114,10 +114,10 @@ export default function FormContrato({ mode = "cadastro" }) {
     // Habilita ou desabilita o campo quantidade dependendo da solução selecionada
     if (solucao !== "") {
       const produtoAtual = produtos.filter(
-        (item) => item.id === Number(solucao),
+        (item) => item.id === Number(solucao)
       );
       const nomeProdutoAtual = removeAcentos(
-        produtoAtual[0].nome.trim().toLowerCase(),
+        produtoAtual[0].nome.trim().toLowerCase()
       );
       if (
         produtoAtual.length > 0 &&
@@ -140,7 +140,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           const response = await api.get(`/contratos/${id}`);
           const contrato = response.contrato;
           const clienteResponse = await api.get(
-            `/clientes/${contrato.id_cliente}`,
+            `/clientes/${contrato.id_cliente}`
           );
           const selectedCliente = clienteResponse.cliente;
           const faturado = await api.get(`/faturados/${contrato.id_faturado}`);
@@ -150,10 +150,10 @@ export default function FormContrato({ mode = "cadastro" }) {
           setClienteInput(
             selectedCliente
               ? `${selectedCliente.razao_social} - ${selectedCliente.nome_fantasia}`
-              : "",
+              : ""
           );
           setSelectedClienteCpfCnpj(
-            selectedCliente ? selectedCliente.cpf_cnpj : "",
+            selectedCliente ? selectedCliente.cpf_cnpj : ""
           );
           setFaturadoPor(selectedFaturado ? selectedFaturado.id : "");
 
@@ -195,7 +195,7 @@ export default function FormContrato({ mode = "cadastro" }) {
             cliente.nome_fantasia
               .toLowerCase()
               .includes(input.toLowerCase())) ||
-          cliente.cpf_cnpj.includes(input),
+          cliente.cpf_cnpj.includes(input)
       );
       setFilteredClientes(filtered);
     }

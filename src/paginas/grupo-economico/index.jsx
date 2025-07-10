@@ -44,7 +44,7 @@ export default function GrupoEconomico() {
         setGrupoEconomico(grupoEconomicoData.grupoEconomico);
 
         const clienteData = await api.get(
-          `/clientes/grupo-economico/${grupoEconomicoData.grupoEconomico.id}`,
+          `/clientes/grupo-economico/${grupoEconomicoData.grupoEconomico.id}`
         );
         setClientes(clienteData.clientes);
 
@@ -52,10 +52,10 @@ export default function GrupoEconomico() {
         const contratosPorCliente = await Promise.all(
           clienteData.clientes.map(async (cliente) => {
             const contratosData = await api.get(
-              `/contratos/cliente/${cliente.id}`,
+              `/contratos/cliente/${cliente.id}`
             );
             return contratosData.contratos;
-          }),
+          })
         );
 
         const todosContratos = contratosPorCliente.flat();
@@ -82,16 +82,16 @@ export default function GrupoEconomico() {
     if (clientes.length === 0) return;
 
     const qtdMatrizes = clientes.filter(
-      (cliente) => cliente.tipo_unidade === "pai",
+      (cliente) => cliente.tipo_unidade === "pai"
     ).length;
 
     if (qtdMatrizes === 0) {
       alert(
-        "Erro: Este grupo econômico não possui nenhuma unidade pai. Algumas funcionalidades podem não funcionar corretamente por conta disso!",
+        "Erro: Este grupo econômico não possui nenhuma unidade pai. Algumas funcionalidades podem não funcionar corretamente por conta disso!"
       );
     } else if (qtdMatrizes > 1) {
       alert(
-        "Erro: Este grupo econômico possui mais de uma unidade pai. Algumas funcionalidades podem não funcionar corretamente por conta disso!",
+        "Erro: Este grupo econômico possui mais de uma unidade pai. Algumas funcionalidades podem não funcionar corretamente por conta disso!"
       );
     }
   }, [clientes]);
@@ -105,7 +105,7 @@ export default function GrupoEconomico() {
     const produto = produtos.find((p) => p.id === produtoId);
     if (produto) {
       const fabricante = fabricantes.find(
-        (f) => f.id === produto.id_fabricante,
+        (f) => f.id === produto.id_fabricante
       );
       return fabricante ? fabricante.nome : "Desconhecido";
     }
@@ -123,7 +123,7 @@ export default function GrupoEconomico() {
     const contratosFiltrados = contratos.filter(
       (contrato) =>
         contrato.status === "ativo" &&
-        contrato.tipo_faturamento?.toLowerCase() === tipo,
+        contrato.tipo_faturamento?.toLowerCase() === tipo
     );
 
     const total = contratosFiltrados.reduce((soma, contrato) => {
@@ -180,10 +180,10 @@ export default function GrupoEconomico() {
               onClick={() => {
                 grupoEconomico.status === "ativo"
                   ? setMessage(
-                      "Tem certeza que deseja inativar esse grupo econômico? Todos os clientes e contratos serão inativados também.",
+                      "Tem certeza que deseja inativar esse grupo econômico? Todos os clientes e contratos serão inativados também."
                     )
                   : setMessage(
-                      "Tem certeza que deseja ativar esse grupo econômico?",
+                      "Tem certeza que deseja ativar esse grupo econômico?"
                     );
                 setPopUpAction(() => () => ativarOuInativar(grupoEconomico.id));
                 setShowModal(true);
@@ -208,11 +208,11 @@ export default function GrupoEconomico() {
           {/* === UMA TABELA POR CLIENTE === */}
           {clientes.map((cliente) => {
             const contratosCliente = contratos.filter(
-              (ctr) => ctr.id_cliente === cliente.id,
+              (ctr) => ctr.id_cliente === cliente.id
             );
 
             const contratosAtivos = contratosCliente.filter(
-              (ctr) => ctr.status === "ativo",
+              (ctr) => ctr.status === "ativo"
             );
 
             const valorTotalMensalCliente = contratosAtivos
@@ -222,9 +222,9 @@ export default function GrupoEconomico() {
                   total +
                   calculaValorImpostoMensal(
                     parseFloat(ctr.valor_mensal),
-                    ctr.indice_reajuste || 0,
+                    ctr.indice_reajuste || 0
                   ),
-                0,
+                0
               );
 
             const valorTotalAnualCliente = contratosAtivos
@@ -234,9 +234,9 @@ export default function GrupoEconomico() {
                   total +
                   calculaValorImpostoMensal(
                     parseFloat(ctr.valor_mensal),
-                    ctr.indice_reajuste || 0,
+                    ctr.indice_reajuste || 0
                   ),
-                0,
+                0
               );
 
             return (
@@ -302,7 +302,7 @@ export default function GrupoEconomico() {
                         <td>
                           {calculaValorImpostoMensal(
                             parseFloat(contrato.valor_mensal),
-                            contrato.indice_reajuste,
+                            contrato.indice_reajuste
                           ).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",

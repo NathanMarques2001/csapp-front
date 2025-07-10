@@ -47,7 +47,7 @@ export default function PopUpMigrate({ id_antigo, fechar, reload }) {
     const id = event.target.value;
     setNovoVendedor(id);
     const vendedor = vendedores.find(
-      (vendedor) => vendedor.id === parseInt(id),
+      (vendedor) => vendedor.id === parseInt(id)
     );
     setNomeNovoVendedor(vendedor ? vendedor.nome : "");
   };
@@ -92,7 +92,7 @@ export default function PopUpMigrate({ id_antigo, fechar, reload }) {
                     <option key={vendedor.id} value={vendedor.id}>
                       {vendedor.nome}
                     </option>
-                  ),
+                  )
               )}
             </select>
           </div>

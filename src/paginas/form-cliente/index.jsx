@@ -84,13 +84,13 @@ export default function FormCliente({ mode }) {
 
           const clienteData = response.cliente;
           clienteData.gestor_contratos_nascimento = formatDate(
-            clienteData.gestor_contratos_nascimento,
+            clienteData.gestor_contratos_nascimento
           );
           clienteData.gestor_chamados_nascimento = formatDate(
-            clienteData.gestor_chamados_nascimento,
+            clienteData.gestor_chamados_nascimento
           );
           clienteData.gestor_financeiro_nascimento = formatDate(
-            clienteData.gestor_financeiro_nascimento,
+            clienteData.gestor_financeiro_nascimento
           );
 
           setCliente(clienteData);
@@ -118,7 +118,7 @@ export default function FormCliente({ mode }) {
       try {
         const response = await api.get("/segmentos");
         const segmentosAtivos = response.segmentos.filter(
-          (segmento) => segmento.status !== "inativo",
+          (segmento) => segmento.status !== "inativo"
         );
         setSegmentos(segmentosAtivos);
       } catch (error) {
@@ -135,7 +135,7 @@ export default function FormCliente({ mode }) {
       try {
         const response = await api.get("/grupos-economicos");
         const gruposEconomicosAtivos = response.grupoEconomico.filter(
-          (grupoEconomico) => grupoEconomico.status !== "inativo",
+          (grupoEconomico) => grupoEconomico.status !== "inativo"
         );
         setGruposEconomicos(gruposEconomicosAtivos);
       } catch (error) {

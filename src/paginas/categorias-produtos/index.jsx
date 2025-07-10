@@ -83,7 +83,7 @@ export default function CategoriasProdutos() {
   };
 
   const categoriasFiltradas = categorias.filter((categoria) =>
-    categoria.nome.toLowerCase().includes(searchTerm.toLowerCase()),
+    categoria.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

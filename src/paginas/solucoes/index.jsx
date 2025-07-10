@@ -35,7 +35,7 @@ export default function Solucoes() {
             map[fabricante.id] = fabricante.nome;
             return map;
           },
-          {},
+          {}
         );
         setFabricantes(fabricantesMap);
       } catch (err) {

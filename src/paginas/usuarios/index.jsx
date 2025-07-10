@@ -67,7 +67,7 @@ export default function Usuarios() {
   const filteredUsuarios =
     response && response.usuarios
       ? response.usuarios.filter((usuario) =>
-          usuario.nome.toLowerCase().includes(searchTerm.toLowerCase()),
+          usuario.nome.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : [];
 

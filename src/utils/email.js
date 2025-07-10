@@ -42,7 +42,7 @@ class Email {
       // Erro ao enviar e-mail
       console.error(
         "Erro ao enviar e-mail:",
-        err.response ? err.response.data : err.message,
+        err.response ? err.response.data : err.message
       );
       throw err.response ? err.response.data : "Erro ao enviar e-mail";
     }

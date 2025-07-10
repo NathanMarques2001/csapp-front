@@ -28,13 +28,13 @@ export default function RelatorioClientes({
       (!filtros.vendedor ||
         usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
       (!filtros.segmento ||
-        segmentosMap[cliente.id_segmento]?.nome === filtros.segmento),
+        segmentosMap[cliente.id_segmento]?.nome === filtros.segmento)
   );
 
   const data = clientesFiltrados.map((cliente) => {
     const contratosCliente = contratos.filter(
       (contrato) =>
-        contrato.id_cliente === cliente.id && contrato.status === "ativo",
+        contrato.id_cliente === cliente.id && contrato.status === "ativo"
     );
 
     const valorTotalContratos = contratosCliente.reduce((sum, contrato) => {

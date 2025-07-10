@@ -76,7 +76,7 @@ export default function Segmentos() {
   };
 
   const filteredSegmentos = segmentos.filter(({ nome }) =>
-    nome.toLowerCase().includes(searchTerm.toLowerCase()),
+    nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalSegmentos = filteredSegmentos.length;

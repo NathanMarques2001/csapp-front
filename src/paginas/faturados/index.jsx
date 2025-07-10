@@ -70,8 +70,8 @@ export default function Faturados() {
       await api.put(`/faturados/${id}`, { status: newStatus });
       setFaturados((prev) =>
         prev.map((faturado) =>
-          faturado.id === id ? { ...faturado, status: newStatus } : faturado,
-        ),
+          faturado.id === id ? { ...faturado, status: newStatus } : faturado
+        )
       );
     } catch (e) {
       console.error(e);
@@ -89,7 +89,7 @@ export default function Faturados() {
   };
 
   const filteredFaturados = faturados.filter((faturado) =>
-    faturado.nome.toLowerCase().includes(searchTerm.toLowerCase()),
+    faturado.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalFaturados = filteredFaturados.length;

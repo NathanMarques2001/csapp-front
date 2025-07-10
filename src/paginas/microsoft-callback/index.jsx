@@ -29,7 +29,7 @@ export default function AuthCallback() {
 
         if (!id || !nome || !tipo) {
           throw new Error(
-            "O token recebido é inválido ou não contém as informações necessárias.",
+            "O token recebido é inválido ou não contém as informações necessárias."
           );
         }
 

@@ -86,7 +86,7 @@ export default function Fabricantes() {
   };
 
   const filteredFabricantes = fabricantes.filter((fabricante) =>
-    fabricante.nome.toLowerCase().includes(searchTerm.toLowerCase()),
+    fabricante.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const totalFabricantes = filteredFabricantes.length;
