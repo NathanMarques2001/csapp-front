@@ -3,16 +3,16 @@ import cookie from "cookie";
 
 class Api {
   // PRD
-  static baseUrl = "https://csapp.prolinx.com.br/api";
+  //static baseUrl = "https://csapp.prolinx.com.br/api";
   // DEV
-  //static baseUrl = "http://localhost:8080/api";
+  static baseUrl = "http://localhost:8080/api";
 
   constructor() {
     this.api = axios.create({
       baseURL: Api.baseUrl,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      // headers: {
+      //   "Content-Type": "application/json",
+      // },
     });
 
     // Interceptor para adicionar o token de autenticação
@@ -43,7 +43,12 @@ class Api {
 
   async post(url, data) {
     try {
-      const res = await this.api.post(url, data);
+      const isFormData = data instanceof FormData;
+
+      const res = await this.api.post(url, data, {
+        headers: isFormData ? {} : { "Content-Type": "application/json" },
+      });
+
       return res.data;
     } catch (err) {
       throw err.response?.data?.message || "Erro ao fazer a requisição POST";

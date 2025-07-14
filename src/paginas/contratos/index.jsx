@@ -6,6 +6,7 @@ import PopUpFiltro from "../../componetes/pop-up-filtro";
 import Api from "../../utils/api";
 import "./style.css";
 import { useCookies } from "react-cookie";
+import { baixarModelo } from "../../utils/modeloExcelContratos";
 
 export default function Contratos() {
   const api = new Api();
@@ -19,6 +20,7 @@ export default function Contratos() {
   const [filters, setFilters] = useState({ status: "ativo" });
   const [loading, setLoading] = useState(false);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [mostrarModalImportacao, setMostrarModalImportacao] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -170,6 +172,77 @@ export default function Contratos() {
           >
             Filtrar
           </button>
+          <button
+            onClick={() => setMostrarModalImportacao(true)}
+            className="contratos-botao"
+          >
+            Importar Contratos
+          </button>
+
+          {mostrarModalImportacao && (
+            <div className="modal-overlay">
+              <div className="modal-content">
+                <h2>Importar Contratos</h2>
+                <button onClick={baixarModelo} className="contratos-botao">
+                  Baixar Modelo
+                </button>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const file = e.target.file.files[0];
+                    if (!file) return alert("Selecione um arquivo Excel");
+
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    try {
+                      setLoading(true);
+                      const response = await api.post(
+                        "/contratos/importar-excel",
+                        formData,
+                        {
+                          headers: { "Content-Type": "multipart/form-data" },
+                        }
+                      );
+                      alert(
+                        response.message || "Importação realizada com sucesso!"
+                      );
+                      window.location.reload();
+                    } catch (err) {
+                      console.error("Erro ao importar contratos:", err);
+                      alert("Erro ao importar contratos.");
+                    } finally {
+                      setLoading(false);
+                      setMostrarModalImportacao(false);
+                    }
+                  }}
+                >
+                  <label htmlFor="file-upload" className="contratos-botao">
+                    Selecionar Excel
+                  </label>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    name="file"
+                    accept=".xlsx"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      if (e.target.files.length > 0) {
+                        e.target.form.requestSubmit();
+                      }
+                    }}
+                  />
+                </form>
+                <button
+                  onClick={() => setMostrarModalImportacao(false)}
+                  className="contratos-botao"
+                >
+                  Fechar
+                </button>
+              </div>
+            </div>
+          )}
+
           {showFilterPopup && (
             <div className="filter-popup">
               <PopUpFiltro
@@ -204,6 +277,7 @@ export default function Contratos() {
               </button>
             </div>
           )}
+
           {filteredContratos.length > 0 ? (
             <table id="contratos-tabela">
               <thead>
