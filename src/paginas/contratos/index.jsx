@@ -111,9 +111,6 @@ export default function Contratos() {
       filters.id_produto
         ? contrato.id_produto.toString().includes(filters.id_produto)
         : true,
-      filters.faturado
-        ? contrato.faturado.toString().includes(filters.faturado)
-        : true,
       filters.status ? contrato.status === filters.status : true,
       filters.duracao
         ? contrato.duracao.toString().includes(filters.duracao)

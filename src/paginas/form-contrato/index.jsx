@@ -240,7 +240,6 @@ export default function FormContrato({ mode = "cadastro" }) {
       const formData = {
         id_cliente: Number(selectedClienteId),
         id_produto: Number(solucao),
-        faturado: false,
         id_faturado: Number(faturadoPor),
         dia_vencimento: Number(vencimento),
         nome_indice: reajuste,
