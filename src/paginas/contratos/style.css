@@ -20,20 +20,20 @@
   border: 1px solid var(--cinza);
   padding: 1%;
   width: 36%;
-  margin-right: 4%;
+  margin-right: 2%;
   font-size: 0.9rem;
 }
 
 .contratos-botao {
   border-radius: 5px;
   padding: 1%;
-  width: 15%;
+  width: 18%;
   cursor: pointer;
   font-size: 0.9rem;
 }
 
 #contratos-botao-add {
-  margin-right: 4%;
+  margin-right: 2%;
   background-color: var(--verde);
   border: 1px solid var(--azul-borda);
 }
@@ -66,7 +66,7 @@
   background-color: var(--preto);
   border: 1px solid var(--azul-borda);
   color: var(--branco);
-  margin-left: 4%;
+  margin-left: 2%;
 }
 
 #contratos-botao-importar:hover {
