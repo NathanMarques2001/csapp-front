@@ -27,7 +27,7 @@
 .contratos-botao {
   border-radius: 5px;
   padding: 1%;
-  width: 24%;
+  width: 15%;
   cursor: pointer;
   font-size: 0.9rem;
 }
@@ -60,6 +60,17 @@
 #contratos-botao-filtro:hover,
 #contratos-botao-limpar-filtros:hover {
   background-color: var(--azul-borda-hover);
+}
+
+#contratos-botao-importar {
+  background-color: var(--preto);
+  border: 1px solid var(--azul-borda);
+  color: var(--branco);
+  margin-left: 4%;
+}
+
+#contratos-botao-importar:hover {
+  background-color: var(--preto-hover);
 }
 
 #contratos-tabela {

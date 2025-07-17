@@ -106,31 +106,47 @@ export default function FormContrato({ mode = "cadastro" }) {
     fetchFaturados();
   }, [mode, id]);
 
+  // CÓDIGO CORRIGIDO
   useEffect(() => {
     const removeAcentos = (str) => {
+      // É uma boa prática adicionar uma verificação para garantir que a string não seja nula
+      if (!str) return "";
       return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
-    // Habilita ou desabilita o campo quantidade dependendo da solução selecionada
-    if (solucao !== "") {
-      const produtoAtual = produtos.filter(
-        (item) => item.id === Number(solucao)
-      );
+    // Se não há solução ou produtos, não há o que fazer.
+    if (solucao === "" || produtos.length === 0) {
+      setIsQuantidadeDisabled(true);
+      setQuantidade("");
+      return;
+    }
+
+    // Use .find() para obter o objeto diretamente, em vez de um array com um item.
+    const produtoAtual = produtos.find((item) => item.id === Number(solucao));
+
+    // V-- A VERIFICAÇÃO CRÍTICA --V
+    // Verifique se o produto FOI ENCONTRADO antes de tentar usá-lo.
+    if (produtoAtual) {
       const nomeProdutoAtual = removeAcentos(
-        produtoAtual[0].nome.trim().toLowerCase()
+        produtoAtual.nome.trim().toLowerCase()
       );
+
       if (
-        produtoAtual.length > 0 &&
-        (nomeProdutoAtual.includes("backup") ||
-          nomeProdutoAtual.includes("antivirus"))
+        nomeProdutoAtual.includes("backup") ||
+        nomeProdutoAtual.includes("antivirus")
       ) {
         setIsQuantidadeDisabled(false);
       } else {
         setIsQuantidadeDisabled(true);
         setQuantidade("");
       }
+    } else {
+      // Se o produto não foi encontrado (talvez os dados ainda não carregaram),
+      // garanta que o campo fique desabilitado.
+      setIsQuantidadeDisabled(true);
+      setQuantidade("");
     }
-  }, [solucao, produtos]);
+  }, [solucao, produtos]); // A dependência [solucao, produtos] está correta.
 
   useEffect(() => {
     const fetchContrato = async () => {
