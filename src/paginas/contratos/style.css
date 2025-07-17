@@ -107,3 +107,24 @@
   background-color: #d8d8d8;
   border-radius: 5px;
 }
+
+#contratos-tabela tfoot tr {
+  background-color: var(--preto);
+  font-weight: bold;
+}
+
+.contratos-total-geral-linha {
+  border-top: 3px solid var(--azul-borda);
+}
+
+.contratos-total-label {
+  text-align: right;
+  color: var(--branco);
+  padding: 0.3rem;
+  padding-right: 1rem;
+}
+
+.contratos-total-valor {
+  color: var(--verde);
+  font-size: 1.05em;
+}

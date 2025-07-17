@@ -23,6 +23,8 @@ export default function Clientes() {
   const navigate = useNavigate();
   const [hoverGrupoId, setHoverGrupoId] = useState(null);
   const [clientesSemGrupo, setClientesSemGrupo] = useState([]);
+  const [totalGeralContratos, setTotalGeralContratos] = useState(0);
+  const [totalPorCategoria, setTotalPorCategoria] = useState({});
 
   useEffect(() => {
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
@@ -81,6 +83,57 @@ export default function Clientes() {
 
     fetchData();
   }, [cookies.tipo, cookies.id]);
+
+  useEffect(() => {
+    let totalGeral = 0;
+    const totaisCategoria = {};
+
+    if (!Object.keys(classificacoesClientes).length) {
+      setTotalGeralContratos(0);
+      setTotalPorCategoria({});
+      return;
+    }
+
+    // 1. Processa os clientes que pertencem a um grupo
+    clientesGrupos.forEach(({ grupo, unidades }) => {
+      // Pega a classificação DO GRUPO
+      const categoriaIdDoGrupo = grupo.id_classificacao_cliente;
+      const nomeCategoria =
+        classificacoesClientes[categoriaIdDoGrupo]?.nome || "Não Classificado";
+
+      if (!totaisCategoria[nomeCategoria]) {
+        totaisCategoria[nomeCategoria] = 0;
+      }
+
+      // Soma o valor de todas as unidades e atribui à categoria do grupo
+      unidades.forEach((unidade) => {
+        const valorUnidade = calculaValorTotalContratos(unidade.id);
+        totaisCategoria[nomeCategoria] += valorUnidade;
+        totalGeral += valorUnidade; // Atualiza o total geral
+      });
+    });
+
+    // 2. Processa os clientes que NÃO pertencem a um grupo
+    clientesSemGrupo.forEach((cliente) => {
+      // Pega a classificação DO PRÓPRIO CLIENTE
+      const categoriaIdDoCliente = cliente.id_classificacao_cliente;
+      const nomeCategoria =
+        classificacoesClientes[categoriaIdDoCliente]?.nome ||
+        "Não Classificado";
+
+      if (!totaisCategoria[nomeCategoria]) {
+        totaisCategoria[nomeCategoria] = 0;
+      }
+
+      const valorCliente = calculaValorTotalContratos(cliente.id);
+      totaisCategoria[nomeCategoria] += valorCliente;
+      totalGeral += valorCliente; // Atualiza o total geral
+    });
+
+    // 3. Define os estados com os valores calculados
+    setTotalGeralContratos(totalGeral);
+    setTotalPorCategoria(totaisCategoria);
+  }, [clientesGrupos, clientesSemGrupo, contratos, classificacoesClientes]);
 
   const agruparClientesPorGrupo = (clientes, grupos) => {
     const gruposIndex = grupos.reduce((acc, grupo) => {
@@ -324,6 +377,42 @@ export default function Clientes() {
                     </tr>
                   ))}
               </tbody>
+
+              <tfoot>
+                <tr className="clientes-total-geral-linha">
+                  <td className="clientes-total-label" colSpan={3}>
+                    TOTAL DE CONTRATOS ATIVOS:
+                  </td>
+                  <td className="clientes-total-valor">
+                    {totalGeralContratos.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </td>
+                  <td /> {/* Célula vazia para a coluna Vendedor */}
+                </tr>
+
+                {/* Mapeia e exibe os totais para cada categoria */}
+                {Object.entries(totalPorCategoria)
+                  .sort(([catA], [catB]) => catA.localeCompare(catB)) // Ordena por nome da categoria
+                  .map(([categoria, total]) => (
+                    <tr
+                      key={categoria}
+                      className="clientes-total-categoria-linha"
+                    >
+                      <td className="clientes-total-label" colSpan={3}>
+                        Total Categoria: {categoria}
+                      </td>
+                      <td className="clientes-total-valor">
+                        {total.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </td>
+                      <td /> {/* Célula vazia para a coluna Vendedor */}
+                    </tr>
+                  ))}
+              </tfoot>
             </table>
           ) : (
             <p id="clientes-sem-clientes">

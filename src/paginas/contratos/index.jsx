@@ -22,6 +22,8 @@ export default function Contratos() {
   const [loading, setLoading] = useState(false);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
   const [mostrarModalImportacao, setMostrarModalImportacao] = useState(false);
+  const [totalGeral, setTotalGeral] = useState(0);
+  const [totalPorFaturamento, setTotalPorFaturamento] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -140,6 +142,37 @@ export default function Contratos() {
 
   const calculaValorImpostoMensal = (valor, indice) =>
     valor + (valor * indice) / 100;
+
+  useEffect(() => {
+    // Calcula o total geral dos contratos filtrados
+    const novoTotalGeral = filteredContratos.reduce((acc, contrato) => {
+      const valorContrato = calculaValorImpostoMensal(
+        parseFloat(contrato.valor_mensal),
+        contrato.indice_reajuste
+      );
+      return acc + valorContrato;
+    }, 0);
+    setTotalGeral(novoTotalGeral);
+
+    // Calcula os totais segregados por tipo de faturamento
+    const novoTotalPorFaturamento = filteredContratos.reduce(
+      (acc, contrato) => {
+        const valorContrato = calculaValorImpostoMensal(
+          parseFloat(contrato.valor_mensal),
+          contrato.indice_reajuste
+        );
+        const tipo = contrato.tipo_faturamento || "Não especificado";
+
+        if (!acc[tipo]) {
+          acc[tipo] = 0;
+        }
+        acc[tipo] += valorContrato;
+        return acc;
+      },
+      {}
+    );
+    setTotalPorFaturamento(novoTotalPorFaturamento);
+  }, [filteredContratos]);
 
   return (
     <>
@@ -273,6 +306,40 @@ export default function Contratos() {
                   );
                 })}
               </tbody>
+
+              <tfoot>
+                <tr className="contratos-total-geral-linha">
+                  <td className="contratos-total-label" colSpan={3}>
+                    TOTAL:
+                  </td>
+                  <td className="contratos-total-valor">
+                    {totalGeral.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </td>
+                  {/* Células vazias para Faturamento e Vendedor */}
+                  <td colSpan={2}></td>
+                </tr>
+
+                {/* Mapeia e exibe os totais para cada tipo de faturamento */}
+                {Object.entries(totalPorFaturamento)
+                  .sort(([tipoA], [tipoB]) => tipoA.localeCompare(tipoB)) // Ordena por nome
+                  .map(([tipo, total]) => (
+                    <tr key={tipo} className="contratos-total-categoria-linha">
+                      <td className="contratos-total-label" colSpan={3}>
+                        Total {tipo}:
+                      </td>
+                      <td className="contratos-total-valor">
+                        {total.toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </td>
+                      <td colSpan={2}></td>
+                    </tr>
+                  ))}
+              </tfoot>
             </table>
           ) : (
             <p id="contratos-sem-contratos">

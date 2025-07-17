@@ -124,3 +124,24 @@
   background-color: var(--verde);
   color: var(--preto);
 }
+
+#clientes-tabela tfoot tr {
+  background-color: var(--preto);
+  font-weight: bold;
+  color: var(--branco);
+}
+
+.clientes-total-geral-linha {
+  border-top: 3px solid var(--azul-borda);
+}
+
+.clientes-total-label {
+  text-align: right;
+  padding-right: 15px;
+  padding: 0.3rem;
+}
+
+.clientes-total-valor {
+  color: var(--verde);
+  font-size: 1.05em;
+}
