@@ -19,6 +19,8 @@ export default function Relatorios() {
   const [usuarios, setUsuarios] = useState([]);
   const [segmentos, setSegmentos] = useState([]);
   const [fabricantes, setFabricantes] = useState([]);
+  const [gruposEconomicos, setGruposEconomicos] = useState([]);
+  const [classificacoesClientes, setClassificacoesClientes] = useState([]);
   const [cookies] = useCookies(["tipo", "id"]);
 
   useEffect(() => {
@@ -33,6 +35,8 @@ export default function Relatorios() {
           usuariosRes,
           segmentosRes,
           fabricantesRes,
+          groposEconomicos,
+          classificacoesClientes,
         ] = await Promise.all([
           api.get("/clientes"),
           api.get(
@@ -44,6 +48,8 @@ export default function Relatorios() {
           api.get("/usuarios"),
           api.get("/segmentos"),
           api.get("/fabricantes"),
+          api.get("/grupos-economicos"),
+          api.get("/classificacoes-clientes"),
         ]);
         setClientes(clientesRes.clientes || []);
         setContratos(contratosRes.contratos || []);
@@ -51,6 +57,8 @@ export default function Relatorios() {
         setUsuarios(usuariosRes.usuarios || []);
         setSegmentos(segmentosRes.segmentos || []);
         setFabricantes(fabricantesRes.fabricantes || []);
+        setGruposEconomicos(groposEconomicos.grupoEconomico || []);
+        setClassificacoesClientes(classificacoesClientes.classificacoes || []);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
@@ -65,6 +73,14 @@ export default function Relatorios() {
   const fabricantesMap = useMemo(
     () => createMapById(fabricantes),
     [fabricantes]
+  );
+  const gruposEconomicosMap = useMemo(
+    () => createMapById(gruposEconomicos),
+    [gruposEconomicos]
+  );
+  const classificacoesClientesMap = useMemo(
+    () => createMapById(classificacoesClientes),
+    [classificacoesClientes]
   );
 
   return (
@@ -90,6 +106,8 @@ export default function Relatorios() {
               contratos={contratos}
               usuariosMap={usuariosMap}
               segmentosMap={segmentosMap}
+              gruposEconomicosMap={gruposEconomicosMap}
+              classificacoesClientesMap={classificacoesClientesMap}
             />
           )}
           {tabelaSelecionada === "Contratos" && (

@@ -7,6 +7,8 @@ export default function RelatorioClientes({
   contratos,
   usuariosMap,
   segmentosMap,
+  gruposEconomicosMap,
+  classificacoesClientesMap,
 }) {
   const excel = new Excel("Relatório de Clientes");
   const [filtros, setFiltros] = useState({
@@ -46,7 +48,14 @@ export default function RelatorioClientes({
     return {
       "Nome Fantasia": cliente.nome_fantasia,
       "CPF/CNPJ": cliente.cpf_cnpj,
-      Tipo: cliente.tipo || "-",
+      Tipo:
+        classificacoesClientesMap[
+          gruposEconomicosMap[cliente.id_grupo_economico]
+            ?.id_classificacao_cliente
+        ]?.nome ||
+        classificacoesClientesMap[cliente.id_classificacao_cliente]?.nome ||
+        "Desconhecido",
+      //"Grupo Econômico": gruposEconomicosMap[cliente.id_grupo_economico],
       Status: cliente.status,
       "Usuário Responsável":
         usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
@@ -54,6 +63,10 @@ export default function RelatorioClientes({
       "Valor Total dos Contratos": valorTotalContratos,
     };
   });
+
+  console.log(gruposEconomicosMap);
+  console.log(classificacoesClientesMap);
+  console.log(clientes);
 
   function handleDownloadReport(e) {
     e.preventDefault();
@@ -201,9 +214,7 @@ export default function RelatorioClientes({
                 {cliente["Nome Fantasia"]}
               </td>
               <td className="global-conteudo-tabela">{cliente["CPF/CNPJ"]}</td>
-              <td className="global-conteudo-tabela">
-                {cliente["Tipo"].toUpperCase()}
-              </td>
+              <td className="global-conteudo-tabela">{cliente["Tipo"]}</td>
               <td className="global-conteudo-tabela">{cliente["Status"]}</td>
               <td className="global-conteudo-tabela">
                 {cliente["Usuário Responsável"]}

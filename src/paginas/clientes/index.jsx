@@ -315,7 +315,9 @@ export default function Clientes() {
                               {cliente.cpf_cnpj}
                             </td>
                             <td className="clientes-conteudo-tabela">
-                              {cliente.tipo || "-"}
+                              {classificacoesClientes[
+                                cliente?.id_classificacao_cliente
+                              ]?.nome || "-"}
                             </td>
                             <td className="clientes-conteudo-tabela">
                               {calculaValorTotalContratos(

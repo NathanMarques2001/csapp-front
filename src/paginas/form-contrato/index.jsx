@@ -47,7 +47,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [reajuste, setReajuste] = useState("");
   const [proximoReajuste, setProximoReajuste] = useState(null);
   const [valorMensal, setValorMensal] = useState("");
-  const [quantidade, setQuantidade] = useState("");
+  const [quantidade, setQuantidade] = useState(null);
   const [dataInicio, setDataInicio] = useState(null);
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -106,26 +106,25 @@ export default function FormContrato({ mode = "cadastro" }) {
     fetchFaturados();
   }, [mode, id]);
 
-  // CÓDIGO CORRIGIDO
+  // CÓDIGO CORRIGIDO E AJUSTADO
   useEffect(() => {
     const removeAcentos = (str) => {
-      // É uma boa prática adicionar uma verificação para garantir que a string não seja nula
       if (!str) return "";
       return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
-    // Se não há solução ou produtos, não há o que fazer.
-    if (solucao === "" || produtos.length === 0) {
+    // Se não há solução selecionada, desabilitamos e zeramos a quantidade.
+    if (!solucao || produtos.length === 0) {
       setIsQuantidadeDisabled(true);
-      setQuantidade("");
+      // Só alteramos para null se o valor atual não for null, para evitar loops
+      if (quantidade !== null) {
+        setQuantidade(null);
+      }
       return;
     }
 
-    // Use .find() para obter o objeto diretamente, em vez de um array com um item.
     const produtoAtual = produtos.find((item) => item.id === Number(solucao));
 
-    // V-- A VERIFICAÇÃO CRÍTICA --V
-    // Verifique se o produto FOI ENCONTRADO antes de tentar usá-lo.
     if (produtoAtual) {
       const nomeProdutoAtual = removeAcentos(
         produtoAtual.nome.trim().toLowerCase()
@@ -138,15 +137,20 @@ export default function FormContrato({ mode = "cadastro" }) {
         setIsQuantidadeDisabled(false);
       } else {
         setIsQuantidadeDisabled(true);
-        setQuantidade("");
+        // Só alteramos para null se o valor atual não for null, para evitar loops
+        if (quantidade !== null) {
+          setQuantidade(null);
+        }
       }
     } else {
-      // Se o produto não foi encontrado (talvez os dados ainda não carregaram),
-      // garanta que o campo fique desabilitado.
       setIsQuantidadeDisabled(true);
-      setQuantidade("");
+      // Só alteramos para null se o valor atual não for null, para evitar loops
+      if (quantidade !== null) {
+        setQuantidade(null);
+      }
     }
-  }, [solucao, produtos]); // A dependência [solucao, produtos] está correta.
+    // ADICIONAMOS 'quantidade' À LISTA DE DEPENDÊNCIAS
+  }, [solucao, produtos, quantidade]);
 
   useEffect(() => {
     const fetchContrato = async () => {
@@ -185,6 +189,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setDescricao(contrato.descricao);
           setStatus(contrato.status);
           setTipoFaturamento(contrato.tipo_faturamento);
+          console.log(contrato);
         } catch (err) {
           console.error("Erro ao buscar contrato:", err);
         } finally {
@@ -263,7 +268,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         status: "ativo",
         duracao: Number(duracao),
         valor_mensal: Number(valorMensal),
-        quantidade: Number(quantidade),
+        quantidade: quantidade != null ? Number(quantidade) : quantidade,
         email_envio: email,
         descricao: descricao,
         data_inicio: formatDate(dataInicio),

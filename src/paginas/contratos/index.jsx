@@ -30,6 +30,7 @@ export default function Contratos() {
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log(cookies);
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
           setIsAdminOrDev(true);
         } else {
