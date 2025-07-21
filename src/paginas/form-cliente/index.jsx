@@ -168,7 +168,8 @@ export default function FormCliente({ mode }) {
       const clienteEnviar = {
         ...cliente,
         id_grupo_economico:
-          cliente.id_grupo_economico === ""
+          cliente.id_grupo_economico === "" ||
+          cliente.id_grupo_economico === null
             ? null
             : Number(cliente.id_grupo_economico),
         tipo_unidade: cliente.tipo_unidade === "" ? null : cliente.tipo_unidade,

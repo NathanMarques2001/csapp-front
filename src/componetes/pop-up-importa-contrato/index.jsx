@@ -50,8 +50,27 @@ export default function PopUpImportaContratos({
               alert(response.message || "Importação realizada com sucesso!");
               window.location.reload();
             } catch (err) {
-              console.error("Erro ao importar contratos:", err);
-              alert("Erro ao importar contratos.");
+              console.error("Erro completo:", err);
+
+              const status = err?.response?.status;
+              const data = err?.response?.data;
+              const fallback = err.message || "Erro desconhecido";
+
+              const msg = [
+                "Erro ao importar contratos:",
+                `Status: ${status || "?"}`,
+                `Mensagem: ${data?.message || fallback}`,
+              ];
+
+              // Mostra erros detalhados se tiver
+              if (Array.isArray(data?.erros) && data.erros.length > 0) {
+                msg.push("\nDetalhes:");
+                data.erros.forEach((e) =>
+                  msg.push(`- ${typeof e === "string" ? e : JSON.stringify(e)}`)
+                );
+              }
+
+              alert(msg.join("\n"));
             } finally {
               setLoading(false);
               setMostrarModalImportacao(false);

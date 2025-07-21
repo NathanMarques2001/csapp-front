@@ -33,44 +33,26 @@ class Api {
   }
 
   async get(url) {
-    try {
-      const res = await this.api.get(url);
-      return res.data;
-    } catch (err) {
-      throw err.response?.data?.message || "Erro ao fazer a requisição GET";
-    }
+    const res = await this.api.get(url);
+    return res.data;
   }
 
   async post(url, data) {
-    try {
-      const isFormData = data instanceof FormData;
-
-      const res = await this.api.post(url, data, {
-        headers: isFormData ? {} : { "Content-Type": "application/json" },
-      });
-
-      return res.data;
-    } catch (err) {
-      throw err.response?.data?.message || "Erro ao fazer a requisição POST";
-    }
+    const isFormData = data instanceof FormData;
+    const res = await this.api.post(url, data, {
+      headers: isFormData ? {} : { "Content-Type": "application/json" },
+    });
+    return res.data;
   }
 
   async put(url, data) {
-    try {
-      const res = await this.api.put(url, data);
-      return res.data;
-    } catch (err) {
-      throw err.response?.data?.message || "Erro ao fazer a requisição PUT";
-    }
+    const res = await this.api.put(url, data);
+    return res.data;
   }
 
   async delete(url) {
-    try {
-      const res = await this.api.delete(url);
-      return res.data;
-    } catch (err) {
-      throw err.response?.data?.message || "Erro ao fazer a requisição DELETE";
-    }
+    const res = await this.api.delete(url);
+    return res.data;
   }
 }
 
