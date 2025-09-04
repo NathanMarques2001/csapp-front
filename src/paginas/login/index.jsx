@@ -73,6 +73,8 @@ export default function Login() {
             <div id="form-container">
               <h1>Bem Vindo(a)!</h1>
               <form id="form">
+                {isDev && (
+                  <>
                 <label for="email" className="form-label">
                   Email
                 </label>
@@ -94,7 +96,6 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
 
-                {isDev && (
                   <button
                     onClick={(e) => sendForm(e)}
                     className="login-button"
@@ -102,6 +103,7 @@ export default function Login() {
                   >
                     Entrar
                   </button>
+                  </>
                 )}
 
                 <button

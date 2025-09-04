@@ -248,6 +248,7 @@ export default function Clientes() {
               <thead>
                 <tr>
                   <th className="clientes-titulo-tabela">Nome</th>
+                  <th className="clientes-titulo-tabela">Tipo</th>
                   <th className="clientes-titulo-tabela">CPF/CNPJ</th>
                   <th className="clientes-titulo-tabela">Categoria</th>
                   <th className="clientes-titulo-tabela">Valor Contratos</th>
@@ -277,6 +278,9 @@ export default function Clientes() {
                       >
                         <td className="clientes-conteudo-tabela">
                           {grupo.grupo.nome}
+                        </td>
+                        <td className="clientes-conteudo-tabela">
+                          Grupo Econômico
                         </td>
                         <td className="clientes-conteudo-tabela">
                           {matriz?.cpf_cnpj || "-"}
@@ -310,6 +314,9 @@ export default function Clientes() {
                           >
                             <td className="clientes-conteudo-tabela">
                               {cliente.nome_fantasia}
+                            </td>
+                            <td className="clientes-conteudo-tabela">
+                              Cliente Comum
                             </td>
                             <td className="clientes-conteudo-tabela">
                               {cliente.cpf_cnpj}
@@ -355,6 +362,9 @@ export default function Clientes() {
                     >
                       <td className="clientes-conteudo-tabela">
                         {cliente.nome_fantasia}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        Cliente Comum
                       </td>
                       <td className="clientes-conteudo-tabela">
                         {cliente.cpf_cnpj}
