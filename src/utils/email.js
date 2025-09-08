@@ -2,9 +2,9 @@ import axios from "axios";
 
 class Email {
   // PRD
-  //static baseUrl = "https://csapp.prolinx.com.br/email/email";
+  static baseUrl = "https://csapp.prolinx.com.br/email/email";
   // DEV
-  static baseUrl = "http://localhost:9090/email";
+  //static baseUrl = "http://localhost:9090/email";
 
   constructor() {
     this.api = axios.create({
