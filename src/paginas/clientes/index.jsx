@@ -9,6 +9,8 @@ import Api from "../../utils/api";
 import "./style.css";
 import { useCookies } from "react-cookie";
 import imgQuestao from "../../assets/images/questao.png";
+import { FaUser, FaUsers } from "react-icons/fa";
+import PopUpFiltroClientes from "../../componetes/pop-up-filtro-clientes";
 
 export default function Clientes() {
   const api = new Api();
@@ -25,6 +27,9 @@ export default function Clientes() {
   const [clientesSemGrupo, setClientesSemGrupo] = useState([]);
   const [totalGeralContratos, setTotalGeralContratos] = useState(0);
   const [totalPorCategoria, setTotalPorCategoria] = useState({});
+  const [filters, setFilters] = useState({ status: "ativo" });
+  const [showFilter, setShowFilter] = useState(false);
+
 
   useEffect(() => {
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
@@ -193,20 +198,40 @@ export default function Clientes() {
       0
     );
 
-  const clientesGruposFiltrados = clientesGrupos.filter((clientesGrupo) => {
-    const texto = filter.toLowerCase();
-    const grupoPassa = clientesGrupo.grupo.nome.toLowerCase().includes(texto);
-    const algumaUnidadePassa = clientesGrupo.unidades.some(
-      (unidade) =>
-        unidade.nome_fantasia.toLowerCase().includes(texto) ||
-        unidade.cpf_cnpj.includes(filter)
-    );
-    return grupoPassa || algumaUnidadePassa;
-  });
+  const clientesGruposFiltrados = clientesGrupos.filter(({ grupo, unidades }) =>
+    unidades.some((unidade) => {
+      const passaClassificacao =
+        !filters.classificacao_cliente ||
+        unidade.id_classificacao_cliente === parseInt(filters.classificacao_cliente);
+      const passaVendedor =
+        !filters.nome_vendedor ||
+        unidade.id_usuario === parseInt(filters.nome_vendedor);
+      const passaStatus =
+        !filters.status || unidade.status === filters.status; // filtro de status
+      return passaClassificacao && passaVendedor && passaStatus;
+    })
+  );
+
+  const limparFiltros = () => {
+    setFilters({ status: "ativo" });
+  };
 
   return (
     <>
       {loading && <Loading />}
+      {showFilter && (
+        <PopUpFiltroClientes
+          onFilter={(newFilters) => {
+            setFilters(newFilters);
+            setShowFilter(false);
+          }}
+          closeModal={() => setShowFilter(false)}
+          classificacoes={classificacoesClientes}
+          vendedores={vendedores}
+        />
+
+      )}
+
       <div id="clientes-display">
         <Navbar />
         <div id="clientes-container">
@@ -223,11 +248,19 @@ export default function Clientes() {
             />
             <button
               disabled={!isAdminOrDev}
-              className={!isAdminOrDev ? "disabled" : ""}
+              className={`clientes-botao${!isAdminOrDev ? " disabled" : ""}`}
               onClick={() => navigate("/cadastro-cliente")}
-              id="clientes-botao"
+              id="clientes-add-edit-botao"
             >
               Adicionar cliente
+            </button>
+
+            <button
+              className="clientes-botao"
+              id="clientes-filtrar"
+              onClick={() => setShowFilter(true)}
+            >
+              Filtrar
             </button>
 
             {/* Tooltip categorias */}
@@ -242,17 +275,52 @@ export default function Clientes() {
             </div>
           </div>
 
+          {Object.keys(filters).length > 0 && (
+            <div className="active-filters">
+              <p>
+                <b>Filtros Ativos:</b>
+              </p>
+              <p id="active-filters-container">
+                {Object.entries(filters).map(([key, value]) => {
+                  if (!value) return null;
+
+                  let displayValue = value;
+
+                  if (key === "classificacao_cliente") {
+                    displayValue = classificacoesClientes[value]?.nome || value;
+                  } else if (key === "nome_vendedor") {
+                    displayValue = vendedores[value] || value;
+                  }
+
+                  return (
+                    <span className="active-filters-current" key={key}>
+                      {`${key.replace(/_/g, " ")}: ${displayValue}`}
+                    </span>
+                  );
+                })}
+              </p>
+              <button
+                onClick={limparFiltros}
+                className="contratos-botao"
+                id="contratos-botao-limpar-filtros"
+              >
+                Limpar Filtros
+              </button>
+            </div>
+          )}
+
+
           {/* Tabela principal */}
           {clientesGruposFiltrados.length || clientesSemGrupo.length ? (
             <table id="clientes-tabela">
               <thead>
                 <tr>
                   <th className="clientes-titulo-tabela">Nome</th>
-                  <th className="clientes-titulo-tabela">Tipo</th>
                   <th className="clientes-titulo-tabela">CPF/CNPJ</th>
                   <th className="clientes-titulo-tabela">Categoria</th>
                   <th className="clientes-titulo-tabela">Valor Contratos</th>
                   <th className="clientes-titulo-tabela">Vendedor</th>
+                  <th className="clientes-titulo-tabela">Tipo</th>
                 </tr>
               </thead>
 
@@ -280,9 +348,6 @@ export default function Clientes() {
                           {grupo.grupo.nome}
                         </td>
                         <td className="clientes-conteudo-tabela">
-                          Grupo Econômico
-                        </td>
-                        <td className="clientes-conteudo-tabela">
                           {matriz?.cpf_cnpj || "-"}
                         </td>
                         <td className="clientes-conteudo-tabela">
@@ -299,6 +364,9 @@ export default function Clientes() {
                         <td className="clientes-conteudo-tabela">
                           {vendedores[matriz?.id_usuario] || "-"}
                         </td>
+                        <td className="clientes-conteudo-tabela">
+                          <FaUsers />
+                        </td>
                       </tr>
 
                       {/* Unidades visíveis apenas no hover */}
@@ -314,9 +382,6 @@ export default function Clientes() {
                           >
                             <td className="clientes-conteudo-tabela">
                               {cliente.nome_fantasia}
-                            </td>
-                            <td className="clientes-conteudo-tabela">
-                              Cliente Comum
                             </td>
                             <td className="clientes-conteudo-tabela">
                               {cliente.cpf_cnpj}
@@ -337,6 +402,9 @@ export default function Clientes() {
                             <td className="clientes-conteudo-tabela">
                               {vendedores[cliente?.id_usuario] || "-"}
                             </td>
+                            <td className="clientes-conteudo-tabela">
+                              <FaUser />
+                            </td>
                           </tr>
                         ))}
                     </tbody>
@@ -346,53 +414,55 @@ export default function Clientes() {
 
               {/* Clientes sem grupo aparecem normalmente na listagem */}
               <tbody>
-                {clientesSemGrupo
-                  .filter((cliente) => {
-                    const texto = filter.toLowerCase();
-                    return (
-                      cliente.nome_fantasia.toLowerCase().includes(texto) ||
-                      cliente.cpf_cnpj.includes(filter)
-                    );
-                  })
-                  .map((cliente) => (
-                    <tr
-                      key={`semgrupo-${cliente.id}`}
-                      className="clientes-conteudo-tabela-sem-grupo"
-                      onClick={() => detalhesCliente(cliente.id)}
-                    >
-                      <td className="clientes-conteudo-tabela">
-                        {cliente.nome_fantasia}
-                      </td>
-                      <td className="clientes-conteudo-tabela">
-                        Cliente Comum
-                      </td>
-                      <td className="clientes-conteudo-tabela">
-                        {cliente.cpf_cnpj}
-                      </td>
-                      <td className="clientes-conteudo-tabela">
-                        {classificacoesClientes[
-                          cliente?.id_classificacao_cliente
-                        ]?.nome || "-"}
-                      </td>
-                      <td className="clientes-conteudo-tabela">
-                        {calculaValorTotalContratos(cliente.id).toLocaleString(
-                          "pt-BR",
-                          {
-                            style: "currency",
-                            currency: "BRL",
-                          }
-                        )}
-                      </td>
-                      <td className="clientes-conteudo-tabela">
-                        {vendedores[cliente.id_usuario] || "-"}
-                      </td>
-                    </tr>
-                  ))}
+                {clientesSemGrupo.filter((cliente) => {
+                  const passaClassificacao =
+                    !filters.classificacao_cliente ||
+                    cliente.id_classificacao_cliente === parseInt(filters.classificacao_cliente);
+                  const passaVendedor =
+                    !filters.nome_vendedor ||
+                    cliente.id_usuario === parseInt(filters.nome_vendedor);
+                  const passaStatus =
+                    !filters.status || cliente.status === filters.status; // filtro de status
+                  return passaClassificacao && passaVendedor && passaStatus;
+                }).map((cliente) => (
+                  <tr
+                    key={`semgrupo-${cliente.id}`}
+                    className="clientes-conteudo-tabela-sem-grupo"
+                    onClick={() => detalhesCliente(cliente.id)}
+                  >
+                    <td className="clientes-conteudo-tabela">
+                      {cliente.nome_fantasia}
+                    </td>
+                    <td className="clientes-conteudo-tabela">
+                      {cliente.cpf_cnpj}
+                    </td>
+                    <td className="clientes-conteudo-tabela">
+                      {classificacoesClientes[
+                        cliente?.id_classificacao_cliente
+                      ]?.nome || "-"}
+                    </td>
+                    <td className="clientes-conteudo-tabela">
+                      {calculaValorTotalContratos(cliente.id).toLocaleString(
+                        "pt-BR",
+                        {
+                          style: "currency",
+                          currency: "BRL",
+                        }
+                      )}
+                    </td>
+                    <td className="clientes-conteudo-tabela">
+                      {vendedores[cliente.id_usuario] || "-"}
+                    </td>
+                    <td className="clientes-conteudo-tabela">
+                      <FaUser />
+                    </td>
+                  </tr>
+                ))}
               </tbody>
 
               <tfoot>
                 <tr className="clientes-total-geral-linha">
-                  <td className="clientes-total-label" colSpan={3}>
+                  <td className="clientes-total-label" colSpan={4}>
                     TOTAL DE CONTRATOS ATIVOS:
                   </td>
                   <td className="clientes-total-valor">
@@ -412,7 +482,7 @@ export default function Clientes() {
                       key={categoria}
                       className="clientes-total-categoria-linha"
                     >
-                      <td className="clientes-total-label" colSpan={3}>
+                      <td className="clientes-total-label" colSpan={4}>
                         Total Categoria: {categoria}
                       </td>
                       <td className="clientes-total-valor">
