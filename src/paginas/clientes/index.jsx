@@ -207,8 +207,12 @@ export default function Clientes() {
         !filters.nome_vendedor ||
         unidade.id_usuario === parseInt(filters.nome_vendedor);
       const passaStatus =
-        !filters.status || unidade.status === filters.status; // filtro de status
-      return passaClassificacao && passaVendedor && passaStatus;
+        !filters.status || unidade.status === filters.status;
+
+      const passaBusca =
+        !filter || unidade.nome_fantasia.toLowerCase().includes(filter.toLowerCase());
+
+      return passaClassificacao && passaVendedor && passaStatus && passaBusca;
     })
   );
 
@@ -422,8 +426,12 @@ export default function Clientes() {
                     !filters.nome_vendedor ||
                     cliente.id_usuario === parseInt(filters.nome_vendedor);
                   const passaStatus =
-                    !filters.status || cliente.status === filters.status; // filtro de status
-                  return passaClassificacao && passaVendedor && passaStatus;
+                    !filters.status || cliente.status === filters.status;
+
+                  const passaBusca =
+                    !filter || cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase());
+
+                  return passaClassificacao && passaVendedor && passaStatus && passaBusca;
                 }).map((cliente) => (
                   <tr
                     key={`semgrupo-${cliente.id}`}
