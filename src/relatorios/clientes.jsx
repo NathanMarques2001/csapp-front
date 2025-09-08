@@ -55,14 +55,14 @@ export default function RelatorioClientes({
         ]?.nome ||
         classificacoesClientesMap[cliente.id_classificacao_cliente]?.nome ||
         "Desconhecido",
-      //"Grupo Econômico": gruposEconomicosMap[cliente.id_grupo_economico],
       Status: cliente.status,
-      "Usuário Responsável":
-        usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
+      "Usuário Responsável": usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
       Segmento: segmentosMap[cliente.id_segmento]?.nome || "Desconhecido",
       "Valor Total dos Contratos": valorTotalContratos,
+      "Pertence Grupo Econômico": cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico] ? "sim" : "não"
     };
   });
+
 
   console.log(gruposEconomicosMap);
   console.log(classificacoesClientesMap);
@@ -205,6 +205,7 @@ export default function RelatorioClientes({
             <th className="global-titulo-tabela">Vendedor</th>
             <th className="global-titulo-tabela">Segmento</th>
             <th className="global-titulo-tabela">Valor dos Contratos</th>
+            <th className="global-titulo-tabela">Pertence Grupo Econômico</th>
           </tr>
         </thead>
         <tbody>
@@ -225,6 +226,9 @@ export default function RelatorioClientes({
                   style: "currency",
                   currency: "BRL",
                 })}
+              </td>
+              <td className="global-conteudo-tabela">
+                {cliente["Pertence Grupo Econômico"]}
               </td>
             </tr>
           ))}
