@@ -30,65 +30,72 @@ export default function Clientes() {
   const [filters, setFilters] = useState({ status: "ativo" });
   const [showFilter, setShowFilter] = useState(false);
 
+  // Paginação
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
+  // Verifica permissão
   useEffect(() => {
-    if (cookies.tipo === "dev" || cookies.tipo === "admin") {
-      setIsAdminOrDev(true);
-    } else {
-      setIsAdminOrDev(false);
-    }
+    setIsAdminOrDev(cookies.tipo === "dev" || cookies.tipo === "admin");
+  }, [cookies.tipo]);
 
-    const fetchData = async () => {
+  // Fetch vendedores e classificações (uma vez só)
+  useEffect(() => {
+    const fetchMeta = async () => {
       try {
-        setLoading(true);
-        const gruposEconomicosResponse = await api.get("/grupos-economicos");
-        const grupos = gruposEconomicosResponse.grupoEconomico;
-
-        const clientesResponse = await api.get("/clientes");
-        const clientesData = clientesResponse.clientes;
-
         const vendedoresResponse = await api.get("/usuarios");
-        const vendedoresMap = vendedoresResponse.usuarios.reduce(
-          (map, vendedor) => {
-            map[vendedor.id] = vendedor.nome;
-            return map;
-          },
-          {}
-        );
+        const vendedoresMap = vendedoresResponse.usuarios.reduce((map, v) => {
+          map[v.id] = v.nome;
+          return map;
+        }, {});
         setVendedores(vendedoresMap);
+
+        const classificacoesResponse = await api.get("/classificacoes-clientes");
+        const classificacoesMap = classificacoesResponse.classificacoes.reduce((map, c) => {
+          map[c.id] = c;
+          return map;
+        }, {});
+        setClassificacoesClientes(classificacoesMap);
 
         const contratosResponse = await api.get("/contratos");
         setContratos(contratosResponse.contratos);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-        const { agrupados, semGrupo } = agruparClientesPorGrupo(
-          clientesData,
-          grupos
-        );
+    fetchMeta();
+  }, []);
+
+  // Fetch clientes paginados
+  useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        setLoading(true);
+
+        const clientesResponse = await api.get(`/clientes/paginados?page=${page}`);
+        const { clientes, pagination } = clientesResponse;
+
+        const gruposEconomicosResponse = await api.get("/grupos-economicos");
+        const grupos = gruposEconomicosResponse.grupoEconomico;
+
+        const { agrupados, semGrupo } = agruparClientesPorGrupo(clientes, grupos);
         setClientesGrupos(agrupados);
         setClientesSemGrupo(semGrupo);
 
-        const classificacoesClientesResponse = await api.get(
-          "/classificacoes-clientes"
-        );
-        const classificacoesClientesMap =
-          classificacoesClientesResponse.classificacoes.reduce(
-            (map, classificacao) => {
-              map[classificacao.id] = classificacao;
-              return map;
-            },
-            {}
-          );
-        setClassificacoesClientes(classificacoesClientesMap);
+        setPage(pagination.page);
+        setTotalPages(pagination.totalPages);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [cookies.tipo, cookies.id]);
+    fetchClientes();
+  }, [page]);
 
+  // Totalizadores
   useEffect(() => {
     let totalGeral = 0;
     const totaisCategoria = {};
@@ -99,43 +106,28 @@ export default function Clientes() {
       return;
     }
 
-    // 1. Processa os clientes que pertencem a um grupo
+    // Clientes com grupo
     clientesGrupos.forEach(({ grupo, unidades }) => {
-      // Pega a classificação DO GRUPO
-      const categoriaIdDoGrupo = grupo.id_classificacao_cliente;
-      const nomeCategoria =
-        classificacoesClientes[categoriaIdDoGrupo]?.nome || "Não Classificado";
+      const categoriaNome = classificacoesClientes[grupo.id_classificacao_cliente]?.nome || "Não Classificado";
 
-      if (!totaisCategoria[nomeCategoria]) {
-        totaisCategoria[nomeCategoria] = 0;
-      }
+      if (!totaisCategoria[categoriaNome]) totaisCategoria[categoriaNome] = 0;
 
-      // Soma o valor de todas as unidades e atribui à categoria do grupo
-      unidades.forEach((unidade) => {
-        const valorUnidade = calculaValorTotalContratos(unidade.id);
-        totaisCategoria[nomeCategoria] += valorUnidade;
-        totalGeral += valorUnidade; // Atualiza o total geral
+      unidades.forEach((cliente) => {
+        const valor = calculaValorTotalContratos(cliente.id);
+        totaisCategoria[categoriaNome] += valor;
+        totalGeral += valor;
       });
     });
 
-    // 2. Processa os clientes que NÃO pertencem a um grupo
+    // Clientes sem grupo
     clientesSemGrupo.forEach((cliente) => {
-      // Pega a classificação DO PRÓPRIO CLIENTE
-      const categoriaIdDoCliente = cliente.id_classificacao_cliente;
-      const nomeCategoria =
-        classificacoesClientes[categoriaIdDoCliente]?.nome ||
-        "Não Classificado";
-
-      if (!totaisCategoria[nomeCategoria]) {
-        totaisCategoria[nomeCategoria] = 0;
-      }
-
-      const valorCliente = calculaValorTotalContratos(cliente.id);
-      totaisCategoria[nomeCategoria] += valorCliente;
-      totalGeral += valorCliente; // Atualiza o total geral
+      const categoriaNome = classificacoesClientes[cliente.id_classificacao_cliente]?.nome || "Não Classificado";
+      if (!totaisCategoria[categoriaNome]) totaisCategoria[categoriaNome] = 0;
+      const valor = calculaValorTotalContratos(cliente.id);
+      totaisCategoria[categoriaNome] += valor;
+      totalGeral += valor;
     });
 
-    // 3. Define os estados com os valores calculados
     setTotalGeralContratos(totalGeral);
     setTotalPorCategoria(totaisCategoria);
   }, [clientesGrupos, clientesSemGrupo, contratos, classificacoesClientes]);
@@ -509,6 +501,13 @@ export default function Clientes() {
               Ainda não foram cadastrados clientes!
             </p>
           )}
+
+          {/* Paginação */}
+          <div className="pagination">
+            <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>Anterior</button>
+            <span>Página {page} de {totalPages}</span>
+            <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages}>Próxima</button>
+          </div>
         </div>
       </div>
     </>

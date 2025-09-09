@@ -47,6 +47,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [reajuste, setReajuste] = useState("");
   const [proximoReajuste, setProximoReajuste] = useState(null);
   const [valorMensal, setValorMensal] = useState("");
+  const [valorAnterior, setValorAnterior] = useState("");
   const [quantidade, setQuantidade] = useState(null);
   const [dataInicio, setDataInicio] = useState(null);
   const [email, setEmail] = useState("");
@@ -55,7 +56,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
   const tiposFaturamento = ["mensal", "anual"];
 
-  const [cookies] = useCookies(["tipo"]);
+  const [cookies] = useCookies(["tipo","id"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
   useEffect(() => {
@@ -183,6 +184,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setProximoReajuste(formatDateForInput(contrato.proximo_reajuste));
           setDuracao(contrato.duracao);
           setValorMensal(contrato.valor_mensal);
+          setValorAnterior(contrato.valor_antigo);
           setQuantidade(contrato.quantidade);
           setDataInicio(formatDateForInput(contrato.data_inicio));
           setEmail(contrato.email_envio);
@@ -273,6 +275,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         descricao: descricao,
         data_inicio: formatDate(dataInicio),
         tipo_faturamento: tipoFaturamento,
+        id_usuario: cookies.id
       };
 
       console.log(formData);
@@ -613,6 +616,19 @@ export default function FormContrato({ mode = "cadastro" }) {
                       </option>
                     ))}
                   </select>
+
+                  <label htmlFor="">
+                    <b>
+                      Valor anterior
+                    </b>
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    name="valor-anterior"
+                    className="form-contrato-input"
+                    value={valorAnterior || "aa"}
+                  />
 
                   <img
                     id="form-contrato-img"
