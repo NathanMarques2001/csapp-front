@@ -51,6 +51,36 @@ export default function FormCliente({ mode }) {
   const [cookies] = useCookies(["tipo"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
+  // permissões por tipo (novo requisito)
+  const userTipo = cookies.tipo;
+
+  const vendedorAllowed = new Set([
+    "gestor_contratos_nome",
+    "gestor_contratos_email",
+    "gestor_contratos_nascimento",
+    "gestor_contratos_telefone_1",
+    "gestor_contratos_telefone_2",
+    "gestor_financeiro_nome",
+    "gestor_financeiro_email",
+    "gestor_financeiro_nascimento",
+    "gestor_financeiro_telefone_1",
+    "gestor_financeiro_telefone_2",
+    "gestor_chamados_nome",
+    "gestor_chamados_email",
+    "gestor_chamados_nascimento",
+    "gestor_chamados_telefone_1",
+    "gestor_chamados_telefone_2",
+  ]);
+
+  const canEdit = (fieldName) => {
+    if (!userTipo) return false;
+    if (userTipo === "dev" || userTipo === "admin" || userTipo === "usuario") return true;
+    if (userTipo === "vendedor") return vendedorAllowed.has(fieldName);
+    return false;
+  };
+
+  const canSubmit = userTipo === "dev" || userTipo === "admin" || userTipo === "usuario" || userTipo === "vendedor";
+
   useEffect(() => {
     // Verifica o tipo de usuário e atualiza o estado
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
@@ -233,7 +263,7 @@ export default function FormCliente({ mode }) {
                       id="razao_social"
                       name="razao_social"
                       required
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("razao_social")}
                       placeholder="Digite a razão social"
                       value={cliente.razao_social}
                       onChange={handleChange}
@@ -248,7 +278,7 @@ export default function FormCliente({ mode }) {
                       id="nome_fantasia"
                       name="nome_fantasia"
                       required
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("nome_fantasia")}
                       placeholder="Digite o nome fantasia"
                       value={cliente.nome_fantasia}
                       onChange={handleChange}
@@ -263,7 +293,7 @@ export default function FormCliente({ mode }) {
                       id="cpf_cnpj"
                       name="cpf_cnpj"
                       required
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("cpf_cnpj")}
                       placeholder="Digite o CPF ou CNPJ"
                       value={cliente.cpf_cnpj}
                       onChange={handleChange}
@@ -276,7 +306,7 @@ export default function FormCliente({ mode }) {
                     <select
                       required
                       id="id_usuario"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("id_usuario")}
                       name="id_usuario"
                       value={cliente.id_usuario}
                       onChange={handleChange}
@@ -296,7 +326,7 @@ export default function FormCliente({ mode }) {
                     <select
                       required
                       id="id_segmento"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("id_segmento")}
                       name="id_segmento"
                       value={cliente.id_segmento}
                       onChange={handleChange}
@@ -313,7 +343,7 @@ export default function FormCliente({ mode }) {
                     <label htmlFor="id_grupo_economico">Grupo Econômico</label>
                     <select
                       id="id_grupo_economico"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("id_grupo_economico")}
                       name="id_grupo_economico"
                       value={cliente.id_grupo_economico}
                       onChange={handleChange}
@@ -333,7 +363,7 @@ export default function FormCliente({ mode }) {
                     <label htmlFor="tipo_unidade">Tipo da Unidade</label>
                     <select
                       id="tipo_unidade"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("tipo_unidade")}
                       name="tipo_unidade"
                       value={cliente.tipo_unidade}
                       onChange={handleChange}
@@ -352,7 +382,7 @@ export default function FormCliente({ mode }) {
                       type="text"
                       id="nps"
                       name="nps"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("nps")}
                       placeholder="Digite o NPS do cliente"
                       value={cliente.nps}
                       onChange={handleChange}
@@ -379,7 +409,7 @@ export default function FormCliente({ mode }) {
                       id="gestor_contratos_nome"
                       name="gestor_contratos_nome"
                       required
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("gestor_contratos_nome")}
                       placeholder="Digite o nome completo"
                       value={cliente.gestor_contratos_nome}
                       onChange={handleChange}
@@ -394,7 +424,7 @@ export default function FormCliente({ mode }) {
                       id="gestor_contratos_email"
                       name="gestor_contratos_email"
                       required
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("gestor_contratos_email")}
                       placeholder="Digite seu endereço de email"
                       value={cliente.gestor_contratos_email}
                       onChange={handleChange}
@@ -409,7 +439,7 @@ export default function FormCliente({ mode }) {
                         type="date"
                         id="gestor_contratos_nascimento"
                         name="gestor_contratos_nascimento"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_contratos_nascimento")}
                         value={cliente.gestor_contratos_nascimento}
                         onChange={handleChange}
                       />
@@ -423,7 +453,7 @@ export default function FormCliente({ mode }) {
                         id="gestor_contratos_telefone_1"
                         name="gestor_contratos_telefone_1"
                         placeholder="Primeiro contato"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_contratos_telefone_1")}
                         value={cliente.gestor_contratos_telefone_1}
                         onChange={handleChange}
                         required
@@ -438,7 +468,7 @@ export default function FormCliente({ mode }) {
                         id="gestor_contratos_telefone_2"
                         name="gestor_contratos_telefone_2"
                         placeholder="Segundo contato"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_contratos_telefone_2")}
                         value={cliente.gestor_contratos_telefone_2}
                         onChange={handleChange}
                       />
@@ -454,7 +484,7 @@ export default function FormCliente({ mode }) {
                       id="gestor_chamados_nome"
                       name="gestor_chamados_nome"
                       placeholder="Digite o nome completo"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("gestor_chamados_nome")}
                       value={cliente.gestor_chamados_nome}
                       onChange={handleChange}
                     />
@@ -466,7 +496,7 @@ export default function FormCliente({ mode }) {
                       id="gestor_chamados_email"
                       name="gestor_chamados_email"
                       placeholder="Digite seu endereço de email"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("gestor_chamados_email")}
                       value={cliente.gestor_chamados_email}
                       onChange={handleChange}
                     />
@@ -480,7 +510,7 @@ export default function FormCliente({ mode }) {
                         type="date"
                         id="gestor_chamados_nascimento"
                         name="gestor_chamados_nascimento"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_chamados_nascimento")}
                         value={cliente.gestor_chamados_nascimento}
                         onChange={handleChange}
                       />
@@ -494,7 +524,7 @@ export default function FormCliente({ mode }) {
                         id="gestor_chamados_telefone_1"
                         name="gestor_chamados_telefone_1"
                         placeholder="Primeiro contato"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_chamados_telefone_1")}
                         value={cliente.gestor_chamados_telefone_1}
                         onChange={handleChange}
                       />
@@ -508,7 +538,7 @@ export default function FormCliente({ mode }) {
                         id="gestor_chamados_telefone_2"
                         name="gestor_chamados_telefone_2"
                         placeholder="Segundo contato"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_chamados_telefone_2")}
                         value={cliente.gestor_chamados_telefone_2}
                         onChange={handleChange}
                       />
@@ -526,7 +556,7 @@ export default function FormCliente({ mode }) {
                       id="gestor_financeiro_nome"
                       name="gestor_financeiro_nome"
                       placeholder="Digite o nome completo"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("gestor_financeiro_nome")}
                       value={cliente.gestor_financeiro_nome}
                       onChange={handleChange}
                     />
@@ -538,7 +568,7 @@ export default function FormCliente({ mode }) {
                       id="gestor_financeiro_email"
                       name="gestor_financeiro_email"
                       placeholder="Digite seu endereço de email"
-                      disabled={!isAdminOrDev}
+                      disabled={!canEdit("gestor_financeiro_email")}
                       value={cliente.gestor_financeiro_email}
                       onChange={handleChange}
                     />
@@ -552,7 +582,7 @@ export default function FormCliente({ mode }) {
                         type="date"
                         id="gestor_financeiro_nascimento"
                         name="gestor_financeiro_nascimento"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_financeiro_nascimento")}
                         value={cliente.gestor_financeiro_nascimento}
                         onChange={handleChange}
                       />
@@ -566,7 +596,7 @@ export default function FormCliente({ mode }) {
                         id="gestor_financeiro_telefone_1"
                         name="gestor_financeiro_telefone_1"
                         placeholder="Primeiro contato"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_financeiro_telefone_1")}
                         value={cliente.gestor_financeiro_telefone_1}
                         onChange={handleChange}
                       />
@@ -580,7 +610,7 @@ export default function FormCliente({ mode }) {
                         id="gestor_financeiro_telefone_2"
                         name="gestor_financeiro_telefone_2"
                         placeholder="Segundo contato"
-                        disabled={!isAdminOrDev}
+                        disabled={!canEdit("gestor_financeiro_telefone_2")}
                         value={cliente.gestor_financeiro_telefone_2}
                         onChange={handleChange}
                       />
@@ -596,7 +626,7 @@ export default function FormCliente({ mode }) {
                 >
                   {!isAdminOrDev ? "Voltar" : "Cancelar"}
                 </button>
-                {!isAdminOrDev ? (
+                {!canSubmit ? (
                   <></>
                 ) : (
                   <button

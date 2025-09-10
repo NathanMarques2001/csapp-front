@@ -184,8 +184,9 @@ export default function FormUsuario({ mode = "cadastro" }) {
                 required
               >
                 <option value="">Selecione...</option>
-                <option value="admin">Administrador</option>
-                <option value="usuario">Usuário comum</option>
+                <option value="admin">Superadministrador</option>
+                <option value="usuario">Administrador</option>
+                <option value="vendedor">Usuário comum</option>
               </select>
               <label htmlFor="senha">
                 Senha <span className="required">*</span>
