@@ -5,6 +5,7 @@ import Loading from "../../componetes/loading";
 import RelatorioClientes from "../../relatorios/clientes";
 import RelatorioContratos from "../../relatorios/contratos";
 import RelatorioProdutos from "../../relatorios/produtos";
+import RelatorioAniversariantes from "../../relatorios/aniversariantes";
 import { useCookies } from "react-cookie";
 import Api from "../../utils/api";
 import { createMapById } from "../../utils/maps";
@@ -98,6 +99,7 @@ export default function Relatorios() {
             <option value="Clientes">Clientes</option>
             <option value="Contratos">Contratos</option>
             <option value="Produtos">Produtos</option>
+            <option value="Aniversariantes">Aniversariantes</option>
           </select>
 
           {tabelaSelecionada === "Clientes" && (
@@ -123,6 +125,9 @@ export default function Relatorios() {
               produtos={produtos}
               fabricantesMap={fabricantesMap}
             />
+          )}
+          {tabelaSelecionada === "Aniversariantes" && (
+            <RelatorioAniversariantes clientes={clientes} />
           )}
         </div>
       </div>
