@@ -31,6 +31,8 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [popupAction, setPopupAction] = useState(null);
   const [faturados, setFaturados] = useState([]);
   const [clientes, setClientes] = useState([]);
+  const [usuarios, setUsuarios] = useState({});
+  const [logs, setLogs] = useState([]);
   const [clienteInput, setClienteInput] = useState("");
   const [filteredClientes, setFilteredClientes] = useState([]);
   const [selectedClienteId, setSelectedClienteId] = useState(null);
@@ -102,9 +104,42 @@ export default function FormContrato({ mode = "cadastro" }) {
       }
     };
 
+    const fetchUsuarios = async () => {
+      try {
+        const response = await api.get("/usuarios");
+        const usuariosMap = response.usuarios.reduce((map, u) => {
+          map[u.id] = u.nome;
+          return map;
+        }, {});
+        setUsuarios(usuariosMap);
+      } catch (err) {
+        console.error("Erro ao buscar usuários:", err);
+      }
+    };
+
     fetchClientes();
     fetchProdutos();
     fetchFaturados();
+    fetchUsuarios();
+  }, [mode, id]);
+
+  // Busca logs do contrato quando estamos em modo edição
+  useEffect(() => {
+    const fetchLogs = async () => {
+      if (mode === "edicao" && id) {
+        try {
+          const response = await api.get(`/logs/${id}`);
+          const logsData = response.logs || [];
+          setLogs(logsData);
+        } catch (err) {
+          // Se a rota retornar 404 (nenhum log), apenas seta array vazio
+          console.error("Erro ao buscar logs:", err);
+          setLogs([]);
+        }
+      }
+    };
+
+    fetchLogs();
   }, [mode, id]);
 
   // CÓDIGO CORRIGIDO E AJUSTADO
@@ -627,7 +662,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                     readOnly
                     name="valor-anterior"
                     className="form-contrato-input"
-                    value={valorAnterior || "aa"}
+                    value={valorAnterior || ""}
                   />
 
                   <img
@@ -640,18 +675,44 @@ export default function FormContrato({ mode = "cadastro" }) {
                   className="form-contrato-label-input-container"
                   id="form-cliente-container-input-descricao"
                 >
-                  <label htmlFor="descricao" className="label-form-contrato">
-                    <b>Descrição breve</b>
-                  </label>
-                  <textarea
-                    name="descricao"
-                    disabled={!isAdminOrDev}
-                    id="form-cliente-input-descricao"
-                    className="form-contrato-input"
-                    placeholder="Algo a mais que deveria ser descrito aqui..."
-                    value={descricao}
-                    onChange={(e) => setDescricao(e.target.value)}
-                  ></textarea>
+                    <div>
+                      <label htmlFor="descricao" className="label-form-contrato">
+                        <b>Descrição breve</b>
+                      </label>
+                      <textarea
+                        name="descricao"
+                        disabled={!isAdminOrDev}
+                        id="form-cliente-input-descricao"
+                        className="form-contrato-input"
+                        placeholder="Algo a mais que deveria ser descrito aqui..."
+                        value={descricao}
+                        onChange={(e) => setDescricao(e.target.value)}
+                      ></textarea>
+
+                      <label htmlFor="" className="label-form-contrato"><b>Histórico</b></label>
+                      <div id="form-contrato-logs-box">
+                        {mode === "edicao" ? (
+                          logs.length === 0 ? (
+                            <p className="logs-empty">Nenhum log cadastrado para este contrato.</p>
+                          ) : (
+                            <ul className="logs-list">
+                              {logs
+                                .slice()
+                                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                                .map((log) => (
+                                  <li key={log.id} className="log-item">
+                                    <div className="log-date">{formatDate(log.createdAt)}</div>
+                                    <div className="log-user">{usuarios[log.id_usuario] || `Usuário ${log.id_usuario}`}</div>
+                                    <div className="log-change">{log.alteracao}</div>
+                                  </li>
+                                ))}
+                            </ul>
+                          )
+                        ) : (
+                          <div className="logs-placeholder" />
+                        )}
+                      </div>
+                    </div>
                 </div>
               </div>
               <div id="form-contrato-container-btn">

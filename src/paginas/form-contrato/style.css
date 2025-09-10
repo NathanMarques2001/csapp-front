@@ -1,3 +1,5 @@
+/* Form contrato styles - cleaned and consolidated */
+
 #div-cadastro-contrato-descricao-btn {
   display: flex;
   padding-bottom: 1.5rem;
@@ -14,7 +16,7 @@
 #btn-inativar-contrato {
   background-color: var(--vermelho);
   border: 1px solid var(--preto);
-  padding: 1%;
+  padding: 6px 10px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -23,7 +25,7 @@
 #btn-ativar-contrato {
   background-color: var(--verde);
   color: var(--preto);
-  padding: 1%;
+  padding: 6px 10px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -93,10 +95,14 @@
 
 #form-cliente-container-input-descricao {
   width: 65%;
+  margin-bottom: 1.25rem;
 }
 
 #form-cliente-input-descricao {
-  height: 100%;
+  /* keep a fixed-ish height for the textarea for predictable layout */
+  min-height: 120px;
+  width: 100%;
+  resize: vertical;
 }
 
 .tres-inputs {
@@ -120,17 +126,78 @@
   background-color: #f0f0f0;
 }
 
+/* image: constrain size so it doesn't dominate layout */
 #form-contrato-img {
-  width: 60%;
-  margin-right: 5%;
-  margin-top: 5%;
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  display: block;
 }
 
+/* logs box: predictable min/max heights and spacing */
+#form-contrato-logs-box {
+  width: 100%;
+  border: 1px solid var(--cinza);
+  border-radius: 6px;
+  padding: 0.5rem;
+  background: var(--branco);
+  min-height: 120px;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.logs-placeholder {
+  height: 180px;
+}
+
+.logs-empty {
+  color: var(--cinza);
+  font-size: 0.9rem;
+  padding: 0.5rem;
+}
+
+.logs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.log-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid #eee;
+}
+
+.log-date {
+  width: 20%;
+  color: var(--cinza);
+  font-size: 0.9rem;
+}
+
+.log-user {
+  width: 25%;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.log-change {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+/* action buttons container */
 #form-contrato-container-btn {
+  background-color: transparent;
   display: flex;
   width: 100%;
   justify-content: end;
-  gap: 3%;
+  gap: 1rem;
+  padding-top: 0.75rem;
 }
 
 #form-contrato-select-tipo-faturamento {
@@ -139,4 +206,44 @@
 
 #form-contrato-select-tipo-faturamento option {
   text-transform: capitalize;
+}
+
+/* Responsive adjustments to avoid overlap and improve stacking on small screens */
+@media (max-width: 768px) {
+  /* stack the input groups vertically */
+  .form-contrato-cliente-tres-inputs-container,
+  .form-contrato-cliente-cpf-cnpj-container,
+  .form-contrato-label-input-container.dois-inputs,
+  .form-contrato-label-input-container.tres-inputs {
+    flex-direction: column;
+  }
+
+  .dois-inputs,
+  .tres-inputs,
+  #form-cliente-container-input-descricao {
+    width: 100%;
+  }
+
+  /* make image full width within its flow on small screens */
+  #form-contrato-img {
+    width: 100%;
+    margin-bottom: 1rem;
+    align-self: flex-start;
+  }
+
+  /* give logs more bottom space so buttons won't overlap */
+  #form-contrato-logs-box {
+    margin-bottom: 3.5rem;
+  }
+
+  /* make each log item stack vertically for readability */
+  .log-item {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .log-date,
+  .log-user {
+    width: auto;
+  }
 }
