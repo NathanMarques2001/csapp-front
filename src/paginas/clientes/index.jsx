@@ -29,73 +29,68 @@ export default function Clientes() {
   const [totalPorCategoria, setTotalPorCategoria] = useState({});
   const [filters, setFilters] = useState({ status: "ativo" });
   const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
 
-  // Paginação
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
-  // Verifica permissão
   useEffect(() => {
-    setIsAdminOrDev(cookies.tipo === "dev" || cookies.tipo === "admin");
-  }, [cookies.tipo]);
+    if (cookies.tipo === "dev" || cookies.tipo === "admin") {
+      setIsAdminOrDev(true);
+    } else {
+      setIsAdminOrDev(false);
+    }
 
-  // Fetch vendedores e classificações (uma vez só)
-  useEffect(() => {
-    const fetchMeta = async () => {
-      try {
-        const vendedoresResponse = await api.get("/usuarios");
-        const vendedoresMap = vendedoresResponse.usuarios.reduce((map, v) => {
-          map[v.id] = v.nome;
-          return map;
-        }, {});
-        setVendedores(vendedoresMap);
-
-        const classificacoesResponse = await api.get("/classificacoes-clientes");
-        const classificacoesMap = classificacoesResponse.classificacoes.reduce((map, c) => {
-          map[c.id] = c;
-          return map;
-        }, {});
-        setClassificacoesClientes(classificacoesMap);
-
-        const contratosResponse = await api.get("/contratos");
-        setContratos(contratosResponse.contratos);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchMeta();
-  }, []);
-
-  // Fetch clientes paginados
-  useEffect(() => {
-    const fetchClientes = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-
-        const clientesResponse = await api.get(`/clientes/paginados?page=${page}`);
-        const { clientes, pagination } = clientesResponse;
-
         const gruposEconomicosResponse = await api.get("/grupos-economicos");
         const grupos = gruposEconomicosResponse.grupoEconomico;
 
-        const { agrupados, semGrupo } = agruparClientesPorGrupo(clientes, grupos);
+        const clientesResponse = await api.get("/clientes");
+        const clientesData = clientesResponse.clientes;
+
+        const vendedoresResponse = await api.get("/usuarios");
+        const vendedoresMap = vendedoresResponse.usuarios.reduce(
+          (map, vendedor) => {
+            map[vendedor.id] = vendedor.nome;
+            return map;
+          },
+          {}
+        );
+        setVendedores(vendedoresMap);
+
+        const contratosResponse = await api.get("/contratos");
+        setContratos(contratosResponse.contratos);
+
+        const { agrupados, semGrupo } = agruparClientesPorGrupo(
+          clientesData,
+          grupos
+        );
         setClientesGrupos(agrupados);
         setClientesSemGrupo(semGrupo);
 
-        setPage(pagination.page);
-        setTotalPages(pagination.totalPages);
+        const classificacoesClientesResponse = await api.get(
+          "/classificacoes-clientes"
+        );
+        const classificacoesClientesMap =
+          classificacoesClientesResponse.classificacoes.reduce(
+            (map, classificacao) => {
+              map[classificacao.id] = classificacao;
+              return map;
+            },
+            {}
+          );
+        setClassificacoesClientes(classificacoesClientesMap);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClientes();
-  }, [page]);
+    fetchData();
+  }, [cookies.tipo, cookies.id]);
 
-  // Totalizadores
   useEffect(() => {
     let totalGeral = 0;
     const totaisCategoria = {};
@@ -106,28 +101,43 @@ export default function Clientes() {
       return;
     }
 
-    // Clientes com grupo
+    // 1. Processa os clientes que pertencem a um grupo
     clientesGrupos.forEach(({ grupo, unidades }) => {
-      const categoriaNome = classificacoesClientes[grupo.id_classificacao_cliente]?.nome || "Não Classificado";
+      // Pega a classificação DO GRUPO
+      const categoriaIdDoGrupo = grupo.id_classificacao_cliente;
+      const nomeCategoria =
+        classificacoesClientes[categoriaIdDoGrupo]?.nome || "Não Classificado";
 
-      if (!totaisCategoria[categoriaNome]) totaisCategoria[categoriaNome] = 0;
+      if (!totaisCategoria[nomeCategoria]) {
+        totaisCategoria[nomeCategoria] = 0;
+      }
 
-      unidades.forEach((cliente) => {
-        const valor = calculaValorTotalContratos(cliente.id);
-        totaisCategoria[categoriaNome] += valor;
-        totalGeral += valor;
+      // Soma o valor de todas as unidades e atribui à categoria do grupo
+      unidades.forEach((unidade) => {
+        const valorUnidade = calculaValorTotalContratos(unidade.id);
+        totaisCategoria[nomeCategoria] += valorUnidade;
+        totalGeral += valorUnidade; // Atualiza o total geral
       });
     });
 
-    // Clientes sem grupo
+    // 2. Processa os clientes que NÃO pertencem a um grupo
     clientesSemGrupo.forEach((cliente) => {
-      const categoriaNome = classificacoesClientes[cliente.id_classificacao_cliente]?.nome || "Não Classificado";
-      if (!totaisCategoria[categoriaNome]) totaisCategoria[categoriaNome] = 0;
-      const valor = calculaValorTotalContratos(cliente.id);
-      totaisCategoria[categoriaNome] += valor;
-      totalGeral += valor;
+      // Pega a classificação DO PRÓPRIO CLIENTE
+      const categoriaIdDoCliente = cliente.id_classificacao_cliente;
+      const nomeCategoria =
+        classificacoesClientes[categoriaIdDoCliente]?.nome ||
+        "Não Classificado";
+
+      if (!totaisCategoria[nomeCategoria]) {
+        totaisCategoria[nomeCategoria] = 0;
+      }
+
+      const valorCliente = calculaValorTotalContratos(cliente.id);
+      totaisCategoria[nomeCategoria] += valorCliente;
+      totalGeral += valorCliente; // Atualiza o total geral
     });
 
+    // 3. Define os estados com os valores calculados
     setTotalGeralContratos(totalGeral);
     setTotalPorCategoria(totaisCategoria);
   }, [clientesGrupos, clientesSemGrupo, contratos, classificacoesClientes]);
@@ -211,6 +221,40 @@ export default function Clientes() {
   const limparFiltros = () => {
     setFilters({ status: "ativo" });
   };
+
+  // Filtra clientes sem grupo (reutilizado para paginação)
+  const filteredClientesSemGrupo = clientesSemGrupo.filter((cliente) => {
+    const passaClassificacao =
+      !filters.classificacao_cliente ||
+      cliente.id_classificacao_cliente === parseInt(filters.classificacao_cliente);
+    const passaVendedor =
+      !filters.nome_vendedor ||
+      cliente.id_usuario === parseInt(filters.nome_vendedor);
+    const passaStatus = !filters.status || cliente.status === filters.status;
+
+    const passaBusca =
+      !filter || cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase());
+
+    return passaClassificacao && passaVendedor && passaStatus && passaBusca;
+  });
+
+  // Monta uma lista única (grupos como um item + clientes sem grupo como itens) para paginação
+  const combinedItems = [
+    ...clientesGruposFiltrados.map((grupo) => ({ type: "group", grupo })),
+    ...filteredClientesSemGrupo.map((cliente) => ({ type: "cliente", cliente })),
+  ];
+
+  const totalPages = Math.max(1, Math.ceil(combinedItems.length / ITEMS_PER_PAGE));
+  const displayPage = Math.min(Math.max(1, currentPage), totalPages);
+  const pagedItems = combinedItems.slice(
+    (displayPage - 1) * ITEMS_PER_PAGE,
+    displayPage * ITEMS_PER_PAGE
+  );
+
+  // Quando filtros ou busca mudam, volta para a primeira página
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, filters.classificacao_cliente, filters.nome_vendedor, filters.status]);
 
   return (
     <>
@@ -320,147 +364,185 @@ export default function Clientes() {
                 </tr>
               </thead>
 
-              {/* Grupos econômicos com unidades */}
-              {clientesGruposFiltrados.map((grupo) => {
-                const matriz = getMatriz(grupo);
-                const totalContratos = calculaTotalContratosGrupo(grupo);
-                const aberto = hoverGrupoId === grupo.grupo.id;
+              {/* Renderiza apenas os itens da página atual: grupos (com hover para unidades) e clientes sem grupo */}
+              {pagedItems.map((item) => {
+                if (item.type === "group") {
+                  const grupo = item.grupo;
+                  const matriz = getMatriz(grupo);
+                  const totalContratos = calculaTotalContratosGrupo(grupo);
+                  const aberto = hoverGrupoId === grupo.grupo.id;
 
-                return (
-                  <Fragment key={grupo.grupo.id}>
-                    <tbody
-                      className={`grupo-unidades ${aberto ? "aberto" : ""}`}
-                      onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
-                      onMouseLeave={() => setHoverGrupoId(null)}
-                    >
-                      {/* Linha do grupo */}
-                      <tr
-                        className={
-                          aberto ? "clientes-conteudo-tabela-grupo-aberto" : ""
-                        }
-                        onClick={() => detalhesGrupo(grupo.grupo.id)}
+                  return (
+                    <Fragment key={grupo.grupo.id}>
+                      <tbody
+                        className={`grupo-unidades ${aberto ? "aberto" : ""}`}
+                        onMouseEnter={() => setHoverGrupoId(grupo.grupo.id)}
+                        onMouseLeave={() => setHoverGrupoId(null)}
                       >
-                        <td className="clientes-conteudo-tabela">
-                          {grupo.grupo.nome}
-                        </td>
-                        <td className="clientes-conteudo-tabela">
-                          {matriz?.cpf_cnpj || "-"}
-                        </td>
-                        <td className="clientes-conteudo-tabela">
-                          {classificacoesClientes[
-                            grupo.grupo?.id_classificacao_cliente
-                          ]?.nome || "-"}
-                        </td>
-                        <td className="clientes-conteudo-tabela">
-                          {totalContratos.toLocaleString("pt-BR", {
+                        <tr
+                          className={
+                            aberto ? "clientes-conteudo-tabela-grupo-aberto" : ""
+                          }
+                          onClick={() => detalhesGrupo(grupo.grupo.id)}
+                        >
+                          <td className="clientes-conteudo-tabela">
+                            {grupo.grupo.nome}
+                          </td>
+                          <td className="clientes-conteudo-tabela">
+                            {matriz?.cpf_cnpj || "-"}
+                          </td>
+                          <td className="clientes-conteudo-tabela">
+                            {classificacoesClientes[
+                              grupo.grupo?.id_classificacao_cliente
+                            ]?.nome || "-"}
+                          </td>
+                          <td className="clientes-conteudo-tabela">
+                            {totalContratos.toLocaleString("pt-BR", {
+                              style: "currency",
+                              currency: "BRL",
+                            })}
+                          </td>
+                          <td className="clientes-conteudo-tabela">
+                            {vendedores[matriz?.id_usuario] || "-"}
+                          </td>
+                          <td className="clientes-conteudo-tabela">
+                            <FaUsers />
+                          </td>
+                        </tr>
+
+                        {aberto &&
+                          grupo.unidades.map((cliente) => (
+                            <tr
+                              key={cliente.id}
+                              className="clientes-conteudo-tabela-hover"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                detalhesCliente(cliente.id);
+                              }}
+                            >
+                              <td className="clientes-conteudo-tabela">
+                                {cliente.nome_fantasia}
+                              </td>
+                              <td className="clientes-conteudo-tabela">
+                                {cliente.cpf_cnpj}
+                              </td>
+                              <td className="clientes-conteudo-tabela">
+                                {classificacoesClientes[
+                                  cliente?.id_classificacao_cliente
+                                ]?.nome || "-"}
+                              </td>
+                              <td className="clientes-conteudo-tabela">
+                                {calculaValorTotalContratos(
+                                  cliente.id
+                                ).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })}
+                              </td>
+                              <td className="clientes-conteudo-tabela">
+                                {vendedores[cliente?.id_usuario] || "-"}
+                              </td>
+                              <td className="clientes-conteudo-tabela">
+                                <FaUser />
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </Fragment>
+                  );
+                }
+
+                // item.type === 'cliente'
+                const cliente = item.cliente;
+                return (
+                  <tbody key={`semgrupo-${cliente.id}`}>
+                    <tr
+                      className="clientes-conteudo-tabela-sem-grupo"
+                      onClick={() => detalhesCliente(cliente.id)}
+                    >
+                      <td className="clientes-conteudo-tabela">
+                        {cliente.nome_fantasia}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {cliente.cpf_cnpj}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {classificacoesClientes[
+                          cliente?.id_classificacao_cliente
+                        ]?.nome || "-"}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {calculaValorTotalContratos(cliente.id).toLocaleString(
+                          "pt-BR",
+                          {
                             style: "currency",
                             currency: "BRL",
-                          })}
-                        </td>
-                        <td className="clientes-conteudo-tabela">
-                          {vendedores[matriz?.id_usuario] || "-"}
-                        </td>
-                        <td className="clientes-conteudo-tabela">
-                          <FaUsers />
-                        </td>
-                      </tr>
-
-                      {/* Unidades visíveis apenas no hover */}
-                      {aberto &&
-                        grupo.unidades.map((cliente) => (
-                          <tr
-                            key={cliente.id}
-                            className="clientes-conteudo-tabela-hover"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              detalhesCliente(cliente.id);
-                            }}
-                          >
-                            <td className="clientes-conteudo-tabela">
-                              {cliente.nome_fantasia}
-                            </td>
-                            <td className="clientes-conteudo-tabela">
-                              {cliente.cpf_cnpj}
-                            </td>
-                            <td className="clientes-conteudo-tabela">
-                              {classificacoesClientes[
-                                cliente?.id_classificacao_cliente
-                              ]?.nome || "-"}
-                            </td>
-                            <td className="clientes-conteudo-tabela">
-                              {calculaValorTotalContratos(
-                                cliente.id
-                              ).toLocaleString("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              })}
-                            </td>
-                            <td className="clientes-conteudo-tabela">
-                              {vendedores[cliente?.id_usuario] || "-"}
-                            </td>
-                            <td className="clientes-conteudo-tabela">
-                              <FaUser />
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </Fragment>
+                          }
+                        )}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        {vendedores[cliente.id_usuario] || "-"}
+                      </td>
+                      <td className="clientes-conteudo-tabela">
+                        <FaUser />
+                      </td>
+                    </tr>
+                  </tbody>
                 );
               })}
 
-              {/* Clientes sem grupo aparecem normalmente na listagem */}
-              <tbody>
-                {clientesSemGrupo.filter((cliente) => {
-                  const passaClassificacao =
-                    !filters.classificacao_cliente ||
-                    cliente.id_classificacao_cliente === parseInt(filters.classificacao_cliente);
-                  const passaVendedor =
-                    !filters.nome_vendedor ||
-                    cliente.id_usuario === parseInt(filters.nome_vendedor);
-                  const passaStatus =
-                    !filters.status || cliente.status === filters.status;
-
-                  const passaBusca =
-                    !filter || cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase());
-
-                  return passaClassificacao && passaVendedor && passaStatus && passaBusca;
-                }).map((cliente) => (
-                  <tr
-                    key={`semgrupo-${cliente.id}`}
-                    className="clientes-conteudo-tabela-sem-grupo"
-                    onClick={() => detalhesCliente(cliente.id)}
-                  >
-                    <td className="clientes-conteudo-tabela">
-                      {cliente.nome_fantasia}
-                    </td>
-                    <td className="clientes-conteudo-tabela">
-                      {cliente.cpf_cnpj}
-                    </td>
-                    <td className="clientes-conteudo-tabela">
-                      {classificacoesClientes[
-                        cliente?.id_classificacao_cliente
-                      ]?.nome || "-"}
-                    </td>
-                    <td className="clientes-conteudo-tabela">
-                      {calculaValorTotalContratos(cliente.id).toLocaleString(
-                        "pt-BR",
-                        {
-                          style: "currency",
-                          currency: "BRL",
-                        }
-                      )}
-                    </td>
-                    <td className="clientes-conteudo-tabela">
-                      {vendedores[cliente.id_usuario] || "-"}
-                    </td>
-                    <td className="clientes-conteudo-tabela">
-                      <FaUser />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
+              {/* Controles de paginação */}
               <tfoot>
+                <tr>
+                  <td colSpan="6" style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="clientes-botao"
+                      >
+                        Anterior
+                      </button>
+                      <span>
+                        Página {currentPage} de{' '}
+                        {Math.ceil((clientesGruposFiltrados.length + clientesSemGrupo.filter(cliente => {
+                          const passaClassificacao =
+                            !filters.classificacao_cliente ||
+                            cliente.id_classificacao_cliente === parseInt(filters.classificacao_cliente);
+                          const passaVendedor =
+                            !filters.nome_vendedor ||
+                            cliente.id_usuario === parseInt(filters.nome_vendedor);
+                          const passaStatus =
+                            !filters.status || cliente.status === filters.status;
+                          const passaBusca =
+                            !filter || cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase());
+
+                          return passaClassificacao && passaVendedor && passaStatus && passaBusca;
+                        }).length) / ITEMS_PER_PAGE)}
+                      </span>
+                      <button
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        disabled={currentPage >= Math.ceil((clientesGruposFiltrados.length + clientesSemGrupo.filter(cliente => {
+                          const passaClassificacao =
+                            !filters.classificacao_cliente ||
+                            cliente.id_classificacao_cliente === parseInt(filters.classificacao_cliente);
+                          const passaVendedor =
+                            !filters.nome_vendedor ||
+                            cliente.id_usuario === parseInt(filters.nome_vendedor);
+                          const passaStatus =
+                            !filters.status || cliente.status === filters.status;
+                          const passaBusca =
+                            !filter || cliente.nome_fantasia.toLowerCase().includes(filter.toLowerCase());
+
+                          return passaClassificacao && passaVendedor && passaStatus && passaBusca;
+                        }).length) / ITEMS_PER_PAGE)}
+                        className="clientes-botao"
+                      >
+                        Próxima
+                      </button>
+                    </div>
+                  </td>
+                </tr>
                 <tr className="clientes-total-geral-linha">
                   <td className="clientes-total-label" colSpan={4}>
                     TOTAL DE CONTRATOS ATIVOS:
@@ -501,13 +583,6 @@ export default function Clientes() {
               Ainda não foram cadastrados clientes!
             </p>
           )}
-
-          {/* Paginação */}
-          <div className="pagination">
-            <button onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>Anterior</button>
-            <span>Página {page} de {totalPages}</span>
-            <button onClick={() => setPage(p => Math.min(p + 1, totalPages))} disabled={page === totalPages}>Próxima</button>
-          </div>
         </div>
       </div>
     </>

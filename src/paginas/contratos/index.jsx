@@ -24,6 +24,8 @@ export default function Contratos() {
   const [mostrarModalImportacao, setMostrarModalImportacao] = useState(false);
   const [totalGeral, setTotalGeral] = useState(0);
   const [totalPorFaturamento, setTotalPorFaturamento] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -140,6 +142,17 @@ export default function Contratos() {
 
     return filterConditions.every((condition) => condition);
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredContratos.length / ITEMS_PER_PAGE));
+  const displayPage = Math.min(Math.max(1, currentPage), totalPages);
+  const pagedContratos = filteredContratos.slice(
+    (displayPage - 1) * ITEMS_PER_PAGE,
+    displayPage * ITEMS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, filters.id_cliente, filters.id_produto, filters.status, filters.nome_fantasia]);
 
   const calculaValorImpostoMensal = (valor, indice) =>
     valor + (valor * indice) / 100;
@@ -268,7 +281,7 @@ export default function Contratos() {
                 </tr>
               </thead>
               <tbody>
-                {filteredContratos.map((contrato) => {
+                {pagedContratos.map((contrato) => {
                   const cliente = clientes[contrato.id_cliente];
                   const produto = produtos[contrato.id_produto];
                   const vendedor = vendedores[cliente?.id_usuario];
@@ -307,8 +320,31 @@ export default function Contratos() {
                   );
                 })}
               </tbody>
-
               <tfoot>
+                <tr>
+                  <td colSpan="6" style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={displayPage === 1}
+                        className="contratos-botao"
+                      >
+                        Anterior
+                      </button>
+                      <span style={{ color: '#fff'}}>
+                        Página {displayPage} de {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={displayPage >= totalPages}
+                        className="contratos-botao"
+                      >
+                        Próxima
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
                 <tr className="contratos-total-geral-linha">
                   <td className="contratos-total-label" colSpan={3}>
                     TOTAL:
