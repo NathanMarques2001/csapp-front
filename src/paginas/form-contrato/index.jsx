@@ -702,7 +702,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                                 .map((log) => (
                                   <li key={log.id} className="log-item">
                                     <div className="log-date">{formatDate(log.createdAt)}</div>
-                                    <div className="log-user">{usuarios[log.id_usuario] || `Usuário ${log.id_usuario}`}</div>
+                                    <div className="log-user">{log.nome_usuario || usuarios[log.id_usuario] || `Usuário ${log.id_usuario ?? ""}`}</div>
                                     <div className="log-change">{log.alteracao}</div>
                                   </li>
                                 ))}
