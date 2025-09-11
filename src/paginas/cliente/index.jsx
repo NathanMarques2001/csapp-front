@@ -198,10 +198,8 @@ export default function Cliente() {
             </div>
             <div id="cliente-btn-div">
               <button
-                disabled={!isAdminOrDev}
                 onClick={() => editar(cliente.id)}
                 id="cliente-botao-editar"
-                className={!isAdminOrDev ? "disabled" : ""}
               >
                 <img src={botaoEditar} alt="ícone editar" />
               </button>

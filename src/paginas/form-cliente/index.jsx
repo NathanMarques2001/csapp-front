@@ -74,12 +74,12 @@ export default function FormCliente({ mode }) {
 
   const canEdit = (fieldName) => {
     if (!userTipo) return false;
-    if (userTipo === "dev" || userTipo === "admin" || userTipo === "usuario") return true;
-    if (userTipo === "vendedor") return vendedorAllowed.has(fieldName);
+    if (userTipo === "dev" || userTipo === "admin") return true;
+    if (userTipo === "usuario") return vendedorAllowed.has(fieldName);
     return false;
   };
 
-  const canSubmit = userTipo === "dev" || userTipo === "admin" || userTipo === "usuario" || userTipo === "vendedor";
+  const canSubmit = userTipo === "dev" || userTipo === "admin" || userTipo === "usuario";
 
   useEffect(() => {
     // Verifica o tipo de usuário e atualiza o estado
