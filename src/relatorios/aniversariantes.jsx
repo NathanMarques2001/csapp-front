@@ -71,7 +71,7 @@ export default function RelatorioAniversariantes({ clientes }) {
                         "CPF/CNPJ": cpfCnpj,
                         Pessoa: item.name || "—",
                         Cargo: item.cargo,
-                        "Data Nascimento": `${dm.day}/${dm.month}`,
+                        "Data Aniversário": `${dm.day}/${dm.month}`,
                     });
                 }
             });
@@ -83,7 +83,7 @@ export default function RelatorioAniversariantes({ clientes }) {
             const clienteKey = (r["Cliente"] || "").toString().trim();
             const cpfKey = (r["CPF/CNPJ"] || "").toString().replace(/\s+/g, "").trim();
             const pessoaKey = (r["Pessoa"] || "").toString().trim();
-            const dataKey = (r["Data Nascimento"] || "").toString().trim();
+            const dataKey = (r["Data Aniversário"] || "").toString().trim();
             const key = `${clienteKey}|${cpfKey}|${pessoaKey}|${dataKey}`;
             if (!seen.has(key)) {
                 seen.add(key);
@@ -93,15 +93,15 @@ export default function RelatorioAniversariantes({ clientes }) {
                     "CPF/CNPJ": cpfKey,
                     Pessoa: pessoaKey,
                     Cargo: r["Cargo"],
-                    "Data Nascimento": dataKey,
+                    "Data Aniversário": dataKey,
                 });
             }
         });
 
         // ordenar por dia
         unique.sort((a, b) => {
-            const da = Number(a["Data Nascimento"].split("/")[0]);
-            const db = Number(b["Data Nascimento"].split("/")[0]);
+            const da = Number(a["Data Aniversário"].split("/")[0]);
+            const db = Number(b["Data Aniversário"].split("/")[0]);
             return da - db;
         });
         return unique;
@@ -151,7 +151,7 @@ export default function RelatorioAniversariantes({ clientes }) {
                         <th className="global-titulo-tabela">CPF/CNPJ</th>
                         <th className="global-titulo-tabela">Pessoa</th>
                         <th className="global-titulo-tabela">Cargo</th>
-                        <th className="global-titulo-tabela">Data Nascimento</th>
+                        <th className="global-titulo-tabela">Data Aniversário</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -161,7 +161,7 @@ export default function RelatorioAniversariantes({ clientes }) {
                             <td className="global-conteudo-tabela">{row["CPF/CNPJ"]}</td>
                             <td className="global-conteudo-tabela">{row["Pessoa"]}</td>
                             <td className="global-conteudo-tabela">{row["Cargo"]}</td>
-                            <td className="global-conteudo-tabela">{row["Data Nascimento"]}</td>
+                            <td className="global-conteudo-tabela">{row["Data Aniversário"]}</td>
                         </tr>
                     ))}
                 </tbody>
