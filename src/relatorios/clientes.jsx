@@ -16,7 +16,9 @@ export default function RelatorioClientes({
     tipo: "",
     status: "",
     vendedor: "",
-    segmento: "",
+  segmento: "",
+  grupo_economico: "",
+  pertence_grupo: "",
   });
   const [openModal, setOpenModal] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
@@ -31,6 +33,8 @@ export default function RelatorioClientes({
         usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
       (!filtros.segmento ||
         segmentosMap[cliente.id_segmento]?.nome === filtros.segmento)
+  && (!filtros.grupo_economico || gruposEconomicosMap[cliente.id_grupo_economico]?.nome === filtros.grupo_economico)
+  && (!filtros.pertence_grupo || ((cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
   );
 
   const data = clientesFiltrados.map((cliente) => {
@@ -48,6 +52,7 @@ export default function RelatorioClientes({
     return {
       "Nome Fantasia": cliente.nome_fantasia,
       "CPF/CNPJ": cliente.cpf_cnpj,
+  "Grupo Econômico": gruposEconomicosMap[cliente.id_grupo_economico]?.nome || "",
       Tipo:
         classificacoesClientesMap[
           gruposEconomicosMap[cliente.id_grupo_economico]
@@ -168,6 +173,35 @@ export default function RelatorioClientes({
               </select>
             </div>
 
+            <div className="form-group">
+              <label>Grupo Econômico:</label>
+              <select
+                name="grupo_economico"
+                value={filtros.grupo_economico}
+                onChange={handleFiltroChange}
+              >
+                <option value="">Selecione</option>
+                {Object.values(gruposEconomicosMap || {}).map((grupo) => (
+                  <option key={grupo.id} value={grupo.nome}>
+                    {grupo.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Pertence Grupo Econômico:</label>
+              <select
+                name="pertence_grupo"
+                value={filtros.pertence_grupo}
+                onChange={handleFiltroChange}
+              >
+                <option value="">Selecione</option>
+                <option value="sim">Sim</option>
+                <option value="não">Não</option>
+              </select>
+            </div>
+
             <button
               type="button"
               onClick={() => setOpenModal(false)}
@@ -206,6 +240,7 @@ export default function RelatorioClientes({
             <th className="global-titulo-tabela">Segmento</th>
             <th className="global-titulo-tabela">Valor dos Contratos</th>
             <th className="global-titulo-tabela">Pertence Grupo Econômico</th>
+            <th className="global-titulo-tabela">Grupo Econômico</th>
           </tr>
         </thead>
         <tbody>
@@ -230,6 +265,7 @@ export default function RelatorioClientes({
               <td className="global-conteudo-tabela">
                 {cliente["Pertence Grupo Econômico"]}
               </td>
+              <td className="global-conteudo-tabela">{cliente["Grupo Econômico"]}</td>
             </tr>
           ))}
         </tbody>
