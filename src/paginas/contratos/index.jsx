@@ -154,8 +154,7 @@ export default function Contratos() {
     setCurrentPage(1);
   }, [filter, filters.id_cliente, filters.id_produto, filters.status, filters.nome_fantasia]);
 
-  const calculaValorImpostoMensal = (valor, indice) =>
-    valor + (valor * indice) / 100;
+  const calculaValorImpostoMensal = (valor, indice) => valor;
 
   useEffect(() => {
     // Calcula o total geral dos contratos filtrados

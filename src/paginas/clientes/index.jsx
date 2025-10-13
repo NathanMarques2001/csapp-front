@@ -163,8 +163,7 @@ export default function Clientes() {
     return { agrupados, semGrupo };
   };
 
-  const calculaValorImpostoMensal = (valor, indice) =>
-    valor + (valor * indice) / 100;
+  const calculaValorImpostoMensal = (valor, indice) => valor;
 
   const calculaValorTotalContratos = (clienteId) => {
     const clienteContratos = contratos.filter(

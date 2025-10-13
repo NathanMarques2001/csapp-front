@@ -45,8 +45,8 @@ export default function RelatorioContratos({
     // const vendedor = usuariosMap[cliente?.id_usuario];
 
     const valor = parseFloat(contrato.valor_mensal);
-    const reajuste = contrato.indice_reajuste || 0;
-    const valorFinal = valor + (valor * reajuste) / 100;
+    //const reajuste = contrato.indice_reajuste || 0;
+    const valorFinal = valor;
 
     return {
       Solução: produto?.nome || "Desconhecido",

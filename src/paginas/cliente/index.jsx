@@ -120,8 +120,7 @@ export default function Cliente() {
     }
   };
 
-  const calculaValorImpostoMensal = (valor, indice) =>
-    valor + (valor * indice) / 100;
+  const calculaValorImpostoMensal = (valor, indice) => valor;
 
   const calculaFaturamentoPorTipo = (tipo) => {
     const contratosFiltrados = contratos.filter(

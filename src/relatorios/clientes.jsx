@@ -46,7 +46,7 @@ export default function RelatorioClientes({
     const valorTotalContratos = contratosCliente.reduce((sum, contrato) => {
       const valor = parseFloat(contrato.valor_mensal);
       const indice = contrato.indice_reajuste || 0;
-      return sum + valor + (valor * indice) / 100;
+      return sum + valor;
     }, 0);
 
     return {
