@@ -172,3 +172,20 @@
 .toast-fechar:hover {
   color: #fff;
 }
+
+.toast-concluir {
+  background: linear-gradient(90deg, #4caf50, #00c853);
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toast-concluir:hover {
+  background: linear-gradient(90deg, #00c853, #00e676);
+  transform: scale(1.05);
+}
