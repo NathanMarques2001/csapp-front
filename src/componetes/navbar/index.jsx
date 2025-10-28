@@ -29,7 +29,12 @@ export default function Navbar() {
   // 🔄 Busca notificações do usuário logado
   async function carregarNotificacoes() {
     try {
-      const response = await api.get(`/notificacoes/usuario/${cookies.id}`);
+      let response;
+      if(cookies.tipo === "dev" || cookies.tipo === "admin") {
+        response = await api.get("/notificacoes/ativas")
+      } else {
+        response = await api.get(`/notificacoes/usuario/${cookies.id}`);
+      }
       setNotificacoes(response);
     } catch (error) {
       console.error("Erro ao buscar notificações:", error);
