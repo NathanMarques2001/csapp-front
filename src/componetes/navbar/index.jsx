@@ -131,6 +131,7 @@ export default function Navbar() {
           position: "top-right",
           autoClose: false,
           hideProgressBar: true,
+          closeButton: false,
           closeOnClick: false,
           draggable: false,
           pauseOnHover: true,

@@ -107,6 +107,8 @@
   border-radius: 12px;
   width: 300px;
   font-family: "Inter", sans-serif;
+  max-height: 68vh;
+  overflow-y: auto;
 }
 
 .toast-notificacoes h4 {
