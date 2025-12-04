@@ -11,6 +11,7 @@ import { useCookies } from "react-cookie";
 import imgQuestao from "../../assets/images/questao.png";
 import { FaUser, FaUsers } from "react-icons/fa";
 import PopUpFiltroClientes from "../../componetes/pop-up-filtro-clientes";
+import SinoNotificacao from "../../componetes/sino-notificacao";
 
 export default function Clientes() {
   const api = new Api();
@@ -31,7 +32,6 @@ export default function Clientes() {
   const [showFilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 50;
-
 
   useEffect(() => {
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
