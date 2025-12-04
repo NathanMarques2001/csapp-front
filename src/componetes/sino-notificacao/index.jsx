@@ -20,9 +20,7 @@ export default function SinoNotificacao({ }) {
 
     async function carregarNotificacoes() {
         try {
-            const url = (cookies.tipo === "dev" || cookies.tipo === "admin")
-                ? "/notificacoes/ativas"
-                : `/notificacoes/usuario/${cookies.id}`;
+            const url = `/notificacoes/usuario/${cookies.id}`;
 
             const response = await api.get(url);
             setNotificacoes(response || []);
