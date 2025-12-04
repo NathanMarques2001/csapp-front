@@ -23,7 +23,9 @@ export default function SinoNotificacao({ }) {
             const url = `/notificacoes/usuario/${cookies.id}`;
 
             const response = await api.get(url);
-            setNotificacoes(response || []);
+            
+            const pendentes = (response || []).filter((n) => !n.confirmado_sn);
+            setNotificacoes(pendentes);
         } catch (err) {
             console.error("Erro ao carregar notificações", err);
             setNotificacoes([]);
