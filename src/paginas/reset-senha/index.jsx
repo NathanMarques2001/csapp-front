@@ -28,6 +28,11 @@ export default function ResetSenha() {
   // Função para criar o delay de 1,5 segundos
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  // Função auxiliar para converter para Base64 (suporta UTF-8)
+  const encodeBase64 = (str) => {
+    return btoa(unescape(encodeURIComponent(str)));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -57,11 +62,14 @@ export default function ResetSenha() {
         const hash = res.resetSenha.hash;
         const mailReset = MailResetSenha(hash);
 
+        // Codificando o HTML antes de enviar
+        const htmlEncoded = encodeBase64(mailReset["reset-senha"].html);
+
         const emailData = {
           to: email,
           subject: mailReset["reset-senha"].subject,
           text: mailReset["reset-senha"].text,
-          html: mailReset["reset-senha"].html,
+          html: htmlEncoded,
         };
 
         console.log(emailData);

@@ -11,12 +11,6 @@ class Email {
       baseURL: Email.baseUrl,
       headers: {
         "Content-Type": "application/json",
-        // Adicione cabeçalhos de segurança (se necessário)
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains", // HSTS
-        "X-Content-Type-Options": "nosniff", // Evita tipo de conteúdo não esperado
-        "X-Frame-Options": "DENY", // Previne ataques de clickjacking
-        "X-XSS-Protection": "1; mode=block", // Protege contra XSS
-        // 'Authorization': `Bearer ${your_token_here}`, // Se necessário para autenticação via token
       },
     });
   }
