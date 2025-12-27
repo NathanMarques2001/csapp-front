@@ -54,11 +54,12 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [dataInicio, setDataInicio] = useState(null);
   const [email, setEmail] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [linkContrato, setLinkContrato] = useState("");
   const [tipoFaturamento, setTipoFaturamento] = useState("");
   const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
   const tiposFaturamento = ["mensal", "anual"];
 
-  const [cookies] = useCookies(["tipo","id"]);
+  const [cookies] = useCookies(["tipo", "id"]);
   const [isAdminOrDev, setIsAdminOrDev] = useState(false);
 
   useEffect(() => {
@@ -224,6 +225,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setDataInicio(formatDateForInput(contrato.data_inicio));
           setEmail(contrato.email_envio);
           setDescricao(contrato.descricao);
+          setLinkContrato(contrato.link_contrato || "");
           setStatus(contrato.status);
           setTipoFaturamento(contrato.tipo_faturamento);
           console.log(contrato);
@@ -308,9 +310,10 @@ export default function FormContrato({ mode = "cadastro" }) {
         quantidade: quantidade != null ? Number(quantidade) : quantidade,
         email_envio: email,
         descricao: descricao,
+        link_contrato: linkContrato,
         data_inicio: formatDate(dataInicio),
         tipo_faturamento: tipoFaturamento,
-        id_usuario: cookies.id
+        id_usuario: cookies.id,
       };
 
       console.log(formData);
@@ -651,11 +654,29 @@ export default function FormContrato({ mode = "cadastro" }) {
                       </option>
                     ))}
                   </select>
+                </div>
 
+                <div className="form-contrato-label-input-container tres-inputs">
+                  <label
+                    htmlFor="link-contrato"
+                    className="label-form-contrato"
+                  >
+                    <b>Link do Contrato</b>
+                  </label>
+                  <input
+                    type="text"
+                    name="link-contrato"
+                    disabled={!isAdminOrDev}
+                    className="form-contrato-input"
+                    placeholder="Insira o link do contrato no SharePoint"
+                    value={linkContrato}
+                    onChange={(e) => setLinkContrato(e.target.value)}
+                  />
+                </div>
+
+                <div className="form-contrato-label-input-container tres-inputs">
                   <label htmlFor="">
-                    <b>
-                      Valor anterior
-                    </b>
+                    <b>Valor anterior</b>
                   </label>
                   <input
                     type="text"
@@ -664,55 +685,75 @@ export default function FormContrato({ mode = "cadastro" }) {
                     className="form-contrato-input"
                     value={valorAnterior || ""}
                   />
-
-                  <img
-                    id="form-contrato-img"
-                    src={imgCadastroContrato}
-                    alt=""
-                  />
                 </div>
-                <div
-                  className="form-contrato-label-input-container"
-                  id="form-cliente-container-input-descricao"
-                >
-                    <div>
-                      <label htmlFor="descricao" className="label-form-contrato">
-                        <b>Descrição breve</b>
-                      </label>
-                      <textarea
-                        name="descricao"
-                        disabled={!isAdminOrDev}
-                        id="form-cliente-input-descricao"
-                        className="form-contrato-input"
-                        placeholder="Algo a mais que deveria ser descrito aqui..."
-                        value={descricao}
-                        onChange={(e) => setDescricao(e.target.value)}
-                      ></textarea>
+              </div>
 
-                      <label htmlFor="" className="label-form-contrato"><b>Histórico</b></label>
-                      <div id="form-contrato-logs-box">
-                        {mode === "edicao" ? (
-                          logs.length === 0 ? (
-                            <p className="logs-empty">Nenhum log cadastrado para este contrato.</p>
-                          ) : (
-                            <ul className="logs-list">
-                              {logs
-                                .slice()
-                                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                                .map((log) => (
-                                  <li key={log.id} className="log-item">
-                                    <div className="log-date">{formatDate(log.createdAt)}</div>
-                                    <div className="log-user">{log.nome_usuario || usuarios[log.id_usuario] || `Usuário ${log.id_usuario ?? ""}`}</div>
-                                    <div className="log-change">{log.alteracao}</div>
-                                  </li>
-                                ))}
-                            </ul>
-                          )
-                        ) : (
-                          <div className="logs-placeholder" />
-                        )}
-                      </div>
-                    </div>
+              <div className="form-contrato-cliente-tres-inputs-container container-final">
+                <div className="form-contrato-label-input-container dois-inputs">
+                  <div>
+                    <label htmlFor="descricao" className="label-form-contrato">
+                      <b>Descrição breve</b>
+                    </label>
+                    <textarea
+                      name="descricao"
+                      disabled={!isAdminOrDev}
+                      id="form-cliente-input-descricao"
+                      className="form-contrato-input"
+                      placeholder="Algo a mais que deveria ser descrito aqui..."
+                      value={descricao}
+                      onChange={(e) => setDescricao(e.target.value)}
+                    ></textarea>
+                    <img
+                      id="form-contrato-img"
+                      src={imgCadastroContrato}
+                      alt=""
+                    />
+                  </div>
+                </div>
+                <div className="form-contrato-label-input-container dois-inputs">
+                  <label htmlFor="" className="label-form-contrato">
+                    <b>Histórico</b>
+                  </label>
+                  <div id="form-contrato-logs-box">
+                    {mode === "edicao" ? (
+                      logs.length === 0 ? (
+                        <p className="logs-empty">
+                          Nenhum log cadastrado para este contrato.
+                        </p>
+                      ) : (
+                        <ul className="logs-list">
+                          {logs
+                            .slice()
+                            .sort(
+                              (a, b) =>
+                                new Date(b.createdAt) - new Date(a.createdAt)
+                            )
+                            .map((log) => (
+                              <li key={log.id} className="log-item">
+                                <div className="log-date">
+                                  {formatDate(log.createdAt)}
+                                </div>
+                                <div className="log-user">
+                                  {log.nome_usuario ||
+                                    usuarios[log.id_usuario] ||
+                                    `Usuário ${log.id_usuario ?? ""}`}
+                                </div>
+                                <div className="log-change">
+                                  {log.alteracao
+                                    .split(";")
+                                    .filter((item) => item.trim() !== "")
+                                    .map((item, index) => (
+                                      <div key={index}>{item.trim()};</div>
+                                    ))}
+                                </div>
+                              </li>
+                            ))}
+                        </ul>
+                      )
+                    ) : (
+                      <div className="logs-placeholder" />
+                    )}
+                  </div>
                 </div>
               </div>
               <div id="form-contrato-container-btn">

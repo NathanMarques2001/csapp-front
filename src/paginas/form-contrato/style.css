@@ -128,7 +128,7 @@
 
 /* image: constrain size so it doesn't dominate layout */
 #form-contrato-img {
-  width: 180px;
+  width: 30%;
   max-width: 100%;
   height: auto;
   margin-top: 1rem;
@@ -206,6 +206,10 @@
 
 #form-contrato-select-tipo-faturamento option {
   text-transform: capitalize;
+}
+
+.container-final {
+  margin-top: -2%;
 }
 
 /* Responsive adjustments to avoid overlap and improve stacking on small screens */
