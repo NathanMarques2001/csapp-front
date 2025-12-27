@@ -1,0 +1,151 @@
+import { useState, useMemo } from "react";
+import Excel from "../utils/excel";
+import Popup from "../componetes/pop-up";
+
+export default function RelatorioLogs({ logs = [], contratos = [], clientes = [] }) {
+  const excel = new Excel("Relatório de Logs");
+  const [filtros, setFiltros] = useState({ usuario: "", cliente: "" });
+  const [openModal, setOpenModal] = useState(false);
+  const [abrirPopup, setAbrirPopup] = useState(false);
+
+  const contratosMap = useMemo(() => {
+    const m = {};
+    (contratos || []).forEach((c) => (m[c.id] = c));
+    return m;
+  }, [contratos]);
+
+  const clientesMap = useMemo(() => {
+    const m = {};
+    (clientes || []).forEach((c) => (m[c.id] = c));
+    return m;
+  }, [clientes]);
+
+  const clientesNomes = useMemo(() => {
+    const s = new Set();
+    (logs || []).forEach((l) => {
+      const contrato = contratosMap[l.id_contrato];
+      const cliente = contrato ? clientesMap[contrato.id_cliente] : null;
+      if (cliente && cliente.nome_fantasia) s.add(cliente.nome_fantasia);
+    });
+    return Array.from(s);
+  }, [logs, contratosMap, clientesMap]);
+
+  const logsFiltrados = (logs || []).filter((l) => {
+    const usuario = (l.nome_usuario || "").toString();
+    const contrato = contratosMap[l.id_contrato];
+    const cliente = contrato ? clientesMap[contrato.id_cliente] : null;
+    const clienteNome = cliente ? cliente.nome_fantasia : "";
+
+    return (
+      (!filtros.usuario || usuario === filtros.usuario) &&
+      (!filtros.cliente || clienteNome === filtros.cliente)
+    );
+  });
+
+  const data = logsFiltrados.map((l) => {
+    const contrato = contratosMap[l.id_contrato];
+    const cliente = contrato ? clientesMap[contrato.id_cliente] : null;
+    const alteracaoLines = (l.alteracao || "")
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    return {
+      Usuario: l.nome_usuario || "Desconhecido",
+      Cliente: cliente ? cliente.nome_fantasia : "Desconhecido",
+      Alteracao: alteracaoLines.join("\n"),
+      Data: l.createdAt ? new Date(l.createdAt).toLocaleString() : "",
+    };
+  });
+
+  function handleDownloadReport(e) {
+    e.preventDefault();
+    excel.exportToExcel(data);
+    setAbrirPopup(false);
+  }
+
+  function handleFiltroChange(e) {
+    setFiltros({ ...filtros, [e.target.name]: e.target.value });
+  }
+
+  return (
+    <>
+      {abrirPopup && (
+        <Popup
+          title="Exportar Logs"
+          message="Tem certeza que deseja exportar o relatório de logs?"
+          onConfirm={handleDownloadReport}
+          onCancel={() => setAbrirPopup(false)}
+        />
+      )}
+
+      {openModal && (
+        <div id="filter-container">
+          <form onSubmit={(e) => e.preventDefault()} className="filter-form">
+            <div className="form-group">
+              <label>Usuário:</label>
+              <select name="usuario" value={filtros.usuario} onChange={handleFiltroChange}>
+                <option value="">Selecione</option>
+                {Array.from(new Set(logs.map((l) => l.nome_usuario))).map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Cliente:</label>
+              <select name="cliente" value={filtros.cliente} onChange={handleFiltroChange}>
+                <option value="">Selecione</option>
+                {clientesNomes.map((cn) => (
+                  <option key={cn} value={cn}>
+                    {cn}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button type="button" onClick={() => setOpenModal(false)} id="filter-close-button" className="filter-button">
+              Fechar
+            </button>
+          </form>
+        </div>
+      )}
+
+      <button onClick={() => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">
+        Filtrar
+      </button>
+      <button onClick={() => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">
+        Exportar para Excel
+      </button>
+
+      <table className="global-tabela">
+        <thead>
+          <tr>
+            <th className="global-titulo-tabela">Usuário</th>
+            <th className="global-titulo-tabela">Cliente</th>
+            <th className="global-titulo-tabela">Alteração</th>
+            <th className="global-titulo-tabela">Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, i) => (
+            <tr key={i}>
+              <td className="global-conteudo-tabela">{row.Usuario}</td>
+              <td className="global-conteudo-tabela">{row.Cliente}</td>
+              <td className="global-conteudo-tabela">
+                {String(row.Alteracao)
+                  .split('\n')
+                  .map((line, idx) => (
+                    <div key={idx}>{line}</div>
+                  ))}
+              </td>
+              <td className="global-conteudo-tabela">{row.Data}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}

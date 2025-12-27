@@ -49,6 +49,8 @@ export default function Rotas() {
           <Route path="/clientes/:id" element={<Cliente />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/relatorios" element={<Relatorios />} />
+          <Route path="/relatorios/notificacoes" element={<Relatorios />} />
+          <Route path="/relatorios/logs" element={<Relatorios />} />
           <Route
             path="/cadastro-solucao"
             element={<FormSolucao mode="cadastro" />}

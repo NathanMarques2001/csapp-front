@@ -6,6 +6,8 @@ import RelatorioClientes from "../../relatorios/clientes";
 import RelatorioContratos from "../../relatorios/contratos";
 import RelatorioProdutos from "../../relatorios/produtos";
 import RelatorioAniversariantes from "../../relatorios/aniversariantes";
+import RelatorioNotificacoes from "../../relatorios/notificacoes";
+import RelatorioLogs from "../../relatorios/logs";
 import { useCookies } from "react-cookie";
 import Api from "../../utils/api";
 import { createMapById } from "../../utils/maps";
@@ -22,6 +24,8 @@ export default function Relatorios() {
   const [fabricantes, setFabricantes] = useState([]);
   const [gruposEconomicos, setGruposEconomicos] = useState([]);
   const [classificacoesClientes, setClassificacoesClientes] = useState([]);
+  const [notificacoes, setNotificacoes] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [cookies] = useCookies(["tipo", "id"]);
 
   useEffect(() => {
@@ -38,6 +42,8 @@ export default function Relatorios() {
           fabricantesRes,
           groposEconomicos,
           classificacoesClientes,
+          notificacoesRes,
+          logsRes,
         ] = await Promise.all([
           api.get("/clientes"),
           api.get(
@@ -51,6 +57,8 @@ export default function Relatorios() {
           api.get("/fabricantes"),
           api.get("/grupos-economicos"),
           api.get("/classificacoes-clientes"),
+          api.get("/notificacoes"),
+          api.get("/logs"),
         ]);
         setClientes(clientesRes.clientes || []);
         setContratos(contratosRes.contratos || []);
@@ -60,6 +68,9 @@ export default function Relatorios() {
         setFabricantes(fabricantesRes.fabricantes || []);
         setGruposEconomicos(groposEconomicos.grupoEconomico || []);
         setClassificacoesClientes(classificacoesClientes.classificacoes || []);
+        // backend retorna um array direto: res.json(notificacoes)
+        setNotificacoes(notificacoesRes || []);
+        setLogs(logsRes.logs || []);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
@@ -100,6 +111,8 @@ export default function Relatorios() {
             <option value="Contratos">Contratos</option>
             <option value="Produtos">Produtos</option>
             <option value="Aniversariantes">Aniversariantes</option>
+              <option value="Notificacoes">Notificações</option>
+            <option value="Logs">Logs</option>
           </select>
 
           {tabelaSelecionada === "Clientes" && (
@@ -128,6 +141,15 @@ export default function Relatorios() {
           )}
           {tabelaSelecionada === "Aniversariantes" && (
             <RelatorioAniversariantes clientes={clientes} />
+          )}
+          {tabelaSelecionada === "Notificacoes" && (
+            <RelatorioNotificacoes
+              notificacoes={notificacoes}
+              usuariosMap={usuariosMap}
+            />
+          )}
+          {tabelaSelecionada === "Logs" && (
+            <RelatorioLogs logs={logs} contratos={contratos} clientes={clientes} />
           )}
         </div>
       </div>
