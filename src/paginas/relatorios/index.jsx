@@ -146,10 +146,13 @@ export default function Relatorios() {
             <RelatorioNotificacoes
               notificacoes={notificacoes}
               usuariosMap={usuariosMap}
+              contratos={contratos}
+              clientes={clientes}
+              produtos={produtos}
             />
           )}
           {tabelaSelecionada === "Logs" && (
-            <RelatorioLogs logs={logs} contratos={contratos} clientes={clientes} />
+            <RelatorioLogs logs={logs} contratos={contratos} clientes={clientes} produtos={produtos} />
           )}
         </div>
       </div>
