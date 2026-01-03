@@ -35,9 +35,11 @@ export default function Navbar() {
     removeCookie("id", { path: "/" });
     removeCookie("tipo", { path: "/" });
     setAbrirPopup(false);
-  }
 
-  
+    const tenantId = "common";
+    const retornoParaLogin = "https://csapp.prolinx.com.br/login";
+    window.location.href = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/logout?post_logout_redirect_uri=${retornoParaLogin}`;
+  }
 
   return (
     <>
