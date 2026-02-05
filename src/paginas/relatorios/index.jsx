@@ -9,6 +9,7 @@ import RelatorioAniversariantes from "../../relatorios/aniversariantes";
 import RelatorioNotificacoes from "../../relatorios/notificacoes";
 import RelatorioLogs from "../../relatorios/logs";
 import RelatorioGeral from "../../relatorios/geral";
+import RelatorioHistorico from "../../relatorios/historico";
 import { useCookies } from "react-cookie";
 import Api from "../../utils/api";
 import { createMapById } from "../../utils/maps";
@@ -115,6 +116,7 @@ export default function Relatorios() {
             <option value="Notificacoes">Notificações</option>
             <option value="Logs">Logs</option>
             <option value="Geral">Relatório Geral</option>
+            <option value="Historico">Histórico (Snapshots)</option>
           </select>
 
           {tabelaSelecionada === "Clientes" && (
@@ -162,6 +164,9 @@ export default function Relatorios() {
               produtos={produtos}
               usuariosMap={usuariosMap}
             />
+          )}
+          {tabelaSelecionada === "Historico" && (
+            <RelatorioHistorico usuariosMap={usuariosMap} />
           )}
         </div>
       </div>
