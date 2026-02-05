@@ -1,6 +1,6 @@
 import Excel from "../utils/excel";
 import { useState } from "react";
-import Popup from "../componetes/pop-up";
+import Popup from "../componentes/pop-up";
 
 export default function RelatorioClientes({
   clientes,
@@ -16,11 +16,11 @@ export default function RelatorioClientes({
     tipo: "",
     status: "",
     vendedor: "",
-  segmento: "",
-  grupo_economico: "",
-  pertence_grupo: "",
+    segmento: "",
+    grupo_economico: "",
+    pertence_grupo: "",
   });
-  const [openModal, setOpenModal] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
   const clientesFiltrados = clientes.filter(
@@ -33,26 +33,26 @@ export default function RelatorioClientes({
         usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
       (!filtros.segmento ||
         segmentosMap[cliente.id_segmento]?.nome === filtros.segmento)
-  && (!filtros.grupo_economico || gruposEconomicosMap[cliente.id_grupo_economico]?.nome === filtros.grupo_economico)
-  && (!filtros.pertence_grupo || ((cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
+      && (!filtros.grupo_economico || gruposEconomicosMap[cliente.id_grupo_economico]?.nome === filtros.grupo_economico)
+      && (!filtros.pertence_grupo || ((cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
   );
 
-  const data = clientesFiltrados.map((cliente) => {
+  const dadosExportacao = clientesFiltrados.map((cliente) => {
     const contratosCliente = contratos.filter(
       (contrato) =>
         contrato.id_cliente === cliente.id && contrato.status === "ativo"
     );
 
-    const valorTotalContratos = contratosCliente.reduce((sum, contrato) => {
+    const valorTotalContratos = contratosCliente.reduce((soma, contrato) => {
       const valor = parseFloat(contrato.valor_mensal);
       const indice = contrato.indice_reajuste || 0;
-      return sum + valor;
+      return soma + valor;
     }, 0);
 
     return {
       "Nome Fantasia": cliente.nome_fantasia,
       "CPF/CNPJ": cliente.cpf_cnpj,
-  "Grupo Econômico": gruposEconomicosMap[cliente.id_grupo_economico]?.nome || "",
+      "Grupo Econômico": gruposEconomicosMap[cliente.id_grupo_economico]?.nome || "",
       Tipo:
         classificacoesClientesMap[
           gruposEconomicosMap[cliente.id_grupo_economico]
@@ -73,13 +73,13 @@ export default function RelatorioClientes({
   console.log(classificacoesClientesMap);
   console.log(clientes);
 
-  function handleDownloadReport(e) {
+  function baixarRelatorio(e) {
     e.preventDefault();
-    excel.exportToExcel(data);
+    excel.exportToExcel(dadosExportacao);
     setAbrirPopup(false);
   }
 
-  function handleFiltroChange(e) {
+  function aoMudarFiltro(e) {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   }
 
@@ -89,12 +89,12 @@ export default function RelatorioClientes({
         <Popup
           title="Exportar Clientes"
           message="Tem certeza que deseja exportar o relatório de clientes?"
-          onConfirm={handleDownloadReport}
+          onConfirm={baixarRelatorio}
           onCancel={() => setAbrirPopup(false)}
         />
       )}
 
-      {openModal && (
+      {mostrarFiltros && (
         <div id="filter-container">
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
@@ -102,7 +102,7 @@ export default function RelatorioClientes({
               <select
                 name="nome_fantasia"
                 value={filtros.nome_fantasia}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {clientes.map((cliente) => (
@@ -118,7 +118,7 @@ export default function RelatorioClientes({
               <select
                 name="tipo"
                 value={filtros.tipo}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 <option value="top 30">TOP 30</option>
@@ -133,7 +133,7 @@ export default function RelatorioClientes({
               <select
                 name="status"
                 value={filtros.status}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 <option value="ativo">Ativo</option>
@@ -146,7 +146,7 @@ export default function RelatorioClientes({
               <select
                 name="vendedor"
                 value={filtros.vendedor}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {Object.values(usuariosMap).map((usuario) => (
@@ -162,7 +162,7 @@ export default function RelatorioClientes({
               <select
                 name="segmento"
                 value={filtros.segmento}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {Object.values(segmentosMap).map((segmento) => (
@@ -178,7 +178,7 @@ export default function RelatorioClientes({
               <select
                 name="grupo_economico"
                 value={filtros.grupo_economico}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {Object.values(gruposEconomicosMap || {}).map((grupo) => (
@@ -194,7 +194,7 @@ export default function RelatorioClientes({
               <select
                 name="pertence_grupo"
                 value={filtros.pertence_grupo}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 <option value="sim">Sim</option>
@@ -204,7 +204,7 @@ export default function RelatorioClientes({
 
             <button
               type="button"
-              onClick={() => setOpenModal(false)}
+              onClick={() => setMostrarFiltros(false)}
               id="filter-close-button"
               className="filter-button"
             >
@@ -215,7 +215,7 @@ export default function RelatorioClientes({
       )}
 
       <button
-        onClick={() => setOpenModal(true)}
+        onClick={() => setMostrarFiltros(true)}
         className="relatorio-button"
         id="relatorio-button-filtrar"
       >
@@ -244,7 +244,7 @@ export default function RelatorioClientes({
           </tr>
         </thead>
         <tbody>
-          {data.map((cliente, index) => (
+          {dadosExportacao.map((cliente, index) => (
             <tr key={index}>
               <td className="global-conteudo-tabela">
                 {cliente["Nome Fantasia"]}

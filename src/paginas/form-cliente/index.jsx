@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import Api from "../../utils/api";
+import Formatadores from "../../utils/formatadores";
 import imgCadastroCliente from "../../assets/images/img-cadastro-cliente.png";
 import "./style.css";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
 import { useCookies } from "react-cookie";
 // Bibliotecas
 // Componentes
@@ -97,6 +98,7 @@ export default function FormCliente({ mode }) {
           setLoading(true);
           const response = await api.get(`/clientes/${id}`);
 
+          /*
           const formatDate = (dateString) => {
             if (
               !dateString ||
@@ -111,15 +113,16 @@ export default function FormCliente({ mode }) {
             const day = String(date.getDate()).padStart(2, "0");
             return `${year}-${month}-${day}`;
           };
+          */
 
           const clienteData = response.cliente;
-          clienteData.gestor_contratos_nascimento = formatDate(
+          clienteData.gestor_contratos_nascimento = Formatadores.formatarDataISO(
             clienteData.gestor_contratos_nascimento
           );
-          clienteData.gestor_chamados_nascimento = formatDate(
+          clienteData.gestor_chamados_nascimento = Formatadores.formatarDataISO(
             clienteData.gestor_chamados_nascimento
           );
-          clienteData.gestor_financeiro_nascimento = formatDate(
+          clienteData.gestor_financeiro_nascimento = Formatadores.formatarDataISO(
             clienteData.gestor_financeiro_nascimento
           );
 
@@ -199,7 +202,7 @@ export default function FormCliente({ mode }) {
         ...cliente,
         id_grupo_economico:
           cliente.id_grupo_economico === "" ||
-          cliente.id_grupo_economico === null
+            cliente.id_grupo_economico === null
             ? null
             : Number(cliente.id_grupo_economico),
         tipo_unidade: cliente.tipo_unidade === "" ? null : cliente.tipo_unidade,
@@ -226,7 +229,7 @@ export default function FormCliente({ mode }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           title={

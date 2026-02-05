@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { jwtDecode } from "jwt-decode";
 
-import Loading from "../../componetes/loading"; // Reutilizando seu componente de loading
+import Carregando from "../../componentes/carregando"; // Reutilizando seu componente de loading
 import "./style.css"; // Vamos criar um CSS simples para ele
 
 export default function AuthCallback() {
@@ -66,5 +66,5 @@ export default function AuthCallback() {
   }
 
   // Enquanto processa, exibe o seu componente de Loading
-  return <Loading />;
+  return <Carregando />;
 }

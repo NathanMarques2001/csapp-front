@@ -26,22 +26,22 @@ export default function CardContato({
     }
   }, [titulo]);
 
-  const confirmDelete = async () => {
+  const confirmarExclusao = async () => {
     try {
       await api.delete(`/${tituloContato}/${idContato}`);
       setModalAberto(false);
       renderizar();
     } catch (err) {
-      console.error("Error deleting contact:", err);
+      console.error("Erro ao excluir contato:", err);
     }
   };
 
-  const handleDelete = (id) => {
+  const excluirContato = (id) => {
     setModalAberto(true);
     setIdContato(id);
   };
 
-  const handleCloseModal = () => {
+  const fecharModal = () => {
     setModalAberto(false);
   };
 
@@ -52,9 +52,9 @@ export default function CardContato({
           title="Excluir contato"
           message="Tem certeza que deseja excluir este contato?"
           onConfirm={() => {
-            confirmDelete();
+            confirmarExclusao();
           }}
-          onCancel={handleCloseModal}
+          onCancel={fecharModal}
         />
       )}
       <div className="card-cliente-contatos">
@@ -82,7 +82,7 @@ export default function CardContato({
               </p>
               <button
                 onClick={() => {
-                  handleDelete(contato.id);
+                  excluirContato(contato.id);
                 }}
                 className="gestao-section-excluir-btn gestao-section-item-btn card-cliente-btn"
                 disabled={permissao}

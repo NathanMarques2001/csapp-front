@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./style.css";
 import Api from "../../utils/api";
-import Loading from "../loading";
+import Carregando from "../carregando";
 import { useParams } from "react-router-dom";
 
 export default function PopupInformacoes({
@@ -67,7 +67,7 @@ export default function PopupInformacoes({
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       <div className="popup-container">
         <div className="popup">
           <p id="popup-titulo">{title}</p>

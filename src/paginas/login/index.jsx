@@ -5,7 +5,7 @@ import logoMicrosoft from "../../assets/icons/microsoft.png";
 import Auth from "../../utils/auth";
 import { useState } from "react";
 import { useCookies } from "react-cookie";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import { useNavigate } from "react-router-dom";
 // Bibliotecas
 // Componentes
@@ -14,48 +14,48 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const auth = new Auth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [senha, setSenha] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const isDev = ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const [, setCookie] = useCookies(["jwtToken", "nomeUsuario", "id", "tipo"]);
   const navigate = useNavigate();
 
-  async function sendForm(event) {
+  async function fazerLogin(evento) {
     try {
-      setLoading(true);
-      event.preventDefault();
+      setCarregando(true);
+      evento.preventDefault();
 
-      const now = new Date();
-      const expireAt = new Date(now);
-      expireAt.setHours(6, 0, 0, 0); // Define a expiração para as 6h da manhã
+      const agora = new Date();
+      const expiraEm = new Date(agora);
+      expiraEm.setHours(6, 0, 0, 0); // Define a expiração para as 6h da manhã
 
-      if (now > expireAt) {
-        expireAt.setDate(expireAt.getDate() + 1); // Se já passou das 6h, define para o próximo dia
+      if (agora > expiraEm) {
+        expiraEm.setDate(expiraEm.getDate() + 1); // Se já passou das 6h, define para o próximo dia
       }
 
-      const expirationTime = expireAt.getTime() - now.getTime(); // Calcula o tempo restante em milissegundos
+      const tempoExpiracao = expiraEm.getTime() - agora.getTime(); // Calcula o tempo restante em milissegundos
 
-      const response = await auth.login("/usuarios/login", {
+      const resposta = await auth.login("/usuarios/login", {
         email: email,
-        senha: password,
+        senha: senha,
       });
-      if (response.token !== "") {
-        setCookie("jwtToken", response.token, {
-          maxAge: expirationTime / 1000,
-        }); // Define o token com 6 horas de expiração
-        setCookie("nomeUsuario", response.usuario.nome, {
-          maxAge: expirationTime / 1000,
-        }); // Define o nome do usuário com 6 horas de expiração
-        setCookie("id", response.usuario.id, { maxAge: expirationTime / 1000 });
-        setCookie("tipo", response.usuario.tipo, {
-          maxAge: expirationTime / 1000,
+      if (resposta.token !== "") {
+        setCookie("jwtToken", resposta.token, {
+          maxAge: tempoExpiracao / 1000,
+        }); // Define o token com expiração calculada
+        setCookie("nomeUsuario", resposta.usuario.nome, {
+          maxAge: tempoExpiracao / 1000,
+        }); // Define o nome do usuário
+        setCookie("id", resposta.usuario.id, { maxAge: tempoExpiracao / 1000 });
+        setCookie("tipo", resposta.usuario.tipo, {
+          maxAge: tempoExpiracao / 1000,
         });
         navigate("/contratos");
       }
-    } catch (error) {
-      console.log(error);
+    } catch (erro) {
+      console.log(erro);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   }
 
@@ -65,52 +65,54 @@ export default function Login() {
 
   return (
     <>
-      {loading && <Loading />}
-      <body id="login-container">
-        <div class="login-container">
-          <img class="logo" src={logo} alt="logo" />
-          <div class="lower-container">
+      {carregando && <Carregando />}
+      <div id="login-container">
+        <div className="login-container">
+          <img className="logo" src={logo} alt="logo" />
+          <div className="lower-container">
             <div id="form-container">
               <h1>Bem Vindo(a)!</h1>
               <form id="form">
                 {isDev && (
                   <>
-                <label for="email" className="form-label">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  className="login-input"
-                  placeholder="Entre com o endereço de email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <label for="password" className="form-label">
-                  Senha
-                </label>
-                <input
-                  type="password"
-                  className="login-input"
-                  placeholder="Entre com sua senha"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                    <label htmlFor="email" className="form-label">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      className="login-input"
+                      placeholder="Entre com o endereço de email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <label htmlFor="senha" className="form-label">
+                      Senha
+                    </label>
+                    <input
+                      id="senha"
+                      type="password"
+                      className="login-input"
+                      placeholder="Entre com sua senha"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                    />
 
-                  <button
-                    onClick={(e) => sendForm(e)}
-                    className="login-button"
-                    id="login-button"
-                  >
-                    Entrar
-                  </button>
+                    <button
+                      onClick={(e) => fazerLogin(e)}
+                      className="login-button"
+                      id="login-button"
+                    >
+                      Entrar
+                    </button>
                   </>
                 )}
 
                 <button
                   type="button"
                   onClick={() =>
-                    (window.location.href =
-                      "https://csapp.prolinx.com.br/api/usuarios/login-microsoft")
+                  (window.location.href =
+                    "https://csapp.prolinx.com.br/api/usuarios/login-microsoft")
                   }
                   className="login-button"
                   id="login-microsoft-button"
@@ -129,10 +131,10 @@ export default function Login() {
               </form>
             </div>
 
-            <img class="imagem-login" src={imgLogin} alt="tela-login" />
+            <img className="imagem-login" src={imgLogin} alt="tela-login" />
           </div>
         </div>
-      </body>
+      </div>
     </>
   );
 }

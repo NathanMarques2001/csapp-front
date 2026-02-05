@@ -1,42 +1,42 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../componetes/navbar";
-import Loading from "../../componetes/loading";
-import PopUpFiltro from "../../componetes/pop-up-filtro";
+import Navbar from "../../componentes/navbar";
+import Carregando from "../../componentes/carregando";
+import PopUpFiltro from "../../componentes/pop-up-filtro";
 import Api from "../../utils/api";
 import "./style.css";
 import { useCookies } from "react-cookie";
 import { baixarModelo } from "../../utils/modeloExcelContratos";
-import PopUpImportaContratos from "../../componetes/pop-up-importa-contrato";
+import PopUpImportaContratos from "../../componentes/pop-up-importa-contrato";
+import Formatadores from "../../utils/formatadores";
 
 export default function Contratos() {
   const api = new Api();
   const [cookies] = useCookies(["tipo", "id"]);
-  const [isAdminOrDev, setIsAdminOrDev] = useState(false);
+  const [adminOuDev, setAdminOuDev] = useState(false);
   const [contratos, setContratos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [vendedores, setVendedores] = useState([]);
   const [produtos, setProdutos] = useState([]);
-  const [filter, setFilter] = useState("");
-  const [filters, setFilters] = useState({ status: "ativo" });
-  const [loading, setLoading] = useState(false);
-  const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [filtro, setFiltro] = useState("");
+  const [filtros, setFiltros] = useState({ status: "ativo" });
+  const [carregando, setCarregando] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [mostrarModalImportacao, setMostrarModalImportacao] = useState(false);
-  const [totalGeral, setTotalGeral] = useState(0);
-  const [totalPorFaturamento, setTotalPorFaturamento] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 50;
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const ITENS_POR_PAGINA = 50;
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    const buscarDados = async () => {
+      setCarregando(true);
       try {
         console.log(cookies);
         if (cookies.tipo === "dev" || cookies.tipo === "admin") {
-          setIsAdminOrDev(true);
+          setAdminOuDev(true);
         } else {
-          setIsAdminOrDev(false);
+          setAdminOuDev(false);
         }
 
         const contratosResponse = await api.get("/contratos");
@@ -73,123 +73,121 @@ export default function Contratos() {
         }, {});
         setProdutos(produtosMap);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Erro ao buscar dados:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
 
-    fetchData();
+    buscarDados();
   }, [cookies.tipo, cookies.id]);
 
   const detalhesContrato = (id) => {
     navigate(`/edicao-contrato/${id}`);
   };
 
-  const addContrato = () => {
+  const adicionarContrato = () => {
     navigate("/cadastro-contrato");
   };
 
-  const filtratContratos = (e) => {
-    setFilter(e.target.value);
+  const filtrarContratos = (e) => {
+    setFiltro(e.target.value);
   };
 
-  const aplicarFiltroPopUp = (filters) => {
-    setFilters(filters);
-    setShowFilterPopup(false);
+  const aplicarFiltroPopUp = (novosFiltros) => {
+    setFiltros(novosFiltros);
+    setMostrarFiltros(false);
   };
 
   const limparFiltros = () => {
-    setFilters({ status: "ativo" });
+    setFiltros({ status: "ativo" });
   };
 
-  const filteredContratos = contratos.filter((contrato) => {
-    const cliente = clientes[contrato.id_cliente];
-    const produto = produtos[contrato.id_produto];
-    const clienteNome = cliente?.nome_fantasia || "";
-    const clienteRazao = cliente?.razao_social || "";
-    const produtoNome = produto?.nome || "";
+  // FIX: Wrapped in useMemo to prevent infinite loop.
+  const contratosFiltrados = useMemo(() => {
+    return contratos.filter((contrato) => {
+      const cliente = clientes[contrato.id_cliente];
+      const produto = produtos[contrato.id_produto];
+      const clienteNome = cliente?.nome_fantasia || "";
+      const clienteRazao = cliente?.razao_social || "";
+      const produtoNome = produto?.nome || "";
 
-    const filterConditions = [
-      filters.id_cliente
-        ? contrato.id_cliente.toString().includes(filters.id_cliente)
-        : true,
-      filters.id_produto
-        ? contrato.id_produto.toString().includes(filters.id_produto)
-        : true,
-      filters.status ? contrato.status === filters.status : true,
-      filters.duracao
-        ? contrato.duracao.toString().includes(filters.duracao)
-        : true,
-      filters.valor_mensal
-        ? contrato.valor_mensal.toString().includes(filters.valor_mensal)
-        : true,
-      filters.razao_social
-        ? clienteRazao
+      const condicoesFiltro = [
+        filtros.id_cliente
+          ? contrato.id_cliente.toString().includes(filtros.id_cliente)
+          : true,
+        filtros.id_produto
+          ? contrato.id_produto.toString().includes(filtros.id_produto)
+          : true,
+        filtros.status ? contrato.status === filtros.status : true,
+        filtros.duracao
+          ? contrato.duracao.toString().includes(filtros.duracao)
+          : true,
+        filtros.valor_mensal
+          ? contrato.valor_mensal.toString().includes(filtros.valor_mensal)
+          : true,
+        filtros.razao_social
+          ? clienteRazao
             .toLowerCase()
-            .includes(filters.razao_social.toLowerCase())
-        : true,
-      filters.nome_fantasia
-        ? clienteNome
+            .includes(filtros.razao_social.toLowerCase())
+          : true,
+        filtros.nome_fantasia
+          ? clienteNome
             .toLowerCase()
-            .includes(filters.nome_fantasia.toLowerCase())
-        : true,
-      filters.nome_produto
-        ? produtoNome.toLowerCase().includes(filters.nome_produto.toLowerCase())
-        : true,
-      clienteNome.toLowerCase().includes(filter.toLowerCase()),
-    ];
+            .includes(filtros.nome_fantasia.toLowerCase())
+          : true,
+        filtros.nome_produto
+          ? produtoNome.toLowerCase().includes(filtros.nome_produto.toLowerCase())
+          : true,
+        clienteNome.toLowerCase().includes(filtro.toLowerCase()),
+      ];
 
-    return filterConditions.every((condition) => condition);
-  });
+      return condicoesFiltro.every((condition) => condition);
+    });
+  }, [contratos, clientes, produtos, filtros, filtro]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredContratos.length / ITEMS_PER_PAGE));
-  const displayPage = Math.min(Math.max(1, currentPage), totalPages);
-  const pagedContratos = filteredContratos.slice(
-    (displayPage - 1) * ITEMS_PER_PAGE,
-    displayPage * ITEMS_PER_PAGE
+  const totalPaginas = Math.max(1, Math.ceil(contratosFiltrados.length / ITENS_POR_PAGINA));
+  const paginaExibida = Math.min(Math.max(1, paginaAtual), totalPaginas);
+  const contratosPaginados = contratosFiltrados.slice(
+    (paginaExibida - 1) * ITENS_POR_PAGINA,
+    paginaExibida * ITENS_POR_PAGINA
   );
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [filter, filters.id_cliente, filters.id_produto, filters.status, filters.nome_fantasia]);
+    setPaginaAtual(1);
+  }, [filtro, filtros]);
 
   const calculaValorImpostoMensal = (valor, indice) => valor;
 
-  useEffect(() => {
-    // Calcula o total geral dos contratos filtrados
-    const novoTotalGeral = filteredContratos.reduce((acc, contrato) => {
+  // FIX: Derived state instead of useState + useEffect
+  const totalGeral = contratosFiltrados.reduce((acc, contrato) => {
+    const valorContrato = calculaValorImpostoMensal(
+      parseFloat(contrato.valor_mensal),
+      contrato.indice_reajuste
+    );
+    return acc + valorContrato;
+  }, 0);
+
+  const totalPorFaturamento = contratosFiltrados.reduce(
+    (acc, contrato) => {
       const valorContrato = calculaValorImpostoMensal(
         parseFloat(contrato.valor_mensal),
         contrato.indice_reajuste
       );
-      return acc + valorContrato;
-    }, 0);
-    setTotalGeral(novoTotalGeral);
+      const tipo = contrato.tipo_faturamento || "Não especificado";
 
-    // Calcula os totais segregados por tipo de faturamento
-    const novoTotalPorFaturamento = filteredContratos.reduce(
-      (acc, contrato) => {
-        const valorContrato = calculaValorImpostoMensal(
-          parseFloat(contrato.valor_mensal),
-          contrato.indice_reajuste
-        );
-        const tipo = contrato.tipo_faturamento || "Não especificado";
-
-        if (!acc[tipo]) {
-          acc[tipo] = 0;
-        }
-        acc[tipo] += valorContrato;
-        return acc;
-      },
-      {}
-    );
-    setTotalPorFaturamento(novoTotalPorFaturamento);
-  }, [filteredContratos]);
+      if (!acc[tipo]) {
+        acc[tipo] = 0;
+      }
+      acc[tipo] += valorContrato;
+      return acc;
+    },
+    {}
+  );
 
   return (
     <>
-      {loading && <Loading />}
+      {carregando && <Carregando />}
       <div id="contratos-display">
         <Navbar />
         <div id="contratos-container">
@@ -198,19 +196,19 @@ export default function Contratos() {
             type="text"
             placeholder="Procure pelo cliente"
             id="contratos-input"
-            value={filter}
-            onChange={filtratContratos}
+            value={filtro}
+            onChange={filtrarContratos}
           />
           <button
-            onClick={addContrato}
-            disabled={!isAdminOrDev}
-            className={`contratos-botao ${!isAdminOrDev ? "disabled" : ""}`}
+            onClick={adicionarContrato}
+            disabled={!adminOuDev}
+            className={`contratos-botao ${!adminOuDev ? "disabled" : ""}`}
             id="contratos-botao-add"
           >
             Adicionar Contrato
           </button>
           <button
-            onClick={() => setShowFilterPopup(true)}
+            onClick={() => setMostrarFiltros(true)}
             className="contratos-botao"
             id="contratos-botao-filtro"
           >
@@ -227,28 +225,28 @@ export default function Contratos() {
           {mostrarModalImportacao && (
             <PopUpImportaContratos
               baixarModelo={baixarModelo}
-              setLoading={setLoading}
+              setLoading={setCarregando}
               setMostrarModalImportacao={setMostrarModalImportacao}
             />
           )}
 
-          {showFilterPopup && (
+          {mostrarFiltros && (
             <div className="filter-popup">
               <PopUpFiltro
                 onFilter={aplicarFiltroPopUp}
-                closeModal={() => setShowFilterPopup(false)}
+                closeModal={() => setMostrarFiltros(false)}
                 clientes={clientes}
                 produtos={produtos}
               />
             </div>
           )}
-          {Object.keys(filters).length > 0 && (
+          {Object.keys(filtros).length > 0 && (
             <div className="active-filters">
               <p>
                 <b>Filtros Ativos:</b>
               </p>
               <p id="active-filters-container">
-                {Object.entries(filters).map(
+                {Object.entries(filtros).map(
                   ([key, value]) =>
                     value && (
                       <span className="active-filters-current" key={key}>
@@ -267,7 +265,7 @@ export default function Contratos() {
             </div>
           )}
 
-          {filteredContratos.length > 0 ? (
+          {contratosFiltrados.length > 0 ? (
             <table id="contratos-tabela">
               <thead>
                 <tr>
@@ -280,7 +278,7 @@ export default function Contratos() {
                 </tr>
               </thead>
               <tbody>
-                {pagedContratos.map((contrato) => {
+                {contratosPaginados.map((contrato) => {
                   const cliente = clientes[contrato.id_cliente];
                   const produto = produtos[contrato.id_produto];
                   const vendedor = vendedores[cliente?.id_usuario];
@@ -301,13 +299,12 @@ export default function Contratos() {
                         {produto?.nome || "-"}
                       </td>
                       <td className="contratos-conteudo-tabela">
-                        {calculaValorImpostoMensal(
-                          parseFloat(contrato.valor_mensal),
-                          contrato.indice_reajuste
-                        ).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
+                        {Formatadores.formatarMoeda(
+                          calculaValorImpostoMensal(
+                            parseFloat(contrato.valor_mensal),
+                            contrato.indice_reajuste
+                          )
+                        )}
                       </td>
                       <td className="contratos-conteudo-tabela contratos-tipo-faturamento">
                         {contrato?.tipo_faturamento || "-"}
@@ -324,18 +321,18 @@ export default function Contratos() {
                   <td colSpan="6" style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
                       <button
-                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                        disabled={displayPage === 1}
+                        onClick={() => setPaginaAtual(prev => Math.max(prev - 1, 1))}
+                        disabled={paginaExibida === 1}
                         className="contratos-botao"
                       >
                         Anterior
                       </button>
-                      <span style={{ color: '#fff'}}>
-                        Página {displayPage} de {totalPages}
+                      <span style={{ color: '#fff' }}>
+                        Página {paginaExibida} de {totalPaginas}
                       </span>
                       <button
-                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                        disabled={displayPage >= totalPages}
+                        onClick={() => setPaginaAtual(prev => Math.min(prev + 1, totalPaginas))}
+                        disabled={paginaExibida >= totalPaginas}
                         className="contratos-botao"
                       >
                         Próxima

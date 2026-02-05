@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../../componetes/navbar";
-import Loading from "../../componetes/loading";
+import Navbar from "../../componentes/navbar";
+import Carregando from "../../componentes/carregando";
 import botaoInativar from "../../assets/icons/icon-inativar.png";
 import botaoAtivar from "../../assets/icons/icon-ativar.png";
 import "./style.css";
 import Api from "../../utils/api";
 import imgGrupoEconomico from "../../assets/images/img-grupo-economico.png";
 import { useCookies } from "react-cookie";
-import Popup from "../../componetes/pop-up";
+import Popup from "../../componentes/pop-up";
 
 export default function GrupoEconomico() {
   const api = new Api();
@@ -157,7 +157,7 @@ export default function GrupoEconomico() {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showModal && (
         <Popup
           message={message}
@@ -179,11 +179,11 @@ export default function GrupoEconomico() {
               onClick={() => {
                 grupoEconomico.status === "ativo"
                   ? setMessage(
-                      "Tem certeza que deseja inativar esse grupo econômico? Todos os clientes e contratos serão inativados também."
-                    )
+                    "Tem certeza que deseja inativar esse grupo econômico? Todos os clientes e contratos serão inativados também."
+                  )
                   : setMessage(
-                      "Tem certeza que deseja ativar esse grupo econômico?"
-                    );
+                    "Tem certeza que deseja ativar esse grupo econômico?"
+                  );
                 setPopUpAction(() => () => ativarOuInativar(grupoEconomico.id));
                 setShowModal(true);
               }}

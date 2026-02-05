@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import Popup from "../componetes/pop-up";
-import DateJS from "../utils/date-js";
+import Popup from "../componentes/pop-up";
+import Formatadores from "../utils/formatadores";
 import Excel from "../utils/excel";
 
 export default function RelatorioContratos({
@@ -8,10 +8,10 @@ export default function RelatorioContratos({
   produtos,
   clientes,
 }) {
-  const dateJs = new DateJS();
+
   const excel = new Excel("Relatório de Contratos");
   const [abrirPopup, setAbrirPopup] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [filtros, setFiltros] = useState({
     solucao: "",
     cliente: "",
@@ -25,8 +25,7 @@ export default function RelatorioContratos({
   const clientesMap = useMemo(() => clientes.reduce((map, c) => ((map[c.id] = c), map), {}), [clientes]);
 
   // Função para calcular o próximo vencimento
-  // Função para calcular o próximo vencimento
-  const calculateNextVencimento = (dataInicio, duracao) => {
+  const calcularProximoVencimento = (dataInicio, duracao) => {
     if (!dataInicio) return null;
     const duracaoMeses = parseInt(duracao);
     if (!duracaoMeses || duracaoMeses <= 0) return null; // Previne loop infinito
@@ -58,28 +57,6 @@ export default function RelatorioContratos({
     data.setMonth(data.getMonth() + duracaoMeses);
 
     if (data < hoje) {
-      // Calcular quantos ciclos faltam de uma vez
-      // Diferença em meses aproximada
-      const diffYears = hoje.getFullYear() - data.getFullYear();
-      const diffMonths = (diffYears * 12) + (hoje.getMonth() - data.getMonth());
-
-      // Quantos ciclos completos já passaram?
-      // Queremos o próximo, então arredondamos pra cima
-      // Mas 'data' já tem +1 ciclo somado ali em cima.
-      // Vamos usar a data original para a matemática ser mais limpa?
-      // Não, vamos apenas iterar de forma protegida ou usar math.
-
-      // Math approach:
-      // diffMonths é a distância entre 'primeiro vencimento' e 'hoje'.
-      // Se positivo, precisamos adicionar mais ciclos.
-      // ciclosAdicionais = ceil(diffMonths / duracaoMeses)
-      // Se diffMonths for exatamente múltiplo, cuidado com o dia.
-      // Vamos ser seguros: loop protegido é ok se duracao >= 1.
-      // Mas loop infinito é ruim. Como já garanti duracao > 0, o while loop só trava se data não avançar.
-      // JS Date setMonth avança corretamente ano.
-      // O problema anterior era dataInicio invalida ou duracao string '12000' nao parseada corretamente?
-      // Adicionando proteção de iterações máximas.
-
       let safeCounter = 0;
       while (data < hoje && safeCounter < 1000) {
         data.setMonth(data.getMonth() + duracaoMeses);
@@ -93,7 +70,7 @@ export default function RelatorioContratos({
   // Pré-processamento dos dados para calcular campos e extrair anos disponíveis
   const dadosProcessados = useMemo(() => {
     return contratos.map((contrato) => {
-      const vencimento = calculateNextVencimento(contrato.data_inicio, contrato.duracao);
+      const vencimento = calcularProximoVencimento(contrato.data_inicio, contrato.duracao);
       return {
         ...contrato,
         vencimentoCalculado: vencimento, // Date object or "Indeterminado"
@@ -142,7 +119,7 @@ export default function RelatorioContratos({
     );
   });
 
-  const data = contratosFiltrados.map((contrato) => {
+  const dadosExportacao = contratosFiltrados.map((contrato) => {
     const cliente = clientesMap[contrato.id_cliente];
     const produto = produtosMap[contrato.id_produto];
     const valor = parseFloat(contrato.valor_mensal);
@@ -162,21 +139,21 @@ export default function RelatorioContratos({
       Solução: produto?.nome || "Desconhecido",
       Cliente: cliente?.nome_fantasia || "Desconhecido",
       Status: contrato.status,
-      Reajuste: dateJs.formatDate(contrato.proximo_reajuste),
+      Reajuste: Formatadores.formatarData(contrato.proximo_reajuste),
       "Data de Vencimento": vencimentoFormatado,
       Expiração: expiracaoFormatada,
-      Valor: valor,
+      Valor: Formatadores.formatarMoeda(valor),
       Faturamento: contrato.tipo_faturamento,
     };
   });
 
-  const handleDownloadReport = (e) => {
+  const baixarRelatorio = (e) => {
     e.preventDefault();
-    excel.exportToExcel(data);
+    excel.exportToExcel(dadosExportacao);
     setAbrirPopup(false);
   };
 
-  const handleFiltroChange = (e) => {
+  const aoMudarFiltro = (e) => {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   };
 
@@ -201,12 +178,12 @@ export default function RelatorioContratos({
         <Popup
           title="Exportar Contratos"
           message="Tem certeza que deseja exportar o relatório de contratos?"
-          onConfirm={handleDownloadReport}
+          onConfirm={baixarRelatorio}
           onCancel={() => setAbrirPopup(false)}
         />
       )}
 
-      {openModal && (
+      {mostrarFiltros && (
         <div id="filter-container" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
@@ -214,7 +191,7 @@ export default function RelatorioContratos({
               <select
                 name="solucao"
                 value={filtros.solucao}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {produtos.map((p) => (
@@ -230,7 +207,7 @@ export default function RelatorioContratos({
               <select
                 name="cliente"
                 value={filtros.cliente}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {clientes.map((c) => (
@@ -246,7 +223,7 @@ export default function RelatorioContratos({
               <select
                 name="status"
                 value={filtros.status}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 <option value="ativo">Ativo</option>
@@ -259,7 +236,7 @@ export default function RelatorioContratos({
               <select
                 name="tipo_faturamento"
                 value={filtros.tipo_faturamento}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 <option value="mensal">Mensal</option>
@@ -272,7 +249,7 @@ export default function RelatorioContratos({
               <select
                 name="mes_vencimento"
                 value={filtros.mes_vencimento}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Todos</option>
                 {meses.map((m) => (
@@ -286,7 +263,7 @@ export default function RelatorioContratos({
               <select
                 name="ano_vencimento"
                 value={filtros.ano_vencimento}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Todos</option>
                 {anosDisponiveis.map((ano) => (
@@ -298,7 +275,7 @@ export default function RelatorioContratos({
 
             <button
               type="button"
-              onClick={() => setOpenModal(false)}
+              onClick={() => setMostrarFiltros(false)}
               id="filter-close-button"
               className="filter-button"
             >
@@ -309,7 +286,7 @@ export default function RelatorioContratos({
       )}
 
       <button
-        onClick={() => setOpenModal(true)}
+        onClick={() => setMostrarFiltros(true)}
         className="relatorio-button"
         id="relatorio-button-filtrar"
       >
@@ -337,7 +314,7 @@ export default function RelatorioContratos({
           </tr>
         </thead>
         <tbody>
-          {data.map((c, i) => (
+          {dadosExportacao.map((c, i) => (
             <tr key={i}>
               <td className="global-conteudo-tabela">{c["Solução"]}</td>
               <td className="global-conteudo-tabela">{c["Cliente"]}</td>
@@ -349,10 +326,7 @@ export default function RelatorioContratos({
                 {c["Faturamento"]}
               </td>
               <td className="global-conteudo-tabela">
-                {c["Valor"].toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
+                {c["Valor"]}
               </td>
             </tr>
           ))}

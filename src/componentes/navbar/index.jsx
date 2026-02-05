@@ -16,16 +16,16 @@ import SinoNotificacao from "../sino-notificacao";
 
 export default function Navbar() {
   const [cookies, , removeCookie] = useCookies(["jwtToken", "nomeUsuario", "id", "tipo"]);
-  const [isAdminOrDev, setIsAdminOrDev] = useState(false);
-  const [abrirPopup, setAbrirPopup] = useState(false);
+  const [adminOuDev, setAdminOuDev] = useState(false);
+  const [mostrarPopup, setMostrarPopup] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (cookies.tipo === "dev" || cookies.tipo === "admin") {
-      setIsAdminOrDev(true);
+      setAdminOuDev(true);
     } else {
-      setIsAdminOrDev(false);
+      setAdminOuDev(false);
     }
   }, [cookies.tipo]);
 
@@ -34,7 +34,7 @@ export default function Navbar() {
     removeCookie("nomeUsuario", { path: "/" });
     removeCookie("id", { path: "/" });
     removeCookie("tipo", { path: "/" });
-    setAbrirPopup(false);
+    setMostrarPopup(false);
 
     const tenantId = "common";
     const retornoParaLogin = "https://csapp.prolinx.com.br/login";
@@ -43,17 +43,17 @@ export default function Navbar() {
 
   return (
     <>
-      {abrirPopup && (
+      {mostrarPopup && (
         <Popup
           title="Deslogar"
           message="Tem certeza que deseja sair?"
           onConfirm={deslogar}
-          onCancel={() => setAbrirPopup(false)}
+          onCancel={() => setMostrarPopup(false)}
         />
       )}
 
       {/* 🧩 Popup para concluir notificação */}
-      
+
 
       <ToastContainer />
 
@@ -70,7 +70,7 @@ export default function Navbar() {
               <img className="navbar-icon" src={iconeContratos} alt="ícone contrato" />
               <span className="navbar-span">Contratos</span>
             </Link>
-            {isAdminOrDev && (
+            {adminOuDev && (
               <Link to="/gestao" className="link">
                 <img className="navbar-icon" src={iconeCentralGestao} alt="ícone gestão" />
                 <span className="navbar-span">Gestão</span>
@@ -91,7 +91,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        <button id="navbar-btn" onClick={() => setAbrirPopup(true)}>
+        <button id="navbar-btn" onClick={() => setMostrarPopup(true)}>
           <img className="navbar-icon" src={iconeSair} alt="ícone sair" />
           <span className="navbar-span">Sair</span>
         </button>

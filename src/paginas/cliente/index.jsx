@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../../componetes/navbar";
-import CardGestor from "../../componetes/card-gestor";
-import CardContato from "../../componetes/card-contato";
-import Loading from "../../componetes/loading";
+import Navbar from "../../componentes/navbar";
+import CardGestor from "../../componentes/card-gestor";
+import CardContato from "../../componentes/card-contato";
+import Carregando from "../../componentes/carregando";
 import "./style.css";
 import Api from "../../utils/api";
 import botaoEditar from "../../assets/icons/icon-lapis.png";
 import botaoInativar from "../../assets/icons/icon-inativar.png";
 import botaoAtivar from "../../assets/icons/icon-ativar.png";
 import imgCliente from "../../assets/images/img-cliente.png";
-import PopupInformacoes from "../../componetes/pop-up-informacoes-adicionais";
+import PopupInformacoes from "../../componentes/pop-up-informacoes-adicionais";
 import { useCookies } from "react-cookie";
-import Popup from "../../componetes/pop-up";
+import Popup from "../../componentes/pop-up";
 
 export default function Cliente() {
   const api = new Api();
@@ -166,7 +166,7 @@ export default function Cliente() {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <PopupInformacoes
           title={titulo}
@@ -207,8 +207,8 @@ export default function Cliente() {
                 onClick={() => {
                   cliente.status === "ativo"
                     ? setMessage(
-                        "Tem certeza que deseja inativar esse cliente? Todos os contratos serão inativados também."
-                      )
+                      "Tem certeza que deseja inativar esse cliente? Todos os contratos serão inativados também."
+                    )
                     : setMessage("Tem certeza que deseja ativar esse cliente?");
                   setPopUpAction(() => () => ativarOuInativar(cliente.id));
                   setShowModal(true);

@@ -3,106 +3,106 @@ import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeInativar from "../../assets/icons/icon-inativar.png";
 import iconeAtivar from "../../assets/icons/icon-ativar.png";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
 import { useNavigate } from "react-router-dom";
 
 export default function Faturados() {
   const api = new Api();
   const [faturados, setFaturados] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [popupConfig, setPopupConfig] = useState({
-    open: false,
-    title: "",
-    message: "",
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const [configuracaoPopup, setConfiguracaoPopup] = useState({
+    aberto: false,
+    titulo: "",
+    mensagem: "",
     id: null,
   });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const buscarDados = async () => {
       try {
-        setLoading(true);
+        setCarregando(true);
         const faturadosResponse = await api.get("/faturados");
         setFaturados(faturadosResponse.faturados);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Erro ao buscar dados:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
 
-    fetchData();
+    buscarDados();
   }, []);
 
-  const handleEdit = (id) => {
+  const editarFaturado = (id) => {
     navigate(`/edicao-faturado/${id}`);
   };
 
-  const handleStatusChange = (id, status) => {
-    const titles = {
+  const confirmarAlteracaoStatus = (id, status) => {
+    const titulos = {
       ativo: "Inativar Faturista",
       inativo: "Ativar Faturista",
     };
-    const messages = {
+    const mensagens = {
       ativo:
         "Tem certeza que deseja inativar este faturista? Após isso, ele não estará mais disponível.",
       inativo:
         "Tem certeza que deseja ativar este faturista? Após isso, ele estará disponível para uso.",
     };
-    setPopupConfig({
-      open: true,
-      title: titles[status],
-      message: messages[status],
+    setConfiguracaoPopup({
+      aberto: true,
+      titulo: titulos[status],
+      mensagem: mensagens[status],
       id,
     });
   };
 
-  const handleChangeStatus = async () => {
-    const { id } = popupConfig;
-    setPopupConfig((prev) => ({ ...prev, open: false }));
-    setLoading(true);
+  const alterarStatus = async () => {
+    const { id } = configuracaoPopup;
+    setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }));
+    setCarregando(true);
     try {
       const response = await api.get(`/faturados/${id}`);
-      const newStatus =
+      const novoStatus =
         response.faturado.status === "ativo" ? "inativo" : "ativo";
-      await api.put(`/faturados/${id}`, { status: newStatus });
+      await api.put(`/faturados/${id}`, { status: novoStatus });
       setFaturados((prev) =>
         prev.map((faturado) =>
-          faturado.id === id ? { ...faturado, status: newStatus } : faturado
+          faturado.id === id ? { ...faturado, status: novoStatus } : faturado
         )
       );
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const aoBuscar = (event) => {
+    setTermoBusca(event.target.value);
   };
 
-  const handleRedirect = (url) => {
+  const redirecionar = (url) => {
     navigate(url);
   };
 
-  const filteredFaturados = faturados.filter((faturado) =>
-    faturado.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  const faturadosFiltrados = faturados.filter((faturado) =>
+    faturado.nome.toLowerCase().includes(termoBusca.toLowerCase())
   );
 
-  const totalFaturados = filteredFaturados.length;
+  const totalFaturados = faturadosFiltrados.length;
 
   return (
     <>
-      {loading && <Loading />}
-      {popupConfig.open && (
+      {carregando && <Carregando />}
+      {configuracaoPopup.aberto && (
         <Popup
-          title={popupConfig.title}
-          message={popupConfig.message}
-          onConfirm={handleChangeStatus}
-          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
+          title={configuracaoPopup.titulo}
+          message={configuracaoPopup.mensagem}
+          onConfirm={alterarStatus}
+          onCancel={() => setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }))}
         />
       )}
       <div>
@@ -112,13 +112,13 @@ export default function Faturados() {
         <input
           type="text"
           placeholder="Procure pelo nome"
-          value={searchTerm}
-          onChange={handleSearch}
+          value={termoBusca}
+          onChange={aoBuscar}
           className="gestao-section-input"
         />
         <button
           className="gestao-section-btn"
-          onClick={() => handleRedirect("/cadastro-faturado")}
+          onClick={() => redirecionar("/cadastro-faturado")}
         >
           Adicionar faturista
         </button>
@@ -132,7 +132,7 @@ export default function Faturados() {
               </tr>
             </thead>
             <tbody>
-              {filteredFaturados.map((faturado) => (
+              {faturadosFiltrados.map((faturado) => (
                 <tr key={faturado.id}>
                   <td className="gestao-section-conteudo-tabela">
                     {faturado.nome}
@@ -144,14 +144,14 @@ export default function Faturados() {
                     <div className="gestao-section-container-btn">
                       <button
                         className="gestao-section-editar-btn gestao-section-item-btn"
-                        onClick={() => handleEdit(faturado.id)}
+                        onClick={() => editarFaturado(faturado.id)}
                       >
                         <img src={editIcon} alt="Editar" />
                       </button>
                       <button
                         className={`${faturado.status === "ativo" ? "gestao-section-excluir-btn" : "gestao-section-editar-btn"} gestao-section-item-btn`}
                         onClick={() =>
-                          handleStatusChange(faturado.id, faturado.status)
+                          confirmarAlteracaoStatus(faturado.id, faturado.status)
                         }
                       >
                         <img

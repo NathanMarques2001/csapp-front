@@ -1,11 +1,11 @@
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import "./style.css";
 import imgCadastroClassificacao from "../../assets/images/img-cadastro-classificacao.png";
 import Api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
 
 export default function FormClassificacaoClientes({ mode = "cadastro" }) {
   const api = new Api();
@@ -91,8 +91,8 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
       console.error("Resposta de erro detalhada:", err?.response?.data);
       alert(
         err?.response?.data?.message ||
-          err?.message ||
-          "Erro inesperado ao salvar a classificação."
+        err?.message ||
+        "Erro inesperado ao salvar a classificação."
       );
     } finally {
       setLoading(false);
@@ -105,7 +105,7 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           title={

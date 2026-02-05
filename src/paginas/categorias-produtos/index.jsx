@@ -3,98 +3,98 @@ import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeInativar from "../../assets/icons/icon-inativar.png";
 import iconeAtivar from "../../assets/icons/icon-ativar.png";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import { useNavigate } from "react-router-dom";
-import Popup from "../../componetes/pop-up";
+import Popup from "../../componentes/pop-up";
 
 export default function CategoriasProdutos() {
   const api = new Api();
   const [categorias, setCategorias] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const [atualizar, setAtualizar] = useState(0);
-  const [popupConfig, setPopupConfig] = useState({
-    open: false,
-    title: "",
-    message: "",
+  const [configuracaoPopup, setConfiguracaoPopup] = useState({
+    aberto: false,
+    titulo: "",
+    mensagem: "",
     id: null,
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCategorias = async () => {
+    const buscarCategorias = async () => {
       try {
-        setLoading(true);
+        setCarregando(true);
         const response = await api.get("/categorias-produtos");
         setCategorias(response.categorias);
       } catch (err) {
         console.error("Erro ao buscar categorias:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
 
-    fetchCategorias();
+    buscarCategorias();
   }, [atualizar]);
 
-  const handleEdit = (id) => navigate(`/edicao-categoria-produto/${id}`);
+  const editarCategoria = (id) => navigate(`/edicao-categoria-produto/${id}`);
 
-  const handleChangeStatus = async () => {
-    const { id } = popupConfig;
-    setPopupConfig((prev) => ({ ...prev, open: false }));
-    setLoading(true);
+  const alterarStatus = async () => {
+    const { id } = configuracaoPopup;
+    setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }));
+    setCarregando(true);
     try {
       const response = await api.get(`/categorias-produtos/${id}`);
-      const newStatus =
+      const novoStatus =
         response.categoria.status === "ativo" ? "inativo" : "ativo";
-      await api.put(`/categorias-produtos/${id}`, { status: newStatus });
+      await api.put(`/categorias-produtos/${id}`, { status: novoStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const handleStatusChange = (id, status) => {
-    const titles = {
+  const confirmarAlteracaoStatus = (id, status) => {
+    const titulos = {
       ativo: "Inativar Categoria",
       inativo: "Ativar Categoria",
     };
-    const messages = {
+    const mensagens = {
       ativo: "Tem certeza que deseja inativar esta categoria?",
       inativo: "Tem certeza que deseja ativar esta categoria?",
     };
-    setPopupConfig({
-      open: true,
-      title: titles[status],
-      message: messages[status],
+    setConfiguracaoPopup({
+      aberto: true,
+      titulo: titulos[status],
+      mensagem: mensagens[status],
       id,
     });
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const aoBuscar = (event) => {
+    setTermoBusca(event.target.value);
   };
 
-  const handleRedirect = (url) => {
+  const redirecionar = (url) => {
     navigate(url);
   };
 
   const categoriasFiltradas = categorias.filter((categoria) =>
-    categoria.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    categoria.nome.toLowerCase().includes(termoBusca.toLowerCase())
   );
 
   return (
     <>
-      {loading && <Loading />}
-      {popupConfig.open && (
+      {carregando && <Carregando />}
+      {configuracaoPopup.aberto && (
         <Popup
-          title={popupConfig.title}
-          message={popupConfig.message}
-          onConfirm={handleChangeStatus}
-          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
+          title={configuracaoPopup.titulo}
+          message={configuracaoPopup.mensagem}
+          onConfirm={alterarStatus}
+          onCancel={() => setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }))}
         />
       )}
       <div>
@@ -104,13 +104,13 @@ export default function CategoriasProdutos() {
         <input
           type="text"
           placeholder="Procure pelo nome da categoria"
-          value={searchTerm}
-          onChange={handleSearch}
+          value={termoBusca}
+          onChange={aoBuscar}
           className="gestao-section-input"
         />
         <button
           className="gestao-section-btn gestao-section-btn-verde"
-          onClick={() => handleRedirect("/cadastro-categoria-produto")}
+          onClick={() => redirecionar("/cadastro-categoria-produto")}
         >
           Adicionar categoria
         </button>
@@ -136,18 +136,17 @@ export default function CategoriasProdutos() {
                     <div className="gestao-section-container-btn">
                       <button
                         className="gestao-section-editar-btn gestao-section-item-btn"
-                        onClick={() => handleEdit(categoria.id)}
+                        onClick={() => editarCategoria(categoria.id)}
                       >
                         <img src={editIcon} alt="Editar" />
                       </button>
                       <button
-                        className={`${
-                          categoria.status === "ativo"
-                            ? "gestao-section-excluir-btn "
-                            : "gestao-section-editar-btn "
-                        } gestao-section-item-btn`}
+                        className={`${categoria.status === "ativo"
+                          ? "gestao-section-excluir-btn "
+                          : "gestao-section-editar-btn "
+                          } gestao-section-item-btn`}
                         onClick={() =>
-                          handleStatusChange(categoria.id, categoria.status)
+                          confirmarAlteracaoStatus(categoria.id, categoria.status)
                         }
                       >
                         <img

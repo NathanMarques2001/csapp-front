@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Excel from "../utils/excel";
-import Popup from "../componetes/pop-up";
+import Popup from "../componentes/pop-up";
 
 export default function RelatorioProdutos({ produtos, fabricantesMap }) {
   const excel = new Excel("Relatório de Produtos");
@@ -9,7 +9,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
     fabricante: "",
     status: "",
   });
-  const [openModal, setOpenModal] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
   const produtosFiltrados = produtos.filter(
@@ -20,19 +20,19 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
       (!filtros.status || produto.status === filtros.status)
   );
 
-  const data = produtosFiltrados.map((produto) => ({
+  const dadosExportacao = produtosFiltrados.map((produto) => ({
     Nome: produto.nome,
     Fabricante: fabricantesMap[produto.id_fabricante]?.nome || "Desconhecido",
     Status: produto.status,
   }));
 
-  const handleDownloadReport = (e) => {
+  const baixarRelatorio = (e) => {
     e.preventDefault();
-    excel.exportToExcel(data);
+    excel.exportToExcel(dadosExportacao);
     setAbrirPopup(false);
   };
 
-  const handleFiltroChange = (e) => {
+  const aoMudarFiltro = (e) => {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   };
 
@@ -42,12 +42,12 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
         <Popup
           title="Exportar Produtos"
           message="Tem certeza que deseja exportar o relatório de produtos?"
-          onConfirm={handleDownloadReport}
+          onConfirm={baixarRelatorio}
           onCancel={() => setAbrirPopup(false)}
         />
       )}
 
-      {openModal && (
+      {mostrarFiltros && (
         <div id="filter-container">
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
@@ -55,7 +55,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
               <select
                 name="nome"
                 value={filtros.nome}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {produtos.map((p) => (
@@ -71,7 +71,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
               <select
                 name="fabricante"
                 value={filtros.fabricante}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 {Object.values(fabricantesMap).map((f) => (
@@ -87,7 +87,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
               <select
                 name="status"
                 value={filtros.status}
-                onChange={handleFiltroChange}
+                onChange={aoMudarFiltro}
               >
                 <option value="">Selecione</option>
                 <option value="ativo">Ativo</option>
@@ -97,7 +97,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
 
             <button
               type="button"
-              onClick={() => setOpenModal(false)}
+              onClick={() => setMostrarFiltros(false)}
               id="filter-close-button"
               className="filter-button"
             >
@@ -108,7 +108,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
       )}
 
       <button
-        onClick={() => setOpenModal(true)}
+        onClick={() => setMostrarFiltros(true)}
         className="relatorio-button"
         id="relatorio-button-filtrar"
       >
@@ -131,7 +131,7 @@ export default function RelatorioProdutos({ produtos, fabricantesMap }) {
           </tr>
         </thead>
         <tbody>
-          {data.map((p, i) => (
+          {dadosExportacao.map((p, i) => (
             <tr key={i}>
               <td className="global-conteudo-tabela">{p["Nome"]}</td>
               <td className="global-conteudo-tabela">{p["Fabricante"]}</td>

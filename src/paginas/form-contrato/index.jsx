@@ -2,11 +2,11 @@ import "./style.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Api from "../../utils/api";
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import imgCadastroContrato from "../../assets/images/img-cadastro-contrato.png";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
-import formatDate from "../../utils/formatDate";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
+import Formatadores from "../../utils/formatadores";
 import { useCookies } from "react-cookie";
 import { format, parseISO } from "date-fns";
 
@@ -303,7 +303,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         id_faturado: Number(faturadoPor),
         dia_vencimento: Number(vencimento),
         nome_indice: reajuste,
-        proximo_reajuste: formatDate(proximoReajuste),
+        proximo_reajuste: Formatadores.formatarDataISO(proximoReajuste),
         status: "ativo",
         duracao: Number(duracao),
         valor_mensal: Number(valorMensal),
@@ -311,7 +311,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         email_envio: email,
         descricao: descricao,
         link_contrato: linkContrato,
-        data_inicio: formatDate(dataInicio),
+        data_inicio: Formatadores.formatarDataISO(dataInicio),
         tipo_faturamento: tipoFaturamento,
         id_usuario: cookies.id,
       };
@@ -376,7 +376,7 @@ export default function FormContrato({ mode = "cadastro" }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           message="Tem certeza que deseja continuar com esta ação?"
@@ -731,7 +731,7 @@ export default function FormContrato({ mode = "cadastro" }) {
                             .map((log) => (
                               <li key={log.id} className="log-item">
                                 <div className="log-date">
-                                  {formatDate(log.createdAt)}
+                                  {Formatadores.formatarData(log.createdAt)}
                                 </div>
                                 <div className="log-user">
                                   {log.nome_usuario ||

@@ -1,7 +1,7 @@
 // /relatorios/index.jsx
 import { useEffect, useState, useMemo } from "react";
-import Navbar from "../../componetes/navbar";
-import Loading from "../../componetes/loading";
+import Navbar from "../../componentes/navbar";
+import Carregando from "../../componentes/carregando";
 import RelatorioClientes from "../../relatorios/clientes";
 import RelatorioContratos from "../../relatorios/contratos";
 import RelatorioProdutos from "../../relatorios/produtos";
@@ -98,7 +98,7 @@ export default function Relatorios() {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       <div id="clientes-display">
         <Navbar />
         <div id="clientes-container">

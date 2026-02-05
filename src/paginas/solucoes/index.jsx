@@ -3,30 +3,30 @@ import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeInativar from "../../assets/icons/icon-inativar.png";
 import iconeAtivar from "../../assets/icons/icon-ativar.png";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import { useNavigate } from "react-router-dom";
-import Popup from "../../componetes/pop-up";
+import Popup from "../../componentes/pop-up";
 
 export default function Solucoes() {
   const api = new Api();
   const [produtos, setProdutos] = useState([]);
   const [fabricantes, setFabricantes] = useState({});
   const [categorias, setCategorias] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const [atualizar, setAtualizar] = useState(0);
-  const [popupConfig, setPopupConfig] = useState({
-    open: false,
-    title: "",
-    message: "",
+  const [configuracaoPopup, setConfiguracaoPopup] = useState({
+    aberto: false,
+    titulo: "",
+    mensagem: "",
     id: null,
   });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const buscarDados = async () => {
       try {
-        setLoading(true);
+        setCarregando(true);
         const produtosResponse = await api.get("/produtos");
         setProdutos(produtosResponse.produtos);
 
@@ -52,76 +52,76 @@ export default function Solucoes() {
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
 
-    fetchData();
+    buscarDados();
   }, [atualizar]);
 
-  const handleEdit = (id) => navigate(`/edicao-solucao/${id}`);
+  const editarSolucao = (id) => navigate(`/edicao-solucao/${id}`);
 
-  const handleChangeStatus = async () => {
-    const { id } = popupConfig;
-    setPopupConfig((prev) => ({ ...prev, open: false }));
-    setLoading(true);
+  const alterarStatus = async () => {
+    const { id } = configuracaoPopup;
+    setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }));
+    setCarregando(true);
     try {
       const response = await api.get(`/produtos/${id}`);
-      const newStatus =
+      const novoStatus =
         response.produto.status === "ativo" ? "inativo" : "ativo";
-      await api.put(`/produtos/${id}`, { status: newStatus });
+      await api.put(`/produtos/${id}`, { status: novoStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const handleStatusChange = (id, status) => {
-    const titles = {
+  const confirmarAlteracaoStatus = (id, status) => {
+    const titulos = {
       ativo: "Inativar Solução",
       inativo: "Ativar Solução",
     };
-    const messages = {
+    const mensagens = {
       ativo: "Tem certeza que deseja inativar esta solução?",
       inativo: "Tem certeza que deseja ativar esta solução?",
     };
-    setPopupConfig({
-      open: true,
-      title: titles[status],
-      message: messages[status],
+    setConfiguracaoPopup({
+      aberto: true,
+      titulo: titulos[status],
+      mensagem: mensagens[status],
       id,
     });
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const aoBuscar = (event) => {
+    setTermoBusca(event.target.value);
   };
 
-  const handleRedirect = (url) => {
+  const redirecionar = (url) => {
     navigate(url);
   };
 
-  const filteredProdutos = produtos.filter((produto) => {
+  const produtosFiltrados = produtos.filter((produto) => {
     const fornecedorNome = fabricantes[produto.id_fabricante] || "";
     return (
-      produto.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fornecedorNome.toLowerCase().includes(searchTerm.toLowerCase())
+      produto.nome.toLowerCase().includes(termoBusca.toLowerCase()) ||
+      fornecedorNome.toLowerCase().includes(termoBusca.toLowerCase())
     );
   });
 
-  const totalSolucoes = filteredProdutos.length;
+  const totalSolucoes = produtosFiltrados.length;
 
   return (
     <>
-      {loading && <Loading />}
-      {popupConfig.open && (
+      {carregando && <Carregando />}
+      {configuracaoPopup.aberto && (
         <Popup
-          title={popupConfig.title}
-          message={popupConfig.message}
-          onConfirm={handleChangeStatus}
-          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
+          title={configuracaoPopup.titulo}
+          message={configuracaoPopup.mensagem}
+          onConfirm={alterarStatus}
+          onCancel={() => setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }))}
         />
       )}
       <div>
@@ -129,13 +129,13 @@ export default function Solucoes() {
         <input
           type="text"
           placeholder="Procure pelo nome ou fornecedor"
-          value={searchTerm}
-          onChange={handleSearch}
+          value={termoBusca}
+          onChange={aoBuscar}
           className="gestao-section-input"
         />
         <button
           className="gestao-section-btn gestao-section-btn-verde"
-          onClick={() => handleRedirect("/cadastro-solucao")}
+          onClick={() => redirecionar("/cadastro-solucao")}
         >
           Adicionar solução
         </button>
@@ -151,7 +151,7 @@ export default function Solucoes() {
               </tr>
             </thead>
             <tbody>
-              {filteredProdutos.map((produto) => (
+              {produtosFiltrados.map((produto) => (
                 <tr key={produto.id}>
                   <td className="gestao-section-conteudo-tabela">
                     {produto.nome}
@@ -169,14 +169,14 @@ export default function Solucoes() {
                     <div className="gestao-section-container-btn">
                       <button
                         className="gestao-section-editar-btn gestao-section-item-btn"
-                        onClick={() => handleEdit(produto.id)}
+                        onClick={() => editarSolucao(produto.id)}
                       >
                         <img src={editIcon} alt="Editar" />
                       </button>
                       <button
                         className={`${produto.status === "ativo" ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
                         onClick={() =>
-                          handleStatusChange(produto.id, produto.status)
+                          confirmarAlteracaoStatus(produto.id, produto.status)
                         }
                       >
                         <img

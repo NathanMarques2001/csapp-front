@@ -1,89 +1,85 @@
 import { useEffect, useState } from "react";
 import Api from "../../utils/api";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeExcluir from "../../assets/icons/icon-lixeira.png";
 import { useNavigate } from "react-router-dom";
-import formataTipoUsuario from "../../utils/formatUserType";
-import PopUpMigrate from "../../componetes/pop-up-migrate";
+import formataTipoUsuario from "../../utils/formataTipoUsuario";
+import PopUpMigrate from "../../componentes/pop-up-migrate";
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
 
 export default function Usuarios() {
   const api = new Api();
-  const [response, setResponse] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [resposta, setResposta] = useState(null);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const [modalAberto, setModalAberto] = useState(false);
   const [idAntigo, setIdAntigo] = useState(null);
   const [reload, setReload] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const buscarDados = async () => {
       try {
-        setLoading(true);
-        const data = await api.get("/usuarios");
-        setResponse(data);
+        setCarregando(true);
+        const dados = await api.get("/usuarios");
+        setResposta(dados);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Erro ao buscar dados:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
-    fetchData();
+    buscarDados();
   }, [reload]);
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const aoBuscar = (event) => {
+    setTermoBusca(event.target.value);
   };
 
-  const handleEditUser = async (id) => {
+  const editarUsuario = async (id) => {
     try {
-      setLoading(true);
-      const userData = await api.get(`/usuarios/${id}`);
-      if (userData) {
-        navigate(`/edicao-usuario/${id}`, { state: { userData } });
+      setCarregando(true);
+      const dadosUsuario = await api.get(`/usuarios/${id}`);
+      if (dadosUsuario) {
+        navigate(`/edicao-usuario/${id}`, { state: { userData: dadosUsuario } });
       } else {
         console.error(`Usuário com id ${id} não encontrado.`);
       }
     } catch (err) {
       console.error("Erro ao buscar usuário:", err);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const handleDelete = (id) => {
+  const excluirUsuario = (id) => {
     setModalAberto(true);
     setIdAntigo(id);
   };
 
-  const handleCloseModal = () => {
+  const fecharModal = () => {
     setModalAberto(false);
   };
 
-  const filteredUsuarios =
-    response && response.usuarios
-      ? response.usuarios.filter((usuario) =>
-          usuario.nome.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+  const usuariosFiltrados =
+    resposta && resposta.usuarios
+      ? resposta.usuarios.filter((usuario) =>
+        usuario.nome.toLowerCase().includes(termoBusca.toLowerCase())
+      )
       : [];
 
-  const totalUsuarios = filteredUsuarios.length;
-
-  // const handleAddUser = () => {
-  //   navigate("/cadastro-usuario");
-  // };
+  const totalUsuarios = usuariosFiltrados.length;
 
   return (
     <>
-      {loading && <Loading />}
+      {carregando && <Carregando />}
       {modalAberto && (
         <PopUpMigrate
           id_antigo={idAntigo}
-          fechar={handleCloseModal}
+          fechar={fecharModal}
           reload={() => setReload((prev) => prev + 1)}
         />
       )}
@@ -92,8 +88,8 @@ export default function Usuarios() {
         <input
           type="text"
           placeholder="Procure pelo seu nome"
-          value={searchTerm}
-          onChange={handleSearch}
+          value={termoBusca}
+          onChange={aoBuscar}
           className="gestao-section-input"
         />
         {/* <button
@@ -102,7 +98,7 @@ export default function Usuarios() {
         >
           Adicionar Usuário
         </button> */}
-        {response && response.usuarios ? (
+        {resposta && resposta.usuarios ? (
           <table className="gestao-section-tabela">
             <thead>
               <tr>
@@ -113,7 +109,7 @@ export default function Usuarios() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsuarios.map((usuario) => (
+              {usuariosFiltrados.map((usuario) => (
                 <tr key={usuario.id}>
                   <td className="gestao-section-conteudo-tabela">
                     {usuario.nome}
@@ -127,14 +123,14 @@ export default function Usuarios() {
                   <td className="gestao-section-conteudo-tabela gestao-section-container-btn">
                     <button
                       className="gestao-section-editar-btn gestao-section-item-btn"
-                      onClick={() => handleEditUser(usuario.id)}
+                      onClick={() => editarUsuario(usuario.id)}
                       disabled={usuario.tipo == "Dev"}
                     >
                       <img src={editIcon} alt="" />
                     </button>
                     <button
                       className="gestao-section-excluir-btn gestao-section-item-btn"
-                      onClick={() => handleDelete(usuario.id)}
+                      onClick={() => excluirUsuario(usuario.id)}
                       disabled={usuario.tipo == "Dev"}
                     >
                       <img src={iconeExcluir} alt="" />

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import Api from "../../utils/api";
 import imgCadastroGrupoEconomico from "../../assets/images/img-cadastro-grupo-economico.png";
 import "./style.css";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
 
 export default function FormGrupoEconomico({ mode = "cadastro" }) {
   const api = new Api();
@@ -77,7 +77,7 @@ export default function FormGrupoEconomico({ mode = "cadastro" }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           title={

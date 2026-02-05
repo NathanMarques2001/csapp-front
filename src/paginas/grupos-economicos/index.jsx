@@ -3,93 +3,93 @@ import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeInativar from "../../assets/icons/icon-inativar.png";
 import iconeAtivar from "../../assets/icons/icon-ativar.png";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import { useNavigate } from "react-router-dom";
-import Popup from "../../componetes/pop-up";
+import Popup from "../../componentes/pop-up";
 
 export default function GruposEconomicos() {
   const api = new Api();
   const [gruposEconomicos, setGruposEconomicos] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const [atualizar, setAtualizar] = useState(0);
-  const [popupConfig, setPopupConfig] = useState({
-    open: false,
-    title: "",
-    message: "",
+  const [configuracaoPopup, setConfiguracaoPopup] = useState({
+    aberto: false,
+    titulo: "",
+    mensagem: "",
     id: null,
   });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const buscarDados = async () => {
       try {
-        setLoading(true);
+        setCarregando(true);
         const response = await api.get("/grupos-economicos");
         setGruposEconomicos(response.grupoEconomico);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Erro ao buscar dados:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
 
-    fetchData();
+    buscarDados();
   }, [atualizar]);
 
-  const handleEdit = (id) => navigate(`/edicao-grupo-economico/${id}`);
+  const editarGrupoEconomico = (id) => navigate(`/edicao-grupo-economico/${id}`);
 
-  const handleChangeStatus = async () => {
-    const { id } = popupConfig;
-    setPopupConfig((prev) => ({ ...prev, open: false }));
-    setLoading(true);
+  const alterarStatus = async () => {
+    const { id } = configuracaoPopup;
+    setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }));
+    setCarregando(true);
     try {
       const response = await api.get(`/grupos-economicos/${id}`);
-      const newStatus =
+      const novoStatus =
         response.grupoEconomico.status === "ativo" ? "inativo" : "ativo";
-      await api.put(`/grupos-economicos/${id}`, { status: newStatus });
+      await api.put(`/grupos-economicos/${id}`, { status: novoStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const handleStatusChange = (id, status) => {
-    const titles = {
+  const confirmarAlteracaoStatus = (id, status) => {
+    const titulos = {
       ativo: "Inativar Segmento",
       inativo: "Ativar Segmento",
     };
-    const messages = {
+    const mensagens = {
       ativo:
         "Tem certeza que deseja inativar este segmento? Após isso, não será possível criar clientes com o mesmo.",
       inativo:
         "Tem certeza que deseja ativar este segmento? Após isso, será possível criar clientes com o mesmo.",
     };
-    setPopupConfig({
-      open: true,
-      title: titles[status],
-      message: messages[status],
+    setConfiguracaoPopup({
+      aberto: true,
+      titulo: titulos[status],
+      mensagem: mensagens[status],
       id,
     });
   };
 
-  const filteredGruposEconomicos = gruposEconomicos.filter(({ nome }) =>
-    nome.toLowerCase().includes(searchTerm.toLowerCase())
+  const gruposEconomicosFiltrados = gruposEconomicos.filter(({ nome }) =>
+    nome.toLowerCase().includes(termoBusca.toLowerCase())
   );
 
-  const totalGruposEconomicos = filteredGruposEconomicos.length;
+  const totalGruposEconomicos = gruposEconomicosFiltrados.length;
 
   return (
     <>
-      {loading && <Loading />}
-      {popupConfig.open && (
+      {carregando && <Carregando />}
+      {configuracaoPopup.aberto && (
         <Popup
-          title={popupConfig.title}
-          message={popupConfig.message}
-          onConfirm={handleChangeStatus}
-          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
+          title={configuracaoPopup.titulo}
+          message={configuracaoPopup.mensagem}
+          onConfirm={alterarStatus}
+          onCancel={() => setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }))}
         />
       )}
       <div>
@@ -99,8 +99,8 @@ export default function GruposEconomicos() {
         <input
           type="text"
           placeholder="Procure pelo nome"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={termoBusca}
+          onChange={(e) => setTermoBusca(e.target.value)}
           className="gestao-section-input"
         />
         <button
@@ -119,7 +119,7 @@ export default function GruposEconomicos() {
               </tr>
             </thead>
             <tbody>
-              {filteredGruposEconomicos.map(({ id, nome, status }) => (
+              {gruposEconomicosFiltrados.map(({ id, nome, status }) => (
                 <tr key={id}>
                   <td className="gestao-section-conteudo-tabela">{nome}</td>
                   {/* <td className="gestao-section-conteudo-tabela">{status}</td> */}
@@ -127,13 +127,13 @@ export default function GruposEconomicos() {
                     <div className="gestao-section-container-btn">
                       <button
                         className="gestao-section-editar-btn gestao-section-item-btn"
-                        onClick={() => handleEdit(id)}
+                        onClick={() => editarGrupoEconomico(id)}
                       >
                         <img src={editIcon} alt="Editar" />
                       </button>
                       <button
                         className={`${status === "ativo" ? "gestao-section-excluir-btn " : "gestao-section-editar-btn "} gestao-section-item-btn`}
-                        onClick={() => handleStatusChange(id, status)}
+                        onClick={() => confirmarAlteracaoStatus(id, status)}
                       >
                         <img
                           src={status === "ativo" ? iconeInativar : iconeAtivar}

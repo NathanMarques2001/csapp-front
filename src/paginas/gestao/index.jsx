@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import "./style.css";
 import Solucoes from "../solucoes";
 import Usuarios from "../usuarios";
@@ -19,91 +19,91 @@ export default function Gestao() {
   const queryParams = new URLSearchParams(location.search);
   const aba = queryParams.get("aba") || "categorias-produtos";
 
-  const [selectedItem, setSelectedItem] = useState(aba);
+  const [itemSelecionado, setItemSelecionado] = useState(aba);
 
-  const handleClick = (item) => {
-    setSelectedItem(item);
+  const selecionarItem = (item) => {
+    setItemSelecionado(item);
   };
 
   useEffect(() => {
-    setSelectedItem(aba);
+    setItemSelecionado(aba);
   }, [aba]);
 
   return (
-    <body id="gestao-display">
+    <div id="gestao-display">
       <Navbar />
       <div id="gestao-container">
         <h1 id="central-gestao-titulo">Central de Gestão</h1>
         <div id="central-gestao-switch-container">
           <p
-            className={`switch-item ${selectedItem === "categorias-produtos" ? "active" : ""}`}
-            onClick={() => handleClick("categorias-produtos")}
+            className={`switch-item ${itemSelecionado === "categorias-produtos" ? "active" : ""}`}
+            onClick={() => selecionarItem("categorias-produtos")}
           >
             Categorias
             <br />
             Produtos/Serviços
           </p>
           <p
-            className={`switch-item ${selectedItem === "classificacoes-clientes" ? "active" : ""}`}
-            onClick={() => handleClick("classificacoes-clientes")}
+            className={`switch-item ${itemSelecionado === "classificacoes-clientes" ? "active" : ""}`}
+            onClick={() => selecionarItem("classificacoes-clientes")}
           >
             Classificações
             <br />
             Clientes
           </p>
           <p
-            className={`switch-item ${selectedItem === "grupos-economicos" ? "active" : ""}`}
-            onClick={() => handleClick("grupos-economicos")}
+            className={`switch-item ${itemSelecionado === "grupos-economicos" ? "active" : ""}`}
+            onClick={() => selecionarItem("grupos-economicos")}
           >
             Grupos
             <br />
             Econômicos
           </p>
           <p
-            className={`switch-item ${selectedItem === "faturados" ? "active" : ""}`}
-            onClick={() => handleClick("faturados")}
+            className={`switch-item ${itemSelecionado === "faturados" ? "active" : ""}`}
+            onClick={() => selecionarItem("faturados")}
           >
             Faturista
           </p>
           <p
-            className={`switch-item ${selectedItem === "fabricantes" ? "active" : ""}`}
-            onClick={() => handleClick("fabricantes")}
+            className={`switch-item ${itemSelecionado === "fabricantes" ? "active" : ""}`}
+            onClick={() => selecionarItem("fabricantes")}
           >
             Fornecedores
           </p>
           <p
-            className={`switch-item ${selectedItem === "segmentos" ? "active" : ""}`}
-            onClick={() => handleClick("segmentos")}
+            className={`switch-item ${itemSelecionado === "segmentos" ? "active" : ""}`}
+            onClick={() => selecionarItem("segmentos")}
           >
             Segmentos
           </p>
           <p
-            className={`switch-item ${selectedItem === "solucoes" ? "active" : ""}`}
-            onClick={() => handleClick("solucoes")}
+            className={`switch-item ${itemSelecionado === "solucoes" ? "active" : ""}`}
+            onClick={() => selecionarItem("solucoes")}
           >
             Produtos/Serviços
           </p>
           <p
-            className={`switch-item ${selectedItem === "usuarios" ? "active" : ""}`}
-            onClick={() => handleClick("usuarios")}
+            className={`switch-item ${itemSelecionado === "usuarios" ? "active" : ""}`}
+            onClick={() => selecionarItem("usuarios")}
           >
             Usuários
           </p>
         </div>
 
         <div>
-          {selectedItem === "categorias-produtos" && <CategoriasProdutos />}
-          {selectedItem === "classificacoes-clientes" && (
+          {itemSelecionado === "categorias-produtos" && <CategoriasProdutos />}
+          {itemSelecionado === "classificacoes-clientes" && (
             <ClassificacoesClientes />
           )}
-          {selectedItem === "grupos-economicos" && <GruposEconomicos />}
-          {selectedItem === "usuarios" && <Usuarios />}
-          {selectedItem === "solucoes" && <Solucoes />}
-          {selectedItem === "fabricantes" && <Fabricantes />}
-          {selectedItem === "segmentos" && <Segmentos />}
-          {selectedItem === "faturados" && <Faturados />}
+          {itemSelecionado === "grupos-economicos" && <GruposEconomicos />}
+          {itemSelecionado === "usuarios" && <Usuarios />}
+          {itemSelecionado === "solucoes" && <Solucoes />}
+          {itemSelecionado === "fabricantes" && <Fabricantes />}
+          {itemSelecionado === "segmentos" && <Segmentos />}
+          {itemSelecionado === "faturados" && <Faturados />}
         </div>
       </div>
-    </body>
+    </div>
   );
 }

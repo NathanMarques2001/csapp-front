@@ -2,10 +2,8 @@ import axios from "axios";
 import cookie from "cookie";
 
 class Api {
-  // PRD
-  //static baseUrl = "https://csapp.prolinx.com.br/api";
-  // DEV
-  static baseUrl = "http://localhost:8080/api";
+  // Configuração via variável de ambiente (Padrão CRA)
+  static baseUrl = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 
   constructor() {
     this.api = axios.create({

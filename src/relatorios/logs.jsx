@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import Excel from "../utils/excel";
-import Popup from "../componetes/pop-up";
+import Popup from "../componentes/pop-up";
 
 export default function RelatorioLogs({ logs = [], contratos = [], clientes = [], produtos = [] }) {
   const excel = new Excel("Relatório de Logs");
   const [filtros, setFiltros] = useState({ usuario: "", cliente: "", statusCliente: "", solucao: "" });
-  const [openModal, setOpenModal] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
   const contratosMap = useMemo(() => {
@@ -36,7 +36,7 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
     return Array.from(s);
   }, [logs, contratosMap, clientesMap]);
 
-  const produtosList = useMemo(() => {
+  const listaProdutos = useMemo(() => {
     const s = new Set();
     (logs || []).forEach((l) => {
       const contrato = contratosMap[l.id_contrato];
@@ -48,7 +48,7 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
     return Array.from(s);
   }, [logs, contratosMap, produtosMap]);
 
-  const statusList = useMemo(() => {
+  const listaStatus = useMemo(() => {
     const s = new Set();
     Object.values(clientesMap).forEach((c) => { if (c && c.status) s.add(c.status); });
     return Array.from(s);
@@ -70,19 +70,19 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
   });
 
   // Expand logs: one row per alteração
-  const data = [];
+  const dadosExportacao = [];
   logsFiltrados.forEach((l) => {
     const contrato = contratosMap[l.id_contrato];
     const cliente = contrato ? clientesMap[contrato.id_cliente] : null;
     const produto = contrato ? produtosMap[contrato.id_produto] : null;
 
-    const alteracaoLines = (l.alteracao || "")
+    const linhasAlteracao = (l.alteracao || "")
       .split(";")
       .map((s) => s.trim())
       .filter(Boolean);
 
-    if (alteracaoLines.length === 0) {
-      data.push({
+    if (linhasAlteracao.length === 0) {
+      dadosExportacao.push({
         Usuario: l.nome_usuario || "Sistema",
         Cliente: cliente ? cliente.nome_fantasia : "Desconhecido",
         StatusCliente: cliente ? cliente.status || "" : "",
@@ -91,26 +91,26 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
         Data: l.createdAt ? new Date(l.createdAt).toLocaleString() : "",
       });
     } else {
-      alteracaoLines.forEach((line) => {
-        data.push({
+      linhasAlteracao.forEach((linha) => {
+        dadosExportacao.push({
           Usuario: l.nome_usuario || "Sistema",
           Cliente: cliente ? cliente.nome_fantasia : "Desconhecido",
           StatusCliente: cliente ? cliente.status || "" : "",
           Solucao: produto ? produto.nome : "Desconhecido",
-          Alteracao: line,
+          Alteracao: linha,
           Data: l.createdAt ? new Date(l.createdAt).toLocaleString() : "",
         });
       });
     }
   });
 
-  function handleDownloadReport(e) {
+  function baixarRelatorio(e) {
     e.preventDefault();
-    excel.exportToExcel(data);
+    excel.exportToExcel(dadosExportacao);
     setAbrirPopup(false);
   }
 
-  function handleFiltroChange(e) {
+  function aoMudarFiltro(e) {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   }
 
@@ -120,17 +120,17 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
         <Popup
           title="Exportar Logs"
           message="Tem certeza que deseja exportar o relatório de logs?"
-          onConfirm={handleDownloadReport}
+          onConfirm={baixarRelatorio}
           onCancel={() => setAbrirPopup(false)}
         />
       )}
 
-      {openModal && (
+      {mostrarFiltros && (
         <div id="filter-container">
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
               <label>Usuário:</label>
-              <select name="usuario" value={filtros.usuario} onChange={handleFiltroChange}>
+              <select name="usuario" value={filtros.usuario} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {Array.from(new Set(logs.map((l) => l.nome_usuario))).map((u) => (
                   <option key={u} value={u}>
@@ -142,7 +142,7 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
 
             <div className="form-group">
               <label>Cliente:</label>
-              <select name="cliente" value={filtros.cliente} onChange={handleFiltroChange}>
+              <select name="cliente" value={filtros.cliente} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {clientesNomes.map((cn) => (
                   <option key={cn} value={cn}>
@@ -154,9 +154,9 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
 
             <div className="form-group">
               <label>Status Cliente:</label>
-              <select name="statusCliente" value={filtros.statusCliente} onChange={handleFiltroChange}>
+              <select name="statusCliente" value={filtros.statusCliente} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
-                {statusList.map((s) => (
+                {listaStatus.map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
@@ -164,22 +164,22 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
 
             <div className="form-group">
               <label>Solução:</label>
-              <select name="solucao" value={filtros.solucao} onChange={handleFiltroChange}>
+              <select name="solucao" value={filtros.solucao} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
-                {produtosList.map((p) => (
+                {listaProdutos.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
               </select>
             </div>
 
-            <button type="button" onClick={() => setOpenModal(false)} id="filter-close-button" className="filter-button">
+            <button type="button" onClick={() => setMostrarFiltros(false)} id="filter-close-button" className="filter-button">
               Fechar
             </button>
           </form>
         </div>
       )}
 
-      <button onClick={() => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">
+      <button onClick={() => setMostrarFiltros(true)} className="relatorio-button" id="relatorio-button-filtrar">
         Filtrar
       </button>
       <button onClick={() => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">
@@ -198,20 +198,20 @@ export default function RelatorioLogs({ logs = [], contratos = [], clientes = []
           </tr>
         </thead>
         <tbody>
-          {data.map((row, i) => (
+          {dadosExportacao.map((linha, i) => (
             <tr key={i}>
-              <td className="global-conteudo-tabela">{row.Usuario}</td>
-              <td className="global-conteudo-tabela">{row.Cliente}</td>
-              <td className="global-conteudo-tabela">{row.StatusCliente}</td>
-              <td className="global-conteudo-tabela">{row.Solucao}</td>
+              <td className="global-conteudo-tabela">{linha.Usuario}</td>
+              <td className="global-conteudo-tabela">{linha.Cliente}</td>
+              <td className="global-conteudo-tabela">{linha.StatusCliente}</td>
+              <td className="global-conteudo-tabela">{linha.Solucao}</td>
               <td className="global-conteudo-tabela">
-                {String(row.Alteracao)
+                {String(linha.Alteracao)
                   .split('\n')
-                  .map((line, idx) => (
-                    <div key={idx}>{line}</div>
+                  .map((texto, idx) => (
+                    <div key={idx}>{texto}</div>
                   ))}
               </td>
-              <td className="global-conteudo-tabela">{row.Data}</td>
+              <td className="global-conteudo-tabela">{linha.Data}</td>
             </tr>
           ))}
         </tbody>

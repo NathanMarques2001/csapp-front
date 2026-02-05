@@ -1,11 +1,11 @@
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import "./style.css";
 import imgCadastroCategoriaProduto from "../../assets/images/img-cadastro-categoria-produto.png";
 import Api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
 
 export default function FormCategoriaProduto({ mode = "cadastro" }) {
   const api = new Api();
@@ -79,7 +79,7 @@ export default function FormCategoriaProduto({ mode = "cadastro" }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           title={

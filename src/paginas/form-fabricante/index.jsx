@@ -1,11 +1,11 @@
-import Navbar from "../../componetes/navbar";
+import Navbar from "../../componentes/navbar";
 import "./style.css";
 import imgCadastroFabricante from "../../assets/images/img-cadastro-fornecedor.png";
 import Api from "../../utils/api";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -81,7 +81,7 @@ export default function FormFabricante({ mode = "cadastro" }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           title={

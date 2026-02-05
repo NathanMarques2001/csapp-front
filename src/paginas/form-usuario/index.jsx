@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import imgCadastroUsuarios from "../../assets/images/img-cadastro-usuario.png";
 import Api from "../../utils/api"; // Assuming you have an API module
 import { useParams, useNavigate } from "react-router-dom";
-import Loading from "../../componetes/loading";
-import Popup from "../../componetes/pop-up";
-import Navbar from "../../componetes/navbar";
+import Carregando from "../../componentes/carregando";
+import Popup from "../../componentes/pop-up";
+import Navbar from "../../componentes/navbar";
 // Bibliotecas
 // Componentes
 // Estilos, funcoes, classes, imagens e etc
@@ -127,7 +127,7 @@ export default function FormUsuario({ mode = "cadastro" }) {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       {showPopup && (
         <Popup
           title={

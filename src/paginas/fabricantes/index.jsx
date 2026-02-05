@@ -3,103 +3,103 @@ import Api from "../../utils/api";
 import editIcon from "../../assets/icons/icon-lapis.png";
 import iconeInativar from "../../assets/icons/icon-inativar.png";
 import iconeAtivar from "../../assets/icons/icon-ativar.png";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import { useNavigate } from "react-router-dom";
-import Popup from "../../componetes/pop-up";
+import Popup from "../../componentes/pop-up";
 
 export default function Fabricantes() {
   const api = new Api();
   const [fabricantes, setFabricantes] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [termoBusca, setTermoBusca] = useState("");
+  const [carregando, setCarregando] = useState(false);
   const [atualizar, setAtualizar] = useState(0);
-  const [popupConfig, setPopupConfig] = useState({
-    open: false,
-    title: "",
-    message: "",
+  const [configuracaoPopup, setConfiguracaoPopup] = useState({
+    aberto: false,
+    titulo: "",
+    mensagem: "",
     id: null,
   });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const buscarDados = async () => {
       try {
-        setLoading(true);
+        setCarregando(true);
         const fabricantesResponse = await api.get("/fabricantes");
         setFabricantes(fabricantesResponse.fabricantes);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        console.error("Erro ao buscar dados:", err);
       } finally {
-        setLoading(false);
+        setCarregando(false);
       }
     };
 
-    fetchData();
+    buscarDados();
   }, [atualizar]);
 
-  const handleEdit = (id) => {
+  const editarFabricante = (id) => {
     navigate(`/edicao-fabricante/${id}`);
   };
 
-  const handleChangeStatus = async () => {
-    const { id } = popupConfig;
-    setPopupConfig((prev) => ({ ...prev, open: false }));
-    setLoading(true);
+  const alterarStatus = async () => {
+    const { id } = configuracaoPopup;
+    setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }));
+    setCarregando(true);
     try {
       const response = await api.get(`/fabricantes/${id}`);
-      const newStatus =
+      const novoStatus =
         response.fabricante.status === "ativo" ? "inativo" : "ativo";
-      await api.put(`/fabricantes/${id}`, { status: newStatus });
+      await api.put(`/fabricantes/${id}`, { status: novoStatus });
       setAtualizar((prev) => prev + 1);
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const handleStatusChange = (id, status) => {
-    const titles = {
+  const confirmarAlteracaoStatus = (id, status) => {
+    const titulos = {
       ativo: "Inativar Fabricante",
       inativo: "Ativar Fabricante",
     };
-    const messages = {
+    const mensagens = {
       ativo:
         "Tem certeza que deseja inativar este fabricante? Após isso, não será possível utilizar este fabricante em novos produtos.",
       inativo:
         "Tem certeza que deseja ativar este fabricante? Após isso, será possível utilizar este fabricante em novos produtos.",
     };
-    setPopupConfig({
-      open: true,
-      title: titles[status],
-      message: messages[status],
+    setConfiguracaoPopup({
+      aberto: true,
+      titulo: titulos[status],
+      mensagem: mensagens[status],
       id,
     });
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  const aoBuscar = (event) => {
+    setTermoBusca(event.target.value);
   };
 
-  const handleRedirect = (url) => {
+  const redirecionar = (url) => {
     navigate(url);
   };
 
-  const filteredFabricantes = fabricantes.filter((fabricante) =>
-    fabricante.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  const fabricantesFiltrados = fabricantes.filter((fabricante) =>
+    fabricante.nome.toLowerCase().includes(termoBusca.toLowerCase())
   );
 
-  const totalFabricantes = filteredFabricantes.length;
+  const totalFabricantes = fabricantesFiltrados.length;
 
   return (
     <>
-      {loading && <Loading />}
-      {popupConfig.open && (
+      {carregando && <Carregando />}
+      {configuracaoPopup.aberto && (
         <Popup
-          title={popupConfig.title}
-          message={popupConfig.message}
-          onConfirm={handleChangeStatus}
-          onCancel={() => setPopupConfig((prev) => ({ ...prev, open: false }))}
+          title={configuracaoPopup.titulo}
+          message={configuracaoPopup.mensagem}
+          onConfirm={alterarStatus}
+          onCancel={() => setConfiguracaoPopup((prev) => ({ ...prev, aberto: false }))}
         />
       )}
       <div>
@@ -109,13 +109,13 @@ export default function Fabricantes() {
         <input
           type="text"
           placeholder="Procure pelo nome"
-          value={searchTerm}
-          onChange={handleSearch}
+          value={termoBusca}
+          onChange={aoBuscar}
           className="gestao-section-input"
         />
         <button
           className="gestao-section-btn"
-          onClick={() => handleRedirect("/cadastro-fabricante")}
+          onClick={() => redirecionar("/cadastro-fabricante")}
         >
           Adicionar fornecedor
         </button>
@@ -129,7 +129,7 @@ export default function Fabricantes() {
               </tr>
             </thead>
             <tbody>
-              {filteredFabricantes.map(({ id, nome, status }) => (
+              {fabricantesFiltrados.map(({ id, nome, status }) => (
                 <tr key={id}>
                   <td className="gestao-section-conteudo-tabela">{nome}</td>
                   <td className="gestao-section-conteudo-tabela">{status}</td>
@@ -137,17 +137,16 @@ export default function Fabricantes() {
                     <div className="gestao-section-container-btn">
                       <button
                         className="gestao-section-editar-btn gestao-section-item-btn"
-                        onClick={() => handleEdit(id)}
+                        onClick={() => editarFabricante(id)}
                       >
                         <img src={editIcon} alt="Editar" />
                       </button>
                       <button
-                        className={`${
-                          status === "ativo"
-                            ? "gestao-section-excluir-btn"
-                            : "gestao-section-editar-btn"
-                        } gestao-section-item-btn`}
-                        onClick={() => handleStatusChange(id, status)}
+                        className={`${status === "ativo"
+                          ? "gestao-section-excluir-btn"
+                          : "gestao-section-editar-btn"
+                          } gestao-section-item-btn`}
+                        onClick={() => confirmarAlteracaoStatus(id, status)}
                       >
                         <img
                           src={status === "ativo" ? iconeInativar : iconeAtivar}

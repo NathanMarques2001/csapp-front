@@ -136,7 +136,7 @@ export default function Rotas() {
 
         {/* --- ROTAS DE ADMIN --- */}
         {/* Rota que exige um tipo de usuário específico */}
-        <Route element={<PrivateRoute allowedRoles={["admin", "dev"]} />}>
+        <Route element={<PrivateRoute cargosPermitidos={["admin", "dev"]} />}>
           <Route path="/gestao" element={<Gestao />} />
         </Route>
       </Routes>

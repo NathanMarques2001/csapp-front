@@ -1,7 +1,8 @@
 import Excel from "../utils/excel";
 import { useState, useEffect } from "react";
-import Popup from "../componetes/pop-up";
+import Popup from "../componentes/pop-up";
 import Api from "../utils/api";
+import Carregando from "../componentes/carregando";
 
 export default function RelatorioGeral({
     clientes,
@@ -10,7 +11,7 @@ export default function RelatorioGeral({
 }) {
     const excel = new Excel("Relatório Geral");
     const [dados, setDados] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [carregando, setCarregando] = useState(false);
 
     const [filtros, setFiltros] = useState({
         nome_fantasia: "",
@@ -20,23 +21,23 @@ export default function RelatorioGeral({
         status_cliente: "",
     });
 
-    const [openModal, setOpenModal] = useState(false);
-    const [abrirPopup, setAbrirPopup] = useState(false);
+    const [mostrarFiltros, setMostrarFiltros] = useState(false);
+    const [mostrarPopup, setMostrarPopup] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
+        const buscarDados = async () => {
+            setCarregando(true);
             try {
                 const api = new Api();
                 const res = await api.get("/relatorios/geral");
                 setDados(res || []);
-            } catch (error) {
-                console.error("Erro ao buscar relatório geral:", error);
+            } catch (erro) {
+                console.error("Erro ao buscar relatório geral:", erro);
             } finally {
-                setLoading(false);
+                setCarregando(false);
             }
         };
-        fetchData();
+        buscarDados();
     }, []);
 
     const dadosFiltrados = dados.filter(
@@ -49,7 +50,7 @@ export default function RelatorioGeral({
             (!filtros.status_cliente || item.status === filtros.status_cliente)
     );
 
-    const dataExport = dadosFiltrados.map((item) => ({
+    const dadosExportacao = dadosFiltrados.map((item) => ({
         "Razão Social": item.razao_social,
         "Nome Fantasia": item.nome_fantasia,
         "CPF/CNPJ": item.cpf_cnpj,
@@ -72,30 +73,30 @@ export default function RelatorioGeral({
         "Tel 2 Gestor Contratos": item.gestor_contratos_telefone_2,
     }));
 
-    function handleDownloadReport(e) {
+    function baixarRelatorio(e) {
         e.preventDefault();
-        excel.exportToExcel(dataExport);
-        setAbrirPopup(false);
+        excel.exportToExcel(dadosExportacao);
+        setMostrarPopup(false);
     }
 
-    function handleFiltroChange(e) {
+    function aoMudarFiltro(e) {
         setFiltros({ ...filtros, [e.target.name]: e.target.value });
     }
 
-    if (loading) return <div>Carregando...</div>;
+    if (carregando) return <div>Carregando...</div>;
 
     return (
         <>
-            {abrirPopup && (
+            {mostrarPopup && (
                 <Popup
                     title="Exportar Relatório Geral"
                     message="Tem certeza que deseja exportar este relatório?"
-                    onConfirm={handleDownloadReport}
-                    onCancel={() => setAbrirPopup(false)}
+                    onConfirm={baixarRelatorio}
+                    onCancel={() => setMostrarPopup(false)}
                 />
             )}
 
-            {openModal && (
+            {mostrarFiltros && (
                 <div id="filter-container">
                     <form onSubmit={(e) => e.preventDefault()} className="filter-form">
                         <div className="form-group">
@@ -103,7 +104,7 @@ export default function RelatorioGeral({
                             <select
                                 name="nome_fantasia"
                                 value={filtros.nome_fantasia}
-                                onChange={handleFiltroChange}
+                                onChange={aoMudarFiltro}
                             >
                                 <option value="">Selecione</option>
                                 {clientes.map((c) => (
@@ -117,7 +118,7 @@ export default function RelatorioGeral({
                             <select
                                 name="produto"
                                 value={filtros.produto}
-                                onChange={handleFiltroChange}
+                                onChange={aoMudarFiltro}
                             >
                                 <option value="">Selecione</option>
                                 {produtos.map((p) => (
@@ -133,7 +134,7 @@ export default function RelatorioGeral({
                             <select
                                 name="vendedor"
                                 value={filtros.vendedor}
-                                onChange={handleFiltroChange}
+                                onChange={aoMudarFiltro}
                             >
                                 <option value="">Selecione</option>
                                 {Object.values(usuariosMap).map((usuario) => (
@@ -149,7 +150,7 @@ export default function RelatorioGeral({
                             <select
                                 name="status_contrato"
                                 value={filtros.status_contrato}
-                                onChange={handleFiltroChange}
+                                onChange={aoMudarFiltro}
                             >
                                 <option value="">Selecione</option>
                                 <option value="ativo">Ativo</option>
@@ -162,7 +163,7 @@ export default function RelatorioGeral({
                             <select
                                 name="status_cliente"
                                 value={filtros.status_cliente}
-                                onChange={handleFiltroChange}
+                                onChange={aoMudarFiltro}
                             >
                                 <option value="">Selecione</option>
                                 <option value="ativo">Ativo</option>
@@ -172,7 +173,7 @@ export default function RelatorioGeral({
 
                         <button
                             type="button"
-                            onClick={() => setOpenModal(false)}
+                            onClick={() => setMostrarFiltros(false)}
                             id="filter-close-button"
                             className="filter-button"
                         >
@@ -183,14 +184,14 @@ export default function RelatorioGeral({
             )}
 
             <button
-                onClick={() => setOpenModal(true)}
+                onClick={() => setMostrarFiltros(true)}
                 className="relatorio-button"
                 id="relatorio-button-filtrar"
             >
                 Filtrar
             </button>
             <button
-                onClick={() => setAbrirPopup(true)}
+                onClick={() => setMostrarPopup(true)}
                 className="relatorio-button"
                 id="relatorio-button-exportar"
             >

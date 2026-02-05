@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
 import Excel from "../utils/excel";
-import Popup from "../componetes/pop-up";
+import Popup from "../componentes/pop-up";
 
 export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap = {}, contratos = [], clientes = [], produtos = [] }) {
   const excel = new Excel("Relatório de Notificações");
   const [filtros, setFiltros] = useState({ usuario: "", modulo: "", confirmado: "", cliente: "", solucao: "" });
-  const [openModal, setOpenModal] = useState(false);
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
   const modulos = useMemo(() => {
@@ -52,7 +52,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
     );
   });
 
-  const data = notificacoesFiltradas.map((n) => {
+  const dadosExportacao = notificacoesFiltradas.map((n) => {
     const contrato = contratosMap[n.id_contrato];
     const cliente = contrato ? clientesMap[contrato.id_cliente] : null;
     const produto = contrato ? produtosMap[contrato.id_produto] : null;
@@ -68,13 +68,13 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
     };
   });
 
-  function handleDownloadReport(e) {
+  function baixarRelatorio(e) {
     e.preventDefault();
-    excel.exportToExcel(data);
+    excel.exportToExcel(dadosExportacao);
     setAbrirPopup(false);
   }
 
-  function handleFiltroChange(e) {
+  function aoMudarFiltro(e) {
     setFiltros({ ...filtros, [e.target.name]: e.target.value });
   }
 
@@ -84,17 +84,17 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
         <Popup
           title="Exportar Notificações"
           message="Tem certeza que deseja exportar o relatório de notificações?"
-          onConfirm={handleDownloadReport}
+          onConfirm={baixarRelatorio}
           onCancel={() => setAbrirPopup(false)}
         />
       )}
 
-      {openModal && (
+      {mostrarFiltros && (
         <div id="filter-container">
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
               <label>Usuário:</label>
-              <select name="usuario" value={filtros.usuario} onChange={handleFiltroChange}>
+              <select name="usuario" value={filtros.usuario} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {Object.values(usuariosMap).map((u) => (
                   <option key={u.id} value={u.nome}>
@@ -106,7 +106,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
 
             <div className="form-group">
               <label>Módulo:</label>
-              <select name="modulo" value={filtros.modulo} onChange={handleFiltroChange}>
+              <select name="modulo" value={filtros.modulo} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {modulos.map((m) => (
                   <option key={m} value={m}>
@@ -118,7 +118,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
 
             <div className="form-group">
               <label>Cliente:</label>
-              <select name="cliente" value={filtros.cliente} onChange={handleFiltroChange}>
+              <select name="cliente" value={filtros.cliente} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {clientesList.map((c) => (
                   <option key={c.id} value={c.razao_social}>
@@ -130,7 +130,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
 
             <div className="form-group">
               <label>Solução:</label>
-              <select name="solucao" value={filtros.solucao} onChange={handleFiltroChange}>
+              <select name="solucao" value={filtros.solucao} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {produtosList.map((p) => (
                   <option key={p.id} value={p.nome}>
@@ -142,21 +142,21 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
 
             <div className="form-group">
               <label>Confirmado:</label>
-              <select name="confirmado" value={filtros.confirmado} onChange={handleFiltroChange}>
+              <select name="confirmado" value={filtros.confirmado} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 <option value="sim">Sim</option>
                 <option value="não">Não</option>
               </select>
             </div>
 
-            <button type="button" onClick={() => setOpenModal(false)} id="filter-close-button" className="filter-button">
+            <button type="button" onClick={() => setMostrarFiltros(false)} id="filter-close-button" className="filter-button">
               Fechar
             </button>
           </form>
         </div>
       )}
 
-      <button onClick={() => setOpenModal(true)} className="relatorio-button" id="relatorio-button-filtrar">
+      <button onClick={() => setMostrarFiltros(true)} className="relatorio-button" id="relatorio-button-filtrar">
         Filtrar
       </button>
       <button onClick={() => setAbrirPopup(true)} className="relatorio-button" id="relatorio-button-exportar">
@@ -176,7 +176,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
           </tr>
         </thead>
         <tbody>
-          {data.map((row, i) => (
+          {dadosExportacao.map((row, i) => (
             <tr key={i}>
               <td className="global-conteudo-tabela">{row["Usuario"]}</td>
               <td className="global-conteudo-tabela">{row["Cliente"]}</td>

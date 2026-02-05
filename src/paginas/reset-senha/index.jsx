@@ -3,7 +3,7 @@ import "./style.css";
 import Email from "../../utils/email";
 import Api from "../../utils/api";
 import MailResetSenha from "../../mail/reset-senha";
-import Loading from "../../componetes/loading";
+import Carregando from "../../componentes/carregando";
 import imgResetSenha from "../../assets/images/img-reset-senha.png";
 import { useNavigate } from "react-router-dom";
 
@@ -91,7 +91,7 @@ export default function ResetSenha() {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading && <Carregando />}
       <div id="reset-senha-container">
         <div className="reset-senha-container">
           <img
