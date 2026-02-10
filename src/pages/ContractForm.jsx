@@ -60,6 +60,7 @@ const ContractForm = () => {
         descricao: "",
         link_contrato: "",
         tipo_faturamento: "",
+        renovacao_automatica: false,
         status: "ativo"
     });
 
@@ -107,6 +108,7 @@ const ContractForm = () => {
                             descricao: data.descricao || "",
                             link_contrato: data.link_contrato || "",
                             tipo_faturamento: data.tipo_faturamento || "",
+                            renovacao_automatica: data.renovacao_automatica || false,
                             status: data.status || "ativo"
                         });
                     }
@@ -146,8 +148,11 @@ const ContractForm = () => {
 
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -300,6 +305,19 @@ const ContractForm = () => {
                                 <FormGroup label="Data Início">
                                     <Input name="data_inicio" type="date" value={formData.data_inicio} onChange={handleChange} />
                                 </FormGroup>
+
+                                <div className="flex items-center pt-6">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            name="renovacao_automatica"
+                                            checked={formData.renovacao_automatica}
+                                            onChange={handleChange}
+                                            className="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500"
+                                        />
+                                        <span className="text-sm font-medium text-slate-700">Renovação Automática</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <SectionTitle title="Faturamento e Valores" />

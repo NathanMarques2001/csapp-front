@@ -3,7 +3,6 @@ import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Shield, Lock, Mail } from 'lucide-react';
 import Auth from "../utils/auth";
-// import logoMicrosoft from "../../assets/icons/microsoft-logo.png"; // Placeholder path
 
 // Simplified UI Components for Login
 const Button = ({ children, variant = 'primary', className = '', icon: Icon, isLoading, ...props }) => {
@@ -89,10 +88,7 @@ export default function Login() {
             <div className="max-w-md w-full bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
                 {/* Header */}
                 <div className="bg-slate-900 px-8 py-8 text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-teal-500 mb-4 shadow-teal-900/50 shadow-lg">
-                        <Shield className="w-7 h-7 text-white" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-white tracking-tight font-montserrat">CSApp<span className="text-teal-400">.io</span></h1>
+                    <h1 className="text-2xl font-bold text-white tracking-tight font-montserrat">CSApp</h1>
                     <p className="text-slate-400 text-sm mt-2">Plataforma de Gestão Integrada</p>
                 </div>
 

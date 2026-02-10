@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Upload, X, FileSpreadsheet, Download } from 'lucide-react';
 import Button from '../ui/Button';
 
-const ImportContractsModal = ({ isOpen, onClose, onImport }) => {
+const ImportContractsModal = ({ isOpen, onClose, onImport, onDownloadTemplate }) => {
     const [file, setFile] = useState(null);
     const [dragging, setDragging] = useState(false);
 
@@ -37,11 +37,8 @@ const ImportContractsModal = ({ isOpen, onClose, onImport }) => {
 
     const handleSubmit = () => {
         if (file) {
-            // Mock import process
-            setTimeout(() => {
-                onImport(file);
-                setFile(null);
-            }, 1000);
+            onImport(file);
+             // Let parent handle errors/success
         }
     };
 
@@ -99,7 +96,7 @@ const ImportContractsModal = ({ isOpen, onClose, onImport }) => {
                 </div>
 
                 <div className="mt-4 flex justify-between items-center text-sm">
-                    <button className="flex items-center gap-1 text-teal-600 hover:text-teal-700 font-medium">
+                    <button onClick={onDownloadTemplate} className="flex items-center gap-1 text-teal-600 hover:text-teal-700 font-medium">
                         <Download className="w-4 h-4" />
                         Baixar modelo
                     </button>

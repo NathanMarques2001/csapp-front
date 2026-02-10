@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen }) => {
     return (
         <aside className={`fixed inset-y-0 left-0 z-50 bg-slate-900 text-white transition-all duration-300 ${isOpen ? 'w-64' : 'w-20'} flex flex-col`}>
             <div className="h-16 flex items-center justify-center border-b border-slate-800">
-                <img src="/logo.png" alt="Logo" className="w-20" />
+                <img src="/logo.png" alt="Logo" className="w-1/2" />
             </div>
 
             <nav className="flex-1 py-6 px-3 space-y-1">
