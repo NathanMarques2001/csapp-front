@@ -56,6 +56,8 @@ export default function RelatorioGeral({
         "CPF/CNPJ": item.cpf_cnpj,
         "Solução": item.solucao,
         "Valor Contrato": parseFloat(item.valor_contrato || 0),
+        "Data Início": item.data_inicio ? new Date(item.data_inicio).toLocaleDateString("pt-BR") : "-",
+        "Data de Vencimento": item.vencimento_calculado ? new Date(item.vencimento_calculado).toLocaleDateString("pt-BR") : "-",
         "Vendedor": item.vendedor,
         "Status Cliente": item.status,
         "Status Contrato": item.status_contrato,

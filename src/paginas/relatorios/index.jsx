@@ -115,7 +115,7 @@ export default function Relatorios() {
             <option value="Aniversariantes">Aniversariantes</option>
             <option value="Notificacoes">Notificações</option>
             <option value="Logs">Logs</option>
-            <option value="Geral">Relatório Geral</option>
+            <option value="Geral">Relatório de Campanhas</option>
             <option value="Historico">Histórico (Snapshots)</option>
           </select>
 
