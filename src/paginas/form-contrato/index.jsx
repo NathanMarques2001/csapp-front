@@ -57,6 +57,7 @@ export default function FormContrato({ mode = "cadastro" }) {
   const [linkContrato, setLinkContrato] = useState("");
   const [tipoFaturamento, setTipoFaturamento] = useState("");
   const [isQuantidadeDisabled, setIsQuantidadeDisabled] = useState(true);
+  const [renovacaoAutomatica, setRenovacaoAutomatica] = useState(false);
   const tiposFaturamento = ["mensal", "anual"];
 
   const [cookies] = useCookies(["tipo", "id"]);
@@ -228,6 +229,7 @@ export default function FormContrato({ mode = "cadastro" }) {
           setLinkContrato(contrato.link_contrato || "");
           setStatus(contrato.status);
           setTipoFaturamento(contrato.tipo_faturamento);
+          setRenovacaoAutomatica(contrato.renovacao_automatica || false);
           console.log(contrato);
         } catch (err) {
           console.error("Erro ao buscar contrato:", err);
@@ -313,6 +315,7 @@ export default function FormContrato({ mode = "cadastro" }) {
         link_contrato: linkContrato,
         data_inicio: Formatadores.formatarDataISO(dataInicio),
         tipo_faturamento: tipoFaturamento,
+        renovacao_automatica: renovacaoAutomatica,
         id_usuario: cookies.id,
       };
 
@@ -630,7 +633,21 @@ export default function FormContrato({ mode = "cadastro" }) {
                   />
                 </div>
               </div>
+
               <div className="form-contrato-cliente-tres-inputs-container">
+                <div className="form-contrato-label-input-container tres-inputs">
+                  <label htmlFor="">
+                    <b>Valor anterior</b>
+                  </label>
+                  <input
+                    type="text"
+                    readOnly
+                    name="valor-anterior"
+                    className="form-contrato-input"
+                    value={valorAnterior || ""}
+                  />
+                </div>
+
                 <div className="form-contrato-label-input-container tres-inputs">
                   <label htmlFor="">
                     <b>
@@ -673,23 +690,30 @@ export default function FormContrato({ mode = "cadastro" }) {
                     onChange={(e) => setLinkContrato(e.target.value)}
                   />
                 </div>
+              </div>
 
-                <div className="form-contrato-label-input-container tres-inputs">
-                  <label htmlFor="">
-                    <b>Valor anterior</b>
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    name="valor-anterior"
-                    className="form-contrato-input"
-                    value={valorAnterior || ""}
-                  />
-                </div>
+              <div className="form-contrato-cliente-tres-inputs-container">
+
+                <div className="form-contrato-label-input-container tres-inputs"></div>
+                <div className="form-contrato-label-input-container tres-inputs"></div>
               </div>
 
               <div className="form-contrato-cliente-tres-inputs-container container-final">
                 <div className="form-contrato-label-input-container dois-inputs">
+                  <div style={{ display: "flex", alignItems: "center", marginBottom: "4%" }}>
+                    <input
+                      type="checkbox"
+                      name="renovacao-automatica"
+                      id="renovacao-automatica"
+                      checked={renovacaoAutomatica}
+                      onChange={(e) => setRenovacaoAutomatica(e.target.checked)}
+                      style={{ width: "20px", height: "20px", marginRight: "10px", cursor: "pointer" }}
+                    />
+                    <label htmlFor="renovacao-automatica" style={{ cursor: "pointer", marginBottom: 0, fontWeight: "bold" }}>
+                      Renovação automática
+                    </label>
+                  </div>
+
                   <div>
                     <label htmlFor="descricao" className="label-form-contrato">
                       <b>Descrição breve</b>
@@ -701,13 +725,9 @@ export default function FormContrato({ mode = "cadastro" }) {
                       className="form-contrato-input"
                       placeholder="Algo a mais que deveria ser descrito aqui..."
                       value={descricao}
+                      rows={7}
                       onChange={(e) => setDescricao(e.target.value)}
                     ></textarea>
-                    <img
-                      id="form-contrato-img"
-                      src={imgCadastroContrato}
-                      alt=""
-                    />
                   </div>
                 </div>
                 <div className="form-contrato-label-input-container dois-inputs">

@@ -214,6 +214,7 @@
 
 /* Responsive adjustments to avoid overlap and improve stacking on small screens */
 @media (max-width: 768px) {
+
   /* stack the input groups vertically */
   .form-contrato-cliente-tres-inputs-container,
   .form-contrato-cliente-cpf-cnpj-container,
