@@ -1,72 +1,55 @@
-import axios from 'axios';
-import cookie from 'cookie';
+import axios from "axios";
 
 class Api {
-    // PRD
-    static baseUrl = "https://csapp.prolinx.com.br/api";
-    // DEV
-    //static baseUrl = "http://localhost:8080/api";
- 
+    // Configuração via variável de ambiente (Padrão Vite)
+    static baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
     constructor() {
         this.api = axios.create({
             baseURL: Api.baseUrl,
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
         });
 
         // Interceptor para adicionar o token de autenticação
         this.api.interceptors.request.use(
             (config) => {
-                const cookies = document.cookie;
-                const parsedCookies = cookie.parse(cookies);
-                const token = parsedCookies['jwtToken'];
-
+                const token = this.getCookie("jwtToken");
                 if (token) {
-                    config.headers['Authorization'] = `Bearer ${token}`;
+                    config.headers["Authorization"] = `Bearer ${token}`;
                 }
-
                 return config;
             },
             (error) => Promise.reject(error)
         );
     }
 
-    async get(url) {
-        try {
-            const res = await this.api.get(url);
-            return res.data;
-        } catch (err) {
-            throw err.response?.data?.message || "Erro ao fazer a requisição GET";
-        }
+    getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
     }
 
-    async post(url, data) {
-        try {
-            const res = await this.api.post(url, data);
-            return res.data;
-        } catch (err) {
-            throw err.response?.data?.message || "Erro ao fazer a requisição POST";
-        }
+    async get(endpoint) {
+        const res = await this.api.get(endpoint);
+        return res.data;
     }
 
-    async put(url, data) {
-        try {
-            const res = await this.api.put(url, data);
-            return res.data;
-        } catch (err) {
-            throw err.response?.data?.message || "Erro ao fazer a requisição PUT";
-        }
+    async post(endpoint, data) {
+        const res = await this.api.post(endpoint, data);
+        return res.data;
     }
 
-    async delete(url) {
-        try {
-            const res = await this.api.delete(url);
-            return res.data;
-        } catch (err) {
-            throw err.response?.data?.message || "Erro ao fazer a requisição DELETE";
-        }
+    async put(endpoint, data) {
+        const res = await this.api.put(endpoint, data);
+        return res.data;
+    }
+
+    async delete(endpoint) {
+        const res = await this.api.delete(endpoint);
+        return res.data;
     }
 }
 
