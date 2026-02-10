@@ -34,6 +34,7 @@ const ClientForm = () => {
         nome_fantasia: "",
         cpf_cnpj: "",
         id_usuario: "",
+        vp: "",
         id_segmento: "",
         id_grupo_economico: "",
         tipo_unidade: "",
@@ -105,6 +106,7 @@ const ClientForm = () => {
             const payload = {
                 ...formData,
                 id_grupo_economico: formData.id_grupo_economico ? Number(formData.id_grupo_economico) : null,
+                vp: formData.vp ? Number(formData.vp) : null,
                 tipo_unidade: formData.tipo_unidade || null,
             };
 
@@ -187,6 +189,12 @@ const ClientForm = () => {
                         <FormGroup label="Relacionamento" required>
                             <Select name="id_usuario" value={formData.id_usuario} onChange={handleChange} required>
                                 <option value="">Selecione um gestor...</option>
+                                {users.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
+                            </Select>
+                        </FormGroup>
+                        <FormGroup label="VP">
+                            <Select name="vp" value={formData.vp} onChange={handleChange}>
+                                <option value="">Selecione um VP...</option>
                                 {users.map(u => <option key={u.id} value={u.id}>{u.nome}</option>)}
                             </Select>
                         </FormGroup>

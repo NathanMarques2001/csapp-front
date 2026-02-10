@@ -22,21 +22,29 @@ const ClientDetails = () => {
     // AI Insight State (Mocked)
     const [generatingInsight, setGeneratingInsight] = useState(false);
 
+    const [products, setProducts] = useState({});
+    const [manufacturers, setManufacturers] = useState({});
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [clientRes, contractsRes] = await Promise.all([
+                const [clientRes, contractsRes, productsRes, manufacturersRes] = await Promise.all([
                     api.get(`/clientes/${id}`),
-                    api.get(`/contratos/cliente/${id}`) // Make sure API supports this or filter client side
+                    api.get(`/contratos/cliente/${id}`),
+                    api.get('/produtos'),
+                    api.get('/fabricantes')
                 ]);
 
-                // If API doesn't support filtering by client ID directly in mock yet, we might need to fetch all and filter.
-                // But let's assume our verify step confirmed it or we fix it.
-                // Actually looking at previous Api.js, I added regex for ` /contratos/cliente/:id` 
-
                 setClient(clientRes.cliente);
-                setContracts(contractsRes.contratos || []); // Fallback if endpoint returns all or nothing
+                setContracts(contractsRes.contratos || []);
+
+                const prodMap = (productsRes.produtos || []).reduce((acc, p) => ({ ...acc, [p.id]: p }), {});
+                setProducts(prodMap);
+
+                const manufMap = (manufacturersRes.fabricantes || []).reduce((acc, m) => ({ ...acc, [m.id]: m.nome }), {});
+                setManufacturers(manufMap);
+
             } catch (e) {
                 console.error(e);
             } finally {
@@ -74,15 +82,15 @@ const ClientDetails = () => {
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" onClick={() => navigate('/clientes')} className="p-2"><ArrowLeft className="w-5 h-5" /></Button>
                         <div className="w-16 h-16 bg-teal-100 rounded-lg flex items-center justify-center text-teal-700 text-xl font-bold">
-                            {client.nomeFantasia.substring(0, 2).toUpperCase()}
+                            {(client.nome_fantasia || client.nomeFantasia || 'CL').substring(0, 2).toUpperCase()}
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900">{client.nomeFantasia}</h1>
+                            <h1 className="text-2xl font-bold text-slate-900">{client.nome_fantasia || client.nomeFantasia}</h1>
                             <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
-                                <span>CNPJ: {client.cnpj}</span>
+                                <span>CNPJ: {client.cpf_cnpj || client.cnpj}</span>
                                 <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
                                 <span>{client.segmento}</span>
-                                <Badge variant={client.status === 'Ativo' ? 'success' : 'secondary'}>{client.status}</Badge>
+                                <Badge variant={client.status === 'ativo' ? 'success' : 'secondary'}>{client.status}</Badge>
                             </div>
                         </div>
                     </div>
@@ -129,32 +137,6 @@ const ClientDetails = () => {
                             <p className="text-2xl font-bold text-slate-900">{nextRenewal ? formatDate(nextRenewal.fim) : '-'}</p>
                             {nextRenewal && <p className="text-sm text-amber-600">Faltam {Math.ceil((new Date(nextRenewal.fim) - new Date()) / (1000 * 60 * 60 * 24))} dias</p>}
                         </Card>
-                    </div>
-
-                    {/* AI Banner */}
-                    <div
-                        className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 p-4 rounded-lg flex items-center justify-between cursor-pointer hover:shadow-md transition-all group"
-                        onClick={handleGenerateInsight}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="bg-white p-3 rounded-full shadow-sm">
-                                <Sparkles className={`w-6 h-6 text-purple-600 ${generatingInsight ? 'animate-spin' : ''}`} />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                                    Inteligência Estratégica
-                                    <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded-full">Gemini AI</span>
-                                </h3>
-                                <p className="text-sm text-slate-600">
-                                    {generatingInsight
-                                        ? "Analisando perfil do cliente e histórico de contratos..."
-                                        : "Clique para gerar oportunidades de Upsell e análise de riscos."}
-                                </p>
-                            </div>
-                        </div>
-                        <Button variant="ghost" className="text-purple-700 group-hover:bg-purple-100 hover:text-purple-900">
-                            {generatingInsight ? 'Gerando...' : 'Analisar Agora'}
-                        </Button>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

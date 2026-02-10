@@ -388,3 +388,54 @@ export const ClientClassificationFormModal = ({ classification, onClose, onSucce
         </ModalBase>
     );
 };
+
+export const GroupFormModal = ({ group, onClose, onSuccess }) => {
+    const api = new Api();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        nome: group?.nome || ''
+    });
+
+    const isEditing = !!group;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            if (isEditing) {
+                await api.put(`/grupos-economicos/${group.id}`, formData);
+            } else {
+                await api.post('/grupos-economicos', formData);
+            }
+            onSuccess();
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao salvar grupo econômico");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <ModalBase title={isEditing ? 'Editar Grupo Econômico' : 'Novo Grupo Econômico'} onClose={onClose}>
+            <form onSubmit={handleSubmit} className="p-4 space-y-4">
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Nome</label>
+                    <input
+                        type="text"
+                        required
+                        className="w-full px-3 py-2 border rounded-md"
+                        value={formData.nome}
+                        onChange={e => setFormData({ ...formData, nome: e.target.value })}
+                        placeholder="Nome do Grupo"
+                    />
+                </div>
+                <div className="flex justify-end gap-2 pt-4 border-t border-slate-100 mt-6">
+                    <Button type="button" variant="secondary" onClick={onClose}>Cancelar</Button>
+                    <Button type="submit" loading={loading}>Salvar</Button>
+                </div>
+            </form>
+        </ModalBase>
+    );
+};

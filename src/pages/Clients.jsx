@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Plus, ChevronDown, ChevronRight, Building, MoreVertical } from 'lucide-react';
+import { Search, Filter, Plus, ChevronDown, ChevronRight, Building, MoreVertical, Edit2 } from 'lucide-react';
 import { FaEye, FaPencilAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Api from '../utils/api';
@@ -8,6 +8,8 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Skeleton from '../components/ui/Skeleton';
 import Input from '../components/ui/Input';
+import { GroupFormModal } from '../components/settings/SettingsModals';
+
 
 const Clients = () => {
     const api = new Api();
@@ -18,46 +20,52 @@ const Clients = () => {
     const [contracts, setContracts] = useState([]);
     const [sellers, setSellers] = useState({});
     const [classifications, setClassifications] = useState({});
+
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedGroups, setExpandedGroups] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [clientsRes, groupsRes, classificationsRes, contractsRes, sellersRes] = await Promise.all([
-                    api.get('/clientes'),
-                    api.get('/grupos-economicos'),
-                    api.get('/classificacoes-clientes'),
-                    api.get('/contratos'),
-                    api.get('/usuarios')
-                ]);
-                setClients(clientsRes.clientes || []);
-                setGroups(groupsRes.grupoEconomico || []);
-                setContracts(contractsRes.contratos || []);
+    // Group Modal State
+    const [groupModalOpen, setGroupModalOpen] = useState(false);
+    const [editingGroup, setEditingGroup] = useState(null);
 
-                const sellersMap = (sellersRes.usuarios || []).reduce((acc, curr) => {
-                    acc[curr.id] = curr.nome;
-                    return acc;
-                }, {});
-                setSellers(sellersMap);
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const [clientsRes, groupsRes, classificationsRes, contractsRes, sellersRes] = await Promise.all([
+                api.get('/clientes'),
+                api.get('/grupos-economicos'),
+                api.get('/classificacoes-clientes'),
+                api.get('/contratos'),
+                api.get('/usuarios')
+            ]);
+            setClients(clientsRes.clientes || []);
+            setGroups(groupsRes.grupoEconomico || []);
+            setContracts(contractsRes.contratos || []);
 
-                const classMap = (classificationsRes.classificacoes || []).reduce((acc, curr) => {
-                    acc[curr.id] = curr.nome;
-                    return acc;
-                }, {});
-                setClassifications(classMap);
+            const sellersMap = (sellersRes.usuarios || []).reduce((acc, curr) => {
+                acc[curr.id] = curr.nome;
+                return acc;
+            }, {});
+            setSellers(sellersMap);
 
-                // Expand first group by default if exists
-                if (groupsRes.grupoEconomico && groupsRes.grupoEconomico.length > 0) {
-                    setExpandedGroups([groupsRes.grupoEconomico[0].id]);
-                }
-            } catch (error) {
-                console.error("Error loading data:", error);
-            } finally {
-                setLoading(false);
+            const classMap = (classificationsRes.classificacoes || []).reduce((acc, curr) => {
+                acc[curr.id] = curr.nome;
+                return acc;
+            }, {});
+            setClassifications(classMap);
+
+            // Expand first group by default if exists
+            if (groupsRes.grupoEconomico && groupsRes.grupoEconomico.length > 0) {
+                setExpandedGroups([groupsRes.grupoEconomico[0].id]);
             }
-        };
+        } catch (error) {
+            console.error("Error loading data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -112,11 +120,34 @@ const Clients = () => {
             }, 0);
     };
 
+    const calculateGroupTotal = (groupId) => {
+        const groupClients = clients.filter(c => c.id_grupo_economico === groupId);
+        return groupClients.reduce((sum, client) => {
+            return sum + calculateContractTotal(client.id);
+        }, 0);
+    };
+
     const formatCurrency = (value) => {
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL'
         }).format(value);
+    };
+
+    const handleNewGroup = () => {
+        setEditingGroup(null);
+        setGroupModalOpen(true);
+    };
+
+    const handleEditGroup = (e, group) => {
+        e.stopPropagation();
+        setEditingGroup(group);
+        setGroupModalOpen(true);
+    };
+
+    const handleGroupSuccess = () => {
+        setGroupModalOpen(false);
+        fetchData(); // Reload data to reflect changes
     };
 
     return (
@@ -127,7 +158,7 @@ const Clients = () => {
                     <p className="text-slate-500">Visão hierárquica de Grupos Econômicos e Empresas.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" icon={Plus}>Novo Grupo</Button>
+                    <Button variant="outline" icon={Plus} onClick={handleNewGroup}>Novo Grupo</Button>
                     <Button onClick={() => navigate('/clientes/novo')} icon={Plus}>Novo Cliente</Button>
                 </div>
             </div>
@@ -176,17 +207,40 @@ const Clients = () => {
                                                 {group.nome}
                                             </td>
                                             <td className="px-6 py-3 text-slate-500 italic">{group.descricao || 'Grupo Econômico'}</td>
+                                            <td className="px-6 py-3">
+                                                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                                    {classifications[group.id_classificacao_cliente] || '-'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-3 font-semibold text-slate-700">
+                                                {formatCurrency(calculateGroupTotal(group.id))}
+                                            </td>
                                             <td className="px-6 py-3"></td>
-                                            <td className="px-6 py-3"></td>
-                                            <td className="px-6 py-3"></td>
-                                            <td className="px-6 py-3"></td>
+                                            <td className="px-6 py-3 w-32">
+                                                <Badge status={group.status || 'ativo'} />
+                                            </td>
                                             <td className="px-6 py-3 text-right">
-                                                <button className="text-xs text-teal-600 hover:underline mr-2" onClick={(e) => { e.stopPropagation(); }}>Editar Grupo</button>
+                                                <div className="flex justify-end gap-2">
+                                                    <button
+                                                        className="text-slate-400 hover:text-indigo-600 transition-colors p-1"
+                                                        onClick={(e) => { e.stopPropagation(); navigate(`/grupo-economico/${group.id}`); }}
+                                                        title="Ver Detalhes do Grupo"
+                                                    >
+                                                        <FaEye className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        className="text-slate-400 hover:text-teal-600 transition-colors p-1"
+                                                        onClick={(e) => handleEditGroup(e, group)}
+                                                        title="Editar Grupo"
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
 
                                         {expandedGroups.includes(group.id) && getClientsByGroup(group.id).map(client => (
-                                            <tr key={client.id} className="hover:bg-white bg-white border-l-4 border-l-transparent hover:border-l-teal-500 transition-all cursor-pointer" onClick={() => navigate(`/clientes/${client.id}`)}>
+                                            <tr key={client.id} className="hover:bg-white bg-white border-l-4 border-l-transparent hover:border-l-teal-500 transition-all">
                                                 <td className="px-6 py-3"></td>
                                                 <td className="px-6 py-3 pl-12 flex items-center gap-2 font-medium text-slate-700">
                                                     {client.nome_fantasia}
@@ -208,12 +262,12 @@ const Clients = () => {
                                                 </td>
                                                 <td className="px-6 py-3 text-right">
                                                     <div className="flex justify-end gap-2">
-                                                        <Button variant="ghost" className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}/editar`); }}>
-                                                            <FaPencilAlt size={16} />
-                                                        </Button>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0 text-slate-500 hover:text-slate-700" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}`); }}>
-                                                            <FaEye size={16} />
-                                                        </Button>
+                                                        <button className="text-slate-400 hover:text-indigo-600 transition-colors p-1" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}`); }}>
+                                                            <FaEye className="w-4 h-4" />
+                                                        </button>
+                                                        <button className="text-slate-400 hover:text-teal-600 transition-colors p-1" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}/editar`); }}>
+                                                            <Edit2 className="w-4 h-4" />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -230,7 +284,7 @@ const Clients = () => {
                                             </td>
                                         </tr>
                                         {clientsWithoutGroup.map(client => (
-                                            <tr key={client.id} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => navigate(`/clientes/${client.id}`)}>
+                                            <tr key={client.id} className="hover:bg-slate-50 transition-colors">
                                                 <td className="px-6 py-3"></td>
                                                 <td className="px-6 py-3 font-medium text-slate-900">{client.nome_fantasia}</td>
                                                 <td className="px-6 py-3 text-slate-500 font-mono text-xs">{client.cpf_cnpj}</td>
@@ -250,12 +304,12 @@ const Clients = () => {
                                                 </td>
                                                 <td className="px-6 py-3 text-right">
                                                     <div className="flex justify-end gap-2">
-                                                        <Button variant="ghost" className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}/editar`); }}>
-                                                            <FaPencilAlt className="w-4 h-4" />
-                                                        </Button>
-                                                        <Button variant="ghost" className="h-8 w-8 p-0 text-slate-500 hover:text-slate-700" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}`); }}>
+                                                        <button className="text-slate-400 hover:text-indigo-600 transition-colors p-1" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}`); }}>
                                                             <FaEye className="w-4 h-4" />
-                                                        </Button>
+                                                        </button>
+                                                        <button className="text-slate-400 hover:text-teal-600 transition-colors p-1" onClick={(e) => { e.stopPropagation(); navigate(`/clientes/${client.id}/editar`); }}>
+                                                            <Edit2 className="w-4 h-4" />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -274,6 +328,13 @@ const Clients = () => {
                         </table>
                     </div>
                 </div>
+            )}
+            {groupModalOpen && (
+                <GroupFormModal
+                    group={editingGroup}
+                    onClose={() => setGroupModalOpen(false)}
+                    onSuccess={handleGroupSuccess}
+                />
             )}
         </div>
     );

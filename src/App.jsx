@@ -8,6 +8,7 @@ import ClientForm from './pages/ClientForm';
 import Contracts from './pages/Contracts';
 import ContractForm from './pages/ContractForm';
 import ClientDetails from './pages/ClientDetails';
+import EconomicGroupDetails from './pages/EconomicGroupDetails';
 
 import Solutions from './pages/Solutions';
 import Reports from './pages/Reports';
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="clients/editar/:id" element={<ClientForm />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="clientes" element={<Clients />} />
+            <Route path="grupo-economico/:id" element={<EconomicGroupDetails />} />
             <Route path="clientes/novo" element={<ClientForm />} />
             <Route path="clientes/:id/editar" element={<ClientForm />} />
             <Route path="clientes/:id" element={<ClientDetails />} />
