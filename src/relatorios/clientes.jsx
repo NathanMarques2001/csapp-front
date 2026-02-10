@@ -66,7 +66,7 @@ export default function RelatorioClientes({
       "Valor Total dos Contratos": valorTotalContratos,
       "Pertence Grupo Econômico": cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico] ? "sim" : "não"
     };
-  });
+  }).sort((a, b) => b["Valor Total dos Contratos"] - a["Valor Total dos Contratos"]);
 
 
   console.log(gruposEconomicosMap);

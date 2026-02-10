@@ -117,7 +117,7 @@ export default function RelatorioContratos({
       (!filtros.status || contrato.status === filtros.status) &&
       (!filtros.tipo_faturamento || contrato.tipo_faturamento === filtros.tipo_faturamento)
     );
-  });
+  }).sort((a, b) => parseFloat(b.valor_mensal) - parseFloat(a.valor_mensal));
 
   const dadosExportacao = contratosFiltrados.map((contrato) => {
     const cliente = clientesMap[contrato.id_cliente];
