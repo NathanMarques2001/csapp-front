@@ -58,6 +58,7 @@ export default function RelatorioGeral({
         "Valor Contrato": parseFloat(item.valor_contrato || 0),
         "Data Início": item.data_inicio ? new Date(item.data_inicio).toLocaleDateString("pt-BR") : "-",
         "Data de Vencimento": item.vencimento_calculado ? new Date(item.vencimento_calculado).toLocaleDateString("pt-BR") : "-",
+        "Cadastro do Cliente": item.data_criacao_cliente ? new Date(item.data_criacao_cliente).toLocaleDateString("pt-BR") : "-",
         "Vendedor": item.vendedor,
         "Status Cliente": item.status,
         "Status Contrato": item.status_contrato,
