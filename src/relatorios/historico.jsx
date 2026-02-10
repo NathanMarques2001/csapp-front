@@ -2,6 +2,7 @@ import { useState } from "react";
 import Api from "../utils/api";
 import Carregando from "../componentes/carregando";
 import Excel from "../utils/excel";
+import Popup from "../componentes/pop-up";
 
 export default function RelatorioHistorico({ usuariosMap }) {
     const [dataInicio, setDataInicio] = useState("");
@@ -10,6 +11,8 @@ export default function RelatorioHistorico({ usuariosMap }) {
     const [historicoClientes, setHistoricoClientes] = useState([]);
     const [historicoContratos, setHistoricoContratos] = useState([]);
     const [abaAtiva, setAbaAtiva] = useState("clientes");
+    const [abrirPopup, setAbrirPopup] = useState(false);
+    const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
     const excelClientes = new Excel("Histórico Clientes");
     const excelContratos = new Excel("Histórico Contratos");
@@ -53,57 +56,122 @@ export default function RelatorioHistorico({ usuariosMap }) {
         return d.toLocaleDateString('pt-BR');
     }
 
+    function confirmExportarExcel() {
+        setAbrirPopup(true);
+    }
+
     function exportarExcel() {
         if (abaAtiva === "clientes") {
             excelClientes.exportToExcel(historicoClientes);
         } else {
             excelContratos.exportToExcel(historicoContratos);
         }
+        setAbrirPopup(false);
     }
 
     return (
-        <div className="historico-container">
+        <>
             {loading && <Carregando />}
 
-            <div className="filtros-historico" style={{ marginBottom: "20px", display: "flex", gap: "10px", alignItems: "flex-end" }}>
-                <div className="form-group">
-                    <label>Data Início:</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        value={dataInicio}
-                        onChange={(e) => setDataInicio(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Data Fim:</label>
-                    <input
-                        type="date"
-                        className="form-control"
-                        value={dataFim}
-                        onChange={(e) => setDataFim(e.target.value)}
-                    />
-                </div>
-                <button onClick={buscarHistorico} className="relatorio-button">Buscar Histórico</button>
-                {(historicoClientes.length > 0 || historicoContratos.length > 0) && (
-                    <button onClick={exportarExcel} className="relatorio-button">Exportar Excel</button>
-                )}
-            </div>
+            {abrirPopup && (
+                <Popup
+                    title={`Exportar Histórico - ${abaAtiva === "clientes" ? "Clientes" : "Contratos"}`}
+                    message={`Deseja exportar o histórico de ${abaAtiva === "clientes" ? "clientes" : "contratos"}?`}
+                    onConfirm={exportarExcel}
+                    onCancel={() => setAbrirPopup(false)}
+                />
+            )}
 
-            <div className="abas-historico" style={{ marginBottom: "15px" }}>
+            {mostrarFiltros && (
+                <div id="filter-container">
+                    <form onSubmit={(e) => { e.preventDefault(); buscarHistorico(); setMostrarFiltros(false); }} className="filter-form">
+                        <div className="form-group">
+                            <label>Data Início:</label>
+                            <input
+                                type="date"
+                                className="global-input"
+                                style={{ width: "90%" }}
+                                value={dataInicio}
+                                onChange={(e) => setDataInicio(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Data Fim:</label>
+                            <input
+                                type="date"
+                                className="global-input"
+                                style={{ width: "90%" }}
+                                value={dataFim}
+                                onChange={(e) => setDataFim(e.target.value)}
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="filter-button"
+                            style={{ marginTop: "10px", width: "100%", backgroundColor: "#97c93d", color: "white", border: "none", padding: "10px" }}
+                        >
+                            Buscar
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setMostrarFiltros(false)}
+                            id="filter-close-button"
+                            className="filter-button"
+                            style={{ marginTop: "10px" }}
+                        >
+                            Fechar
+                        </button>
+                    </form>
+                </div>
+            )}
+
+            <button
+                onClick={() => setMostrarFiltros(true)}
+                className="relatorio-button"
+                id="relatorio-button-filtrar"
+            >
+                Filtrar
+            </button>
+            <button
+                onClick={() => setAbrirPopup(true)}
+                className="relatorio-button"
+                id="relatorio-button-exportar"
+            >
+                Exportar para Excel
+            </button>
+
+            <div className="abas-historico" style={{ marginBottom: "20px", borderBottom: "2px solid #e9ecef", display: "flex", gap: "20px", marginTop: "2%" }}>
                 <button
                     onClick={() => setAbaAtiva("clientes")}
-                    className={`relatorio-button ${abaAtiva === "clientes" ? "ativo" : ""}`}
-                    style={{ fontWeight: abaAtiva === "clientes" ? "bold" : "normal", marginRight: "10px" }}
+                    style={{
+                        background: "none",
+                        border: "none",
+                        borderBottom: abaAtiva === "clientes" ? "3px solid #0056b3" : "3px solid transparent",
+                        padding: "10px 5px",
+                        fontSize: "16px",
+                        fontWeight: abaAtiva === "clientes" ? "700" : "500",
+                        color: abaAtiva === "clientes" ? "#0056b3" : "#6c757d",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease"
+                    }}
                 >
-                    Histórico de Clientes ({historicoClientes.length})
+                    Histórico de Clientes <span style={{ fontSize: "12px", background: "#e9ecef", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px", verticalAlign: "middle" }}>{historicoClientes.length}</span>
                 </button>
                 <button
                     onClick={() => setAbaAtiva("contratos")}
-                    className={`relatorio-button ${abaAtiva === "contratos" ? "ativo" : ""}`}
-                    style={{ fontWeight: abaAtiva === "contratos" ? "bold" : "normal" }}
+                    style={{
+                        background: "none",
+                        border: "none",
+                        borderBottom: abaAtiva === "contratos" ? "3px solid #0056b3" : "3px solid transparent",
+                        padding: "10px 5px",
+                        fontSize: "16px",
+                        fontWeight: abaAtiva === "contratos" ? "700" : "500",
+                        color: abaAtiva === "contratos" ? "#0056b3" : "#6c757d",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease"
+                    }}
                 >
-                    Histórico de Contratos ({historicoContratos.length})
+                    Histórico de Contratos <span style={{ fontSize: "12px", background: "#e9ecef", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px", verticalAlign: "middle" }}>{historicoContratos.length}</span>
                 </button>
             </div>
 
@@ -131,7 +199,7 @@ export default function RelatorioHistorico({ usuariosMap }) {
                             </tr>
                         ))}
                         {historicoClientes.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: "center", padding: "10px" }}>Nenhum registro encontrado.</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: "center", padding: "30px", color: "#6c757d" }}>Nenhum registro encontrado para o período selecionado.</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -163,11 +231,11 @@ export default function RelatorioHistorico({ usuariosMap }) {
                             </tr>
                         ))}
                         {historicoContratos.length === 0 && (
-                            <tr><td colSpan="6" style={{ textAlign: "center", padding: "10px" }}>Nenhum registro encontrado.</td></tr>
+                            <tr><td colSpan="6" style={{ textAlign: "center", padding: "30px", color: "#6c757d" }}>Nenhum registro encontrado para o período selecionado.</td></tr>
                         )}
                     </tbody>
                 </table>
             )}
-        </div>
+        </>
     );
 }
