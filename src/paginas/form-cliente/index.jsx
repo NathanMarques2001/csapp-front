@@ -28,6 +28,7 @@ export default function FormCliente({ mode }) {
     nome_fantasia: "",
     cpf_cnpj: "",
     id_usuario: "",
+    vp: "",
     id_segmento: "",
     id_grupo_economico: "",
     tipo_unidade: "",
@@ -205,6 +206,7 @@ export default function FormCliente({ mode }) {
             cliente.id_grupo_economico === null
             ? null
             : Number(cliente.id_grupo_economico),
+        vp: cliente.vp === "" || cliente.vp === null ? null : Number(cliente.vp),
         tipo_unidade: cliente.tipo_unidade === "" ? null : cliente.tipo_unidade,
       };
 
@@ -312,6 +314,23 @@ export default function FormCliente({ mode }) {
                       disabled={!canEdit("id_usuario")}
                       name="id_usuario"
                       value={cliente.id_usuario}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecione...</option>
+                      {usuarios.map((usuario) => (
+                        <option key={usuario.id} value={usuario.id}>
+                          {usuario.nome}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="vp">VP</label>
+                    <select
+                      id="vp"
+                      disabled={!canEdit("id_usuario")}
+                      name="vp"
+                      value={cliente.vp || ""}
                       onChange={handleChange}
                     >
                       <option value="">Selecione...</option>
