@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Building, Power, ArrowLeft, Calendar, DollarSign, Package, Factory, AlertTriangle, FileText, CheckCircle, XCircle } from "lucide-react";
+import { Building, Power, ArrowLeft, Calendar, DollarSign, Package, Factory, AlertTriangle, FileText, CheckCircle, XCircle, Edit2 } from "lucide-react";
 import Api from "../utils/api";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
@@ -179,6 +179,7 @@ const EconomicGroupDetails = () => {
                                             <th className="px-6 py-3">Valor</th>
                                             <th className="px-6 py-3">Recorrência</th>
                                             <th className="px-6 py-3">Fabricante</th>
+                                            <th className="px-6 py-3 text-right">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
@@ -209,6 +210,18 @@ const EconomicGroupDetails = () => {
                                                     <td className="px-6 py-3 text-slate-500 flex items-center gap-2">
                                                         <Factory size={14} />
                                                         {getManufacturerName(contract.id_produto)}
+                                                    </td>
+                                                    <td className="px-6 py-3 text-right">
+                                                        <Button
+                                                            variant="ghost"
+                                                            className="text-slate-400 hover:text-teal-600"
+                                                            size="sm"
+                                                            icon={Edit2}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                navigate(`/contratos/${contract.id}/editar`);
+                                                            }}
+                                                        />
                                                     </td>
                                                 </tr>
                                             ))

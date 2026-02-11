@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, ChevronLeft, ChevronRight, Pencil, FileText, TrendingUp, DollarSign, Upload, Filter } from 'lucide-react';
 import Api from '../utils/api';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency, formatDate, formatCpfCnpj } from '../utils/formatters';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
@@ -260,16 +260,14 @@ const Contracts = () => {
                 <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                            <thead className="bg-slate-50 text-xs uppercase tracking-wider font-semibold text-slate-500 border-b border-slate-200">
                                 <tr>
-                                    <th className="px-6 py-3">ID</th>
                                     <th className="px-6 py-3">Cliente</th>
+                                    <th className="px-6 py-3">CPF/CNPJ</th>
                                     <th className="px-6 py-3">Produto</th>
                                     <th className="px-6 py-3">Valor</th>
                                     <th className="px-6 py-3">Faturamento</th>
                                     <th className="px-6 py-3">Vendedor</th>
-                                    <th className="px-6 py-3">Fim Vigência</th>
-                                    <th className="px-6 py-3 text-center">Renovação Aut.</th>
                                     <th className="px-6 py-3 text-center">Status</th>
                                     <th className="px-6 py-3 text-right">Ações</th>
                                 </tr>
@@ -283,23 +281,19 @@ const Contracts = () => {
 
                                         return (
                                             <tr key={contract.id} className="hover:bg-slate-50 transition-colors">
-                                                <td className="px-6 py-4 font-mono text-slate-500">#{contract.id}</td>
                                                 <td className="px-6 py-4 font-medium text-slate-900">
                                                     {client?.nome_fantasia || 'Cliente Desconhecido'}
                                                     <div className="text-xs text-slate-500 font-normal">{client?.razao_social}</div>
                                                 </td>
-                                                <td className="px-6 py-4 text-slate-600">
+                                                <td className="px-6 py-4 text-slate-500 font-mono text-xs">
+                                                    {formatCpfCnpj(client?.cpf_cnpj)}
+                                                </td>
+                                                <td className="px-6 py-4 font-medium text-slate-700">
                                                     {product?.nome || `Produto ${contract.id_produto} `}
                                                 </td>
                                                 <td className="px-6 py-4 font-medium text-slate-700">{formatCurrency(contract.valor_mensal)}</td>
-                                                <td className="px-6 py-4 text-slate-500">{contract.tipo_faturamento}</td>
+                                                <td className="px-6 py-4 text-slate-500">{contract.tipo_faturamento.replace(contract.tipo_faturamento[0], contract.tipo_faturamento[0].toUpperCase())}</td>
                                                 <td className="px-6 py-4 text-slate-500">{seller?.nome || '-'}</td>
-                                                <td className="px-6 py-4 text-slate-500">
-                                                    {contract.duracao ? `${contract.duracao} meses` : '-'}
-                                                </td>
-                                                <td className="px-6 py-4 text-center text-slate-600">
-                                                    {contract.renovacao_automatica ? 'Sim' : 'Não'}
-                                                </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <Badge status={contract.status} />
                                                 </td>

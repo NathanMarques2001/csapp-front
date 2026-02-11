@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom'; // <--- 1. Importação necessária
 import { Upload, X, FileSpreadsheet, Download } from 'lucide-react';
 import Button from '../ui/Button';
 
@@ -38,12 +39,13 @@ const ImportContractsModal = ({ isOpen, onClose, onImport, onDownloadTemplate })
     const handleSubmit = () => {
         if (file) {
             onImport(file);
-             // Let parent handle errors/success
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    // 2. Definimos o conteúdo do modal em uma variável
+    const modalContent = (
+        // Aumentei o z-index para 9999 para garantir prioridade máxima
+        <div className="fixed inset-0 top-0 left-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative animate-in zoom-in-95 duration-200">
                 <button
                     onClick={onClose}
@@ -100,7 +102,6 @@ const ImportContractsModal = ({ isOpen, onClose, onImport, onDownloadTemplate })
                         <Download className="w-4 h-4" />
                         Baixar modelo
                     </button>
-                    {/* Placeholder for download logic */}
                 </div>
 
                 <div className="mt-6 flex justify-end gap-3">
@@ -110,6 +111,9 @@ const ImportContractsModal = ({ isOpen, onClose, onImport, onDownloadTemplate })
             </div>
         </div>
     );
+
+    // 3. Retornamos o createPortal renderizando no body
+    return createPortal(modalContent, document.body);
 };
 
 export default ImportContractsModal;

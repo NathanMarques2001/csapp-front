@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import Button from '../ui/Button';
 
@@ -30,8 +31,8 @@ const ClientFilterModal = ({ isOpen, onClose, onApply, filters, classifications,
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    const modalContent = (
+        <div className="fixed inset-0 top-0 left-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center p-4 border-b border-slate-100">
                     <h3 className="font-semibold text-lg text-slate-800">Filtrar Clientes</h3>
@@ -93,6 +94,8 @@ const ClientFilterModal = ({ isOpen, onClose, onApply, filters, classifications,
             </div>
         </div>
     );
+
+    return createPortal(modalContent, document.body);
 };
 
 export default ClientFilterModal;

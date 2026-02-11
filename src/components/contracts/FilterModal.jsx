@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom'; // <--- 1. Importação necessária
 import { X } from 'lucide-react';
 import Button from '../ui/Button';
 
@@ -38,8 +39,9 @@ const FilterModal = ({ isOpen, onClose, onApply, initialFilters, clients, produc
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    // 2. Isolamos o JSX do modal numa variável e aumentamos o z-index
+    const modalContent = (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative animate-in zoom-in-95 duration-200">
                 <button
                     onClick={onClose}
@@ -128,6 +130,9 @@ const FilterModal = ({ isOpen, onClose, onApply, initialFilters, clients, produc
             </div>
         </div>
     );
+
+    // 3. Retornamos usando o Portal
+    return createPortal(modalContent, document.body);
 };
 
 export default FilterModal;

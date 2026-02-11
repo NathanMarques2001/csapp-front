@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit2, Plus, Sparkles, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, Edit2, Plus, Sparkles, ChevronRight, Check, FileText, CheckCircle, XCircle, Package, Factory } from 'lucide-react';
 import Api from '../utils/api';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import Button from '../components/ui/Button';
@@ -18,9 +18,6 @@ const ClientDetails = () => {
     const [loading, setLoading] = useState(true);
     const [client, setClient] = useState(null);
     const [contracts, setContracts] = useState([]);
-
-    // AI Insight State (Mocked)
-    const [generatingInsight, setGeneratingInsight] = useState(false);
 
     const [products, setProducts] = useState({});
     const [manufacturers, setManufacturers] = useState({});
@@ -59,15 +56,85 @@ const ClientDetails = () => {
     if (!client) return <div>Cliente não encontrado</div>;
 
     // Metrics Calculation
-    const activeContracts = contracts.filter(c => c.status === 'Ativo');
+    const activeContracts = contracts.filter(c => c.status === 'ativo');
+    const inactiveContracts = contracts.filter(c => c.status === 'inativo');
+
+    // Assuming 'valor_mensal' is the monthly value for both types, or the annual value for annual?
+    // Based on ARR logic (monthly * 12, annual * 1):
+    // If 'mensal', value is monthly. ARR = value * 12.
+    // If 'anual', value is annual. ARR = value.
+    // So for MRR:
+    // If 'mensal', MRR = value.
+    // If 'anual', MRR = value / 12.
     const totalARR = activeContracts.reduce((acc, c) => {
-        const value = Number(c.valor);
-        return acc + (c.tipoFaturamento === 'Mensal' ? value * 12 : value);
+        const value = Number(c.valor_mensal || 0);
+        return acc + (c.tipo_faturamento === 'mensal' ? value * 12 : value);
     }, 0);
-    // Find next renewal (arbitrary logic for mock: closest 'fim' date in future)
-    const nextRenewal = contracts
-        .filter(c => c.status === 'Ativo' && new Date(c.fim) > new Date())
-        .sort((a, b) => new Date(a.fim) - new Date(b.fim))[0];
+
+    const totalMRR = activeContracts.reduce((acc, c) => {
+        const value = Number(c.valor_mensal || 0);
+        return acc + (c.tipo_faturamento === 'mensal' ? value : value / 12);
+    }, 0);
+
+    // Função para calcular o próximo vencimento (ported from legacy)
+    const parseDate = (dateStr) => {
+        if (!dateStr) return null;
+        let data = new Date(dateStr);
+        if (typeof dateStr === 'string' && dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            if (parts[0].length === 4) {
+                // YYYY-MM-DD
+                data = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            } else {
+                // DD-MM-YYYY
+                data = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            }
+        }
+        return isNaN(data.getTime()) ? null : data;
+    };
+
+    const calcularProximoVencimento = (dataInicio, duracao) => {
+        if (!dataInicio) return null;
+        const duracaoMeses = parseInt(duracao);
+        if (!duracaoMeses || duracaoMeses <= 0) return null;
+        if (duracaoMeses === 12000) return "Indeterminado";
+
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        let data = parseDate(dataInicio);
+        if (!data) return null;
+
+        data.setMonth(data.getMonth() + duracaoMeses);
+
+        if (data < hoje) {
+            let safeCounter = 0;
+            while (data < hoje && safeCounter < 1000) {
+                data.setMonth(data.getMonth() + duracaoMeses);
+                safeCounter++;
+            }
+        }
+
+        return data;
+    };
+
+    // Next Readjustment
+    const nextReadjustment = activeContracts
+        .map(c => ({ ...c, parsedReadjustment: parseDate(c.proximo_reajuste) }))
+        .filter(c => c.parsedReadjustment && c.parsedReadjustment > new Date())
+        .sort((a, b) => a.parsedReadjustment - b.parsedReadjustment)[0];
+
+    // Find next renewal
+    const nextRenewalClient = activeContracts
+        .map(c => {
+            const vencimento = calcularProximoVencimento(c.data_inicio, c.duracao);
+            return {
+                ...c,
+                vencimentoCalculado: vencimento
+            };
+        })
+        .filter(c => c.vencimentoCalculado instanceof Date && c.vencimentoCalculado > new Date())
+        .sort((a, b) => a.vencimentoCalculado - b.vencimentoCalculado)[0];
 
     const handleGenerateInsight = () => {
         setGeneratingInsight(true);
@@ -90,7 +157,7 @@ const ClientDetails = () => {
                                 <span>CNPJ: {client.cpf_cnpj || client.cnpj}</span>
                                 <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
                                 <span>{client.segmento}</span>
-                                <Badge variant={client.status === 'ativo' ? 'success' : 'secondary'}>{client.status}</Badge>
+                                <Badge status={client.status} />
                             </div>
                         </div>
                     </div>
@@ -134,8 +201,47 @@ const ClientDetails = () => {
                         </Card>
                         <Card className="p-6">
                             <h3 className="text-sm font-medium text-slate-500 mb-2">Próxima Renovação</h3>
-                            <p className="text-2xl font-bold text-slate-900">{nextRenewal ? formatDate(nextRenewal.fim) : '-'}</p>
-                            {nextRenewal && <p className="text-sm text-amber-600">Faltam {Math.ceil((new Date(nextRenewal.fim) - new Date()) / (1000 * 60 * 60 * 24))} dias</p>}
+                            <div className="flex flex-col">
+                                <p className="text-2xl font-bold text-slate-900">
+                                    {nextRenewalClient ? (
+                                        <>
+                                            <span className="text-lg font-normal text-slate-400">#{nextRenewalClient.id} - </span>
+                                            {formatDate(nextRenewalClient.vencimentoCalculado)}
+                                        </>
+                                    ) : '-'}
+                                </p>
+                                {nextRenewalClient && (
+                                    <p className="text-sm text-amber-600 mt-1">
+                                        Faltam {Math.ceil((nextRenewalClient.vencimentoCalculado - new Date()) / (1000 * 60 * 60 * 24))} dias
+                                    </p>
+                                )}
+                            </div>
+                        </Card>
+                        <Card className="p-6">
+                            <h3 className="text-sm font-medium text-slate-500 mb-2">Receita Mensal Recorrente (MRR)</h3>
+                            <p className="text-2xl font-bold text-slate-900">{formatCurrency(totalMRR)}</p>
+                        </Card>
+                        <Card className="p-6">
+                            <h3 className="text-sm font-medium text-slate-500 mb-2">Contratos Inativos</h3>
+                            <p className="text-2xl font-bold text-slate-900">{inactiveContracts.length}</p>
+                        </Card>
+                        <Card className="p-6">
+                            <h3 className="text-sm font-medium text-slate-500 mb-2">Próximo Reajuste</h3>
+                            <div className="flex flex-col">
+                                <p className="text-2xl font-bold text-slate-900">
+                                    {nextReadjustment ? (
+                                        <>
+                                            <span className="text-lg font-normal text-slate-400">#{nextReadjustment.id} - </span>
+                                            {formatDate(nextReadjustment.parsedReadjustment)}
+                                        </>
+                                    ) : '-'}
+                                </p>
+                                {nextReadjustment && (
+                                    <p className="text-sm text-slate-500 mt-1">
+                                        Faltam {Math.ceil((nextReadjustment.parsedReadjustment - new Date()) / (1000 * 60 * 60 * 24))} dias
+                                    </p>
+                                )}
+                            </div>
                         </Card>
                     </div>
 
@@ -171,20 +277,24 @@ const ClientDetails = () => {
                             <h3 className="font-bold mb-4 text-slate-900">Últimos Contratos</h3>
                             <div className="space-y-3">
                                 {contracts.slice(0, 4).map(c => (
-                                    <div key={c.id} className="flex justify-between items-center text-sm border-b border-slate-100 pb-2">
-                                        <div>
-                                            {/* We need product name here. In real app, we would have fetched it. Mock contracts have produtoId. 
-                                                Fetching products or assuming mock contracts have 'product' field (MOCK_CONTACTS in request had 'product' field string,
-                                                our MOCK_CONTRATOS in constants.js has 'produtoId'. 
-                                                For this Quick View, let's just show ID or fetch products later.
-                                                Ideally we should have fetched logic. 
-                                                Let's assume our backend returns augmented data or we fetch products map.
-                                                For now rendering ID to avoid complexities in this single file or a generic name.
-                                             */}
-                                            <p className="font-medium text-slate-800">Contrato #{c.id}</p>
-                                            <p className="text-xs text-slate-500">{formatDate(c.fim)}</p>
+                                    <div key={c.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-colors" onClick={() => navigate(`/contratos/${c.id}/editar`)}>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                                <FileText className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium text-slate-900">
+                                                    Contrato #{c.id} - {products[c.id_produto]?.nome || `Produto ${c.id_produto}`}
+                                                </p>
+                                                <p className="text-xs text-slate-500 capitalize">
+                                                    {formatCurrency(c.valor_mensal)} - {c.tipo_faturamento}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <Badge variant={c.status === 'Ativo' ? 'success' : 'secondary'}>{c.status}</Badge>
+                                        <div className="flex items-center gap-3">
+                                            <Badge status={c.status} />
+                                            <ChevronRight className="w-4 h-4 text-slate-400" />
+                                        </div>
                                     </div>
                                 ))}
                                 {contracts.length === 0 && <p className="text-sm text-slate-500">Nenhum contrato encontrado.</p>}
@@ -241,43 +351,98 @@ const ClientDetails = () => {
 
             {activeTab === 'contratos' && (
                 <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
-                            <tr>
-                                <th className="px-6 py-3">ID</th>
-                                <th className="px-6 py-3">Produto (ID)</th>
-                                <th className="px-6 py-3">Valor</th>
-                                <th className="px-6 py-3">Inicio</th>
-                                <th className="px-6 py-3">Fim</th>
-                                <th className="px-6 py-3 text-center">Status</th>
-                                <th className="px-6 py-3 text-right">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {contracts.map(contract => (
-                                <tr key={contract.id} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => navigate(`/contratos/${contract.id}`)}>
-                                    <td className="px-6 py-4 font-mono text-slate-500">#{contract.id}</td>
-                                    <td className="px-6 py-4">{contract.produtoId}</td>
-                                    <td className="px-6 py-4 font-medium">{formatCurrency(contract.valor)}</td>
-                                    <td className="px-6 py-4">{formatDate(contract.inicio)}</td>
-                                    <td className="px-6 py-4">{formatDate(contract.fim)}</td>
-                                    <td className="px-6 py-4 text-center">
-                                        <Badge variant={contract.status === 'Ativo' ? 'success' : 'secondary'}>{contract.status}</Badge>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <Button variant="ghost" className="text-teal-600">Ver</Button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {contracts.length === 0 && (
+                    {/* Totals Header */}
+                    <div className="bg-slate-50 p-4 border-b border-slate-200 flex justify-end gap-6 text-sm">
+                        <div className="text-right">
+                            <p className="text-slate-500 uppercase tracking-wider text-xs mb-1">Faturamento Mensal</p>
+                            <p className="font-bold text-slate-700 text-lg">
+                                {formatCurrency(contracts
+                                    .filter(c => c.status === 'ativo' && c.tipo_faturamento === 'mensal')
+                                    .reduce((acc, c) => acc + Number(c.valor_mensal || 0), 0)
+                                )}
+                            </p>
+                        </div>
+                        <div className="text-right pl-6 border-l border-slate-200">
+                            <p className="text-slate-500 uppercase tracking-wider text-xs mb-1">Faturamento Anual</p>
+                            <p className="font-bold text-slate-700 text-lg">
+                                {formatCurrency(contracts
+                                    .filter(c => c.status === 'ativo' && c.tipo_faturamento === 'anual')
+                                    .reduce((acc, c) => acc + Number(c.valor_mensal || 0), 0)
+                                )}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Table */}
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-white text-slate-500 font-medium border-b border-slate-100">
                                 <tr>
-                                    <td colSpan="7" className="px-6 py-8 text-center text-slate-500">
-                                        Nenhum contrato encontrado para este cliente.
-                                    </td>
+                                    <th className="px-6 py-3">Status</th>
+                                    <th className="px-6 py-3">Solução</th>
+                                    <th className="px-6 py-3">Contratação</th>
+                                    <th className="px-6 py-3">Valor</th>
+                                    <th className="px-6 py-3">Recorrência</th>
+                                    <th className="px-6 py-3">Fabricante</th>
+                                    <th className="px-6 py-3 text-right">Ações</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {contracts.length === 0 ? (
+                                    <tr><td colSpan="7" className="px-6 py-8 text-center text-slate-400 italic">Nenhum contrato encontrado</td></tr>
+                                ) : (
+                                    contracts.map(contract => {
+                                        const product = products[contract.id_produto];
+                                        const manufacturerName = product ? manufacturers[product.id_fabricante] : '-';
+
+                                        return (
+                                            <tr key={contract.id} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => navigate(`/contratos/${contract.id}`)}>
+                                                <td className="px-6 py-4">
+                                                    {contract.status === 'ativo'
+                                                        ? <span className="flex items-center gap-1.5 text-emerald-600 font-medium"><CheckCircle size={16} /> Ativo</span>
+                                                        : <span className="flex items-center gap-1.5 text-slate-400 font-medium"><XCircle size={16} /> Inativo</span>
+                                                    }
+                                                </td>
+                                                <td className="px-6 py-4 font-medium text-slate-700">
+                                                    <div className="flex items-center gap-2">
+                                                        <Package size={16} className="text-indigo-400" />
+                                                        {product?.nome || contract.id_produto}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-500">
+                                                    {formatDate(contract.data_inicio)}
+                                                </td>
+                                                <td className="px-6 py-4 font-mono text-slate-600">
+                                                    {formatCurrency(contract.valor_mensal)}
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-600">
+                                                    {contract.duracao === 12000 ? 'Indeterminado' : `${contract.duracao} Meses`}
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-500">
+                                                    <div className="flex items-center gap-2">
+                                                        <Factory size={16} className="text-slate-400" />
+                                                        {manufacturerName}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <Button
+                                                        variant="ghost"
+                                                        className="text-slate-400 hover:text-teal-600"
+                                                        size="sm"
+                                                        icon={Edit2}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/contratos/${contract.id}/editar`);
+                                                        }}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 
@@ -312,8 +477,7 @@ const ClientDetails = () => {
                         <p className="text-sm text-red-700 mt-1">Ao inativar o cliente, todos os contratos ativos serão automaticamente suspensos.</p>
                     </div>
                     <Button
-                        variant="secondary"
-                        className="bg-white border-red-200 text-red-700 hover:bg-red-50 hover:border-red-300"
+                        className="bg-red-600 text-white hover:bg-red-700 border-transparent shadow-sm"
                         onClick={() => {
                             if (window.confirm("FATAL: Tem certeza? Isso inativará todos os contratos deste cliente.")) {
                                 alert("Cliente inativado (Mock)");
