@@ -2,7 +2,7 @@ import axios from "axios";
 
 class Email {
   // Configuração via variável de ambiente
-  static baseUrl = process.env.REACT_APP_EMAIL_URL || "http://localhost:9090/email";
+  static baseUrl = "https://csapp.prolinx.com.br/email";
 
   constructor() {
     this.api = axios.create({
