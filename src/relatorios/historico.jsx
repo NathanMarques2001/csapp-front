@@ -200,6 +200,9 @@ export default function RelatorioHistorico({
 
                 return {
                     ...c,
+                    // Override raw date fields
+                    data_referencia: formatarData(c.data_referencia),
+
                     "Data Referência": formatarData(c.data_referencia),
                     "Nome Fantasia": c.nome_fantasia,
                     "CPF/CNPJ": c.cpf_cnpj,
@@ -238,17 +241,25 @@ export default function RelatorioHistorico({
 
                 return {
                     ...c,
+                    // Sobrescreve campos de data originais com formatação
+                    data_referencia: formatarData(c.data_referencia),
+                    data_inicio: formatarData(c.data_inicio),
+                    proximo_reajuste_resolvido: formatarData(c.proximo_reajuste_resolvido),
+                    data_vencimento_calculada: vencimentoFormatado,
+
+                    // Campos Human Readable
                     "Data Referência": formatarData(c.data_referencia),
+                    "Data Início": formatarData(c.data_inicio),
                     "Solução": produtoNome,
                     "Cliente": clienteNome,
                     "Status": c.status,
-                    "Reajuste": c.proximo_reajuste_resolvido ? new Date(c.proximo_reajuste_resolvido).toLocaleDateString('pt-BR') : '-',
+                    "Reajuste": formatarData(c.proximo_reajuste_resolvido),
                     "Data de Vencimento": vencimentoFormatado,
                     "Expiração": expiracaoFormatada,
                     "Faturamento": c.tipo_faturamento_resolvido,
                     "Valor": c.valor_mensal ? parseFloat(c.valor_mensal) : 0,
 
-                    // Campos calculados extras
+                    // Campos extras solicitados explicitamente
                     nomeProduto: produtoNome,
                     nomeCliente: clienteNome,
                     vencimentoFormatado: vencimentoFormatado,
