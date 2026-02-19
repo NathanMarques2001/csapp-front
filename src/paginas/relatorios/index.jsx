@@ -166,7 +166,15 @@ export default function Relatorios() {
             />
           )}
           {tabelaSelecionada === "Historico" && (
-            <RelatorioHistorico usuariosMap={usuariosMap} />
+            <RelatorioHistorico
+              usuariosMap={usuariosMap}
+              clientes={clientes}
+              contratos={contratos}
+              produtos={produtos}
+              segmentosMap={segmentosMap}
+              gruposEconomicosMap={gruposEconomicosMap}
+              classificacoesClientesMap={classificacoesClientesMap}
+            />
           )}
         </div>
       </div>

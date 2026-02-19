@@ -184,7 +184,7 @@ export default function RelatorioContratos({
       )}
 
       {mostrarFiltros && (
-        <div id="filter-container" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+        <div id="filter-container" style={{ maxHeight: '100vh', overflowY: 'auto' }}>
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
               <label>Solução:</label>
