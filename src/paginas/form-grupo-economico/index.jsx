@@ -65,11 +65,9 @@ export default function FormGrupoEconomico({ mode = "cadastro" }) {
       if (resp.message?.includes("sucesso")) {
         navigate("/gestao?aba=grupos-economicos");
       } else {
-        alert("Erro ao salvar grupo econômico.");
       }
     } catch (err) {
       console.error(err);
-      alert("Erro ao salvar grupo econômico.");
     } finally {
       setLoading(false);
     }

@@ -63,11 +63,9 @@ export default function FormCategoriaProduto({ mode = "cadastro" }) {
         setNomeCategoria("");
         navigate("/gestao?aba=categorias-produtos");
       } else {
-        alert("Erro ao salvar categoria.");
       }
     } catch (err) {
       console.error("Erro ao salvar categoria:", err);
-      alert(err);
     } finally {
       setLoading(false);
     }

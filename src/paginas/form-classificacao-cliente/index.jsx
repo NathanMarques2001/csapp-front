@@ -84,7 +84,6 @@ export default function FormClassificacaoClientes({ mode = "cadastro" }) {
       ) {
         navigate("/gestao?aba=classificacoes-clientes");
       } else {
-        alert("Erro ao salvar classificação.");
       }
     } catch (err) {
       console.error("Erro ao salvar:", err);

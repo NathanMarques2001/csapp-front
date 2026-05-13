@@ -106,11 +106,9 @@ export default function FormSolucao({ mode = "cadastro" }) {
         setSelectedFabricante("");
         navigate("/gestao?aba=solucoes");
       } else {
-        alert("Erro ao cadastrar solução.");
       }
     } catch (err) {
       console.error("Error posting data:", err);
-      alert(err);
     } finally {
       setLoading(false);
     }

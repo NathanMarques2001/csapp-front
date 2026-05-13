@@ -219,7 +219,6 @@ export default function FormCliente({ mode }) {
       }
     } catch (error) {
       console.error("Error submitting client data:", error);
-      alert(error);
     } finally {
       setLoading(false);
     }

@@ -83,7 +83,6 @@ export default function ResetSenha() {
       }
     } catch (error) {
       console.error(error);
-      alert(`Erro ao processar a requisição: ${error.message || error}`);
     } finally {
       setLoading(false);
     }

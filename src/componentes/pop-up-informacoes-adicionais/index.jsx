@@ -58,7 +58,6 @@ export default function PopupInformacoes({
       }
     } catch (e) {
       console.error("Error submitting contact data:", e);
-      alert("Erro ao salvar contato.");
     } finally {
       setLoading(false);
       onConfirm();

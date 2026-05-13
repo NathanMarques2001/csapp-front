@@ -156,7 +156,6 @@ export default function RelatorioHistorico({
 
         } catch (error) {
             console.error("Erro ao buscar histórico:", error);
-            alert("Erro ao buscar dados históricos.");
         } finally {
             setLoading(false);
         }

@@ -111,11 +111,9 @@ export default function FormUsuario({ mode = "cadastro" }) {
         });
         navigate("/gestao?aba=usuarios");
       } else {
-        alert("Erro ao salvar usuário.");
       }
     } catch (err) {
       console.error("Erro ao salvar usuário:", err);
-      alert(err);
     } finally {
       setLoading(false);
     }

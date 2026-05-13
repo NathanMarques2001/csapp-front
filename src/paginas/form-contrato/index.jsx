@@ -334,11 +334,9 @@ export default function FormContrato({ mode = "cadastro" }) {
       ) {
         navigate("/contratos");
       } else {
-        alert("Erro ao salvar contrato.");
       }
     } catch (error) {
       console.error("Erro ao enviar os dados do contrato:", error);
-      alert(error);
     } finally {
       setLoading(false);
     }
@@ -360,11 +358,9 @@ export default function FormContrato({ mode = "cadastro" }) {
       if (req.message === "Contrato atualizado com sucesso!") {
         navigate("/contratos");
       } else {
-        alert("Erro ao inativar contrato.");
       }
     } catch (error) {
       console.error("Erro ao inativar contrato:", error);
-      alert("Erro ao inativar contrato.");
     } finally {
       setLoading(false);
     }

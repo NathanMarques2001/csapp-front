@@ -65,11 +65,9 @@ export default function FormSegmento({ mode = "cadastro" }) {
         setNomeSegmento("");
         navigate("/gestao?aba=segmentos");
       } else {
-        alert("Erro ao salvar segmento.");
       }
     } catch (err) {
       console.error("Error saving data:", err);
-      alert(err);
     } finally {
       setLoading(false);
     }

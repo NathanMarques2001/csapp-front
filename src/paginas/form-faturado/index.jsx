@@ -65,11 +65,9 @@ export default function FormFaturado({ mode = "cadastro" }) {
         setNomeFaturado("");
         navigate("/gestao?aba=faturados");
       } else {
-        alert("Erro ao salvar faturado.");
       }
     } catch (err) {
       console.error("Error saving data:", err);
-      alert(err);
     } finally {
       setLoading(false);
     }

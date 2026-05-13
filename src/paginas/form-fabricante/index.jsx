@@ -65,11 +65,9 @@ export default function FormFabricante({ mode = "cadastro" }) {
         setNomeFabricante("");
         navigate("/gestao?aba=fabricantes");
       } else {
-        alert("Erro ao salvar fabricante.");
       }
     } catch (err) {
       console.error("Error saving data:", err);
-      alert(err);
     } finally {
       setLoading(false);
     }
