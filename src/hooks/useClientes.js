@@ -188,8 +188,12 @@ export function useClientes() {
 
         const passaStatus = !status || cliente.status === status;
 
+        const buscaNormalizada = busca ? busca.toLowerCase().replace(/[.\-/]/g, "") : "";
+        const cnpjNormalizado = (cliente.cpf_cnpj || "").replace(/[.\-/]/g, "");
+
         const passaBusca = !busca ||
-            cliente.nome_fantasia.toLowerCase().includes(busca.toLowerCase());
+            cliente.nome_fantasia.toLowerCase().includes(busca.toLowerCase()) ||
+            cnpjNormalizado.includes(buscaNormalizada);
 
         return passaClassificacao && passaVendedor && passaStatus && passaBusca;
     };

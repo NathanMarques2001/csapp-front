@@ -139,7 +139,8 @@ export default function Contratos() {
         filtros.nome_produto
           ? produtoNome.toLowerCase().includes(filtros.nome_produto.toLowerCase())
           : true,
-        clienteNome.toLowerCase().includes(filtro.toLowerCase()),
+        clienteNome.toLowerCase().includes(filtro.toLowerCase()) ||
+          (cliente?.cpf_cnpj || "").replace(/[.\-/]/g, "").includes(filtro.replace(/[.\-/]/g, "")),
       ];
 
       return condicoesFiltro.every((condition) => condition);
@@ -194,7 +195,7 @@ export default function Contratos() {
           <h1 id="contratos-titulo">Contratos</h1>
           <input
             type="text"
-            placeholder="Procure pelo cliente"
+            placeholder="Procure pelo cliente ou CNPJ"
             id="contratos-input"
             value={filtro}
             onChange={filtrarContratos}

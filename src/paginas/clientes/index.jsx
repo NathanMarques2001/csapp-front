@@ -49,7 +49,7 @@ export default function Clientes() {
           <div id="header-clientes">
             <input
               type="text"
-              placeholder="Procure pelo nome"
+              placeholder="Procure pelo nome ou CNPJ"
               id="clientes-input"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
