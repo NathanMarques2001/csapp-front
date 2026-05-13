@@ -4,8 +4,8 @@ import { toast } from "react-toastify";
 
 class Api {
   // Configuração via variável de ambiente (Padrão CRA)
-  //static baseUrl = "https://csapp.prolinx.com.br/api";
-  static baseUrl = "http://localhost:8080/api";
+  static baseUrl = "https://csapp.prolinx.com.br/api";
+  // static baseUrl = "http://localhost:8080/api";
 
   constructor() {
     this.api = axios.create({
@@ -41,11 +41,11 @@ class Api {
             position: "top-right",
             autoClose: 5000,
           });
-        } 
+        }
         // Se o servidor estiver totalmente fora do ar
         else if (error.message === "Network Error") {
           toast.error("Servidor indisponível. Verifique sua conexão ou tente mais tarde.");
-        } 
+        }
         // Erro inesperado
         else {
           toast.error("Ocorreu um erro na requisição. Tente novamente.");
