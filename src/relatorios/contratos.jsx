@@ -7,6 +7,7 @@ export default function RelatorioContratos({
   contratos,
   produtos,
   clientes,
+  gruposEconomicosMap = {},
 }) {
 
   const excel = new Excel("Relatório de Contratos");
@@ -19,6 +20,8 @@ export default function RelatorioContratos({
     tipo_faturamento: "",
     mes_vencimento: "",
     ano_vencimento: "",
+    grupo_economico: "",
+    pertence_grupo: "",
   });
 
   const produtosMap = useMemo(() => produtos.reduce((map, p) => ((map[p.id] = p), map), {}), [produtos]);
@@ -115,7 +118,9 @@ export default function RelatorioContratos({
       (!filtros.solucao || produto?.nome === filtros.solucao) &&
       (!filtros.cliente || cliente?.nome_fantasia === filtros.cliente) &&
       (!filtros.status || contrato.status === filtros.status) &&
-      (!filtros.tipo_faturamento || contrato.tipo_faturamento === filtros.tipo_faturamento)
+      (!filtros.tipo_faturamento || contrato.tipo_faturamento === filtros.tipo_faturamento) &&
+      (!filtros.grupo_economico || gruposEconomicosMap[cliente?.id_grupo_economico]?.nome === filtros.grupo_economico) &&
+      (!filtros.pertence_grupo || ((cliente?.id_grupo_economico && gruposEconomicosMap[cliente?.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
     );
   }).sort((a, b) => parseFloat(b.valor_mensal) - parseFloat(a.valor_mensal));
 
@@ -138,6 +143,8 @@ export default function RelatorioContratos({
     return {
       Solução: produto?.nome || "Desconhecido",
       Cliente: cliente?.nome_fantasia || "Desconhecido",
+      "Pertence Grupo Econômico": (cliente?.id_grupo_economico && gruposEconomicosMap[cliente?.id_grupo_economico]) ? "sim" : "não",
+      "Grupo Econômico": gruposEconomicosMap[cliente?.id_grupo_economico]?.nome || "",
       Status: contrato.status,
       Reajuste: Formatadores.formatarData(contrato.proximo_reajuste),
       "Data de Vencimento": vencimentoFormatado,
@@ -273,6 +280,35 @@ export default function RelatorioContratos({
               </select>
             </div>
 
+            <div className="form-group">
+              <label>Grupo Econômico:</label>
+              <select
+                name="grupo_economico"
+                value={filtros.grupo_economico}
+                onChange={aoMudarFiltro}
+              >
+                <option value="">Selecione</option>
+                {Object.values(gruposEconomicosMap || {}).map((grupo) => (
+                  <option key={grupo.id} value={grupo.nome}>
+                    {grupo.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Pertence Grupo Econômico:</label>
+              <select
+                name="pertence_grupo"
+                value={filtros.pertence_grupo}
+                onChange={aoMudarFiltro}
+              >
+                <option value="">Selecione</option>
+                <option value="sim">Sim</option>
+                <option value="não">Não</option>
+              </select>
+            </div>
+
             <button
               type="button"
               onClick={() => setMostrarFiltros(false)}
@@ -305,6 +341,8 @@ export default function RelatorioContratos({
           <tr>
             <th className="global-titulo-tabela">Solução</th>
             <th className="global-titulo-tabela">Cliente</th>
+            <th className="global-titulo-tabela">Pertence Grupo Econômico</th>
+            <th className="global-titulo-tabela">Grupo Econômico</th>
             <th className="global-titulo-tabela">Status</th>
             <th className="global-titulo-tabela">Reajuste</th>
             <th className="global-titulo-tabela">Data de Vencimento</th>
@@ -318,6 +356,8 @@ export default function RelatorioContratos({
             <tr key={i}>
               <td className="global-conteudo-tabela">{c["Solução"]}</td>
               <td className="global-conteudo-tabela">{c["Cliente"]}</td>
+              <td className="global-conteudo-tabela">{c["Pertence Grupo Econômico"]}</td>
+              <td className="global-conteudo-tabela">{c["Grupo Econômico"]}</td>
               <td className="global-conteudo-tabela">{c["Status"]}</td>
               <td className="global-conteudo-tabela">{c["Reajuste"]}</td>
               <td className="global-conteudo-tabela">{c["Data de Vencimento"]}</td>

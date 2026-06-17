@@ -135,6 +135,7 @@ export default function Relatorios() {
               produtos={produtos}
               clientes={clientes}
               usuariosMap={usuariosMap}
+              gruposEconomicosMap={gruposEconomicosMap}
             />
           )}
           {tabelaSelecionada === "Produtos" && (

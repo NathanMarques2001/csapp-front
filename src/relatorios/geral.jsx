@@ -17,6 +17,7 @@ export default function RelatorioGeral({
         nome_fantasia: "",
         produto: "",
         vendedor: "",
+        vp: "",
         status_contrato: "",
         status_cliente: "",
     });
@@ -46,6 +47,7 @@ export default function RelatorioGeral({
                 item.nome_fantasia.toLowerCase().includes(filtros.nome_fantasia.toLowerCase())) &&
             (!filtros.produto || item.solucao === filtros.produto) &&
             (!filtros.vendedor || item.vendedor === filtros.vendedor) &&
+            (!filtros.vp || item.vp === filtros.vp) &&
             (!filtros.status_contrato || item.status_contrato === filtros.status_contrato) &&
             (!filtros.status_cliente || item.status === filtros.status_cliente)
     );
@@ -60,6 +62,7 @@ export default function RelatorioGeral({
         "Data de Vencimento": item.vencimento_calculado ? new Date(item.vencimento_calculado).toLocaleDateString("pt-BR") : "-",
         "Cadastro do Cliente": item.data_criacao_cliente ? new Date(item.data_criacao_cliente).toLocaleDateString("pt-BR") : "-",
         "Vendedor": item.vendedor,
+        "VP": item.vp || "Desconhecido",
         "Status Cliente": item.status,
         "Status Contrato": item.status_contrato,
         "Gestor Chamados": item.gestor_chamados_nome,
@@ -149,6 +152,22 @@ export default function RelatorioGeral({
                         </div>
 
                         <div className="form-group">
+                            <label>VP:</label>
+                            <select
+                                name="vp"
+                                value={filtros.vp}
+                                onChange={aoMudarFiltro}
+                            >
+                                <option value="">Selecione</option>
+                                {Object.values(usuariosMap).map((usuario) => (
+                                    <option key={usuario.id} value={usuario.nome}>
+                                        {usuario.nome}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="form-group">
                             <label>Status Contrato:</label>
                             <select
                                 name="status_contrato"
@@ -209,6 +228,7 @@ export default function RelatorioGeral({
                         <th className="global-titulo-tabela">Solução</th>
                         <th className="global-titulo-tabela">Valor</th>
                         <th className="global-titulo-tabela">Vendedor</th>
+                        <th className="global-titulo-tabela">VP</th>
                         <th className="global-titulo-tabela">Status Cli.</th>
                         <th className="global-titulo-tabela">Status Cont.</th>
                         <th className="global-titulo-tabela">Gestor Chamados</th>
@@ -228,6 +248,7 @@ export default function RelatorioGeral({
                                 })}
                             </td>
                             <td className="global-conteudo-tabela">{item.vendedor}</td>
+                            <td className="global-conteudo-tabela">{item.vp || "Desconhecido"}</td>
                             <td className="global-conteudo-tabela">{item.status}</td>
                             <td className="global-conteudo-tabela">{item.status_contrato}</td>
                             <td className="global-conteudo-tabela">{item.gestor_chamados_nome}</td>

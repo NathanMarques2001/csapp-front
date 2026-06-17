@@ -19,22 +19,33 @@ export default function RelatorioClientes({
     segmento: "",
     grupo_economico: "",
     pertence_grupo: "",
+    vp: "",
+    tipo_faturamento: "",
   });
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
   const clientesFiltrados = clientes.filter(
-    (cliente) =>
-      (!filtros.nome_fantasia ||
-        cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&
-      (!filtros.tipo || cliente.tipo === filtros.tipo) &&
-      (!filtros.status || cliente.status === filtros.status) &&
-      (!filtros.vendedor ||
-        usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
-      (!filtros.segmento ||
-        segmentosMap[cliente.id_segmento]?.nome === filtros.segmento)
-      && (!filtros.grupo_economico || gruposEconomicosMap[cliente.id_grupo_economico]?.nome === filtros.grupo_economico)
-      && (!filtros.pertence_grupo || ((cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
+    (cliente) => {
+      const contratosCliente = contratos.filter(
+        (contrato) =>
+          contrato.id_cliente === cliente.id && contrato.status === "ativo"
+      );
+      return (
+        (!filtros.nome_fantasia ||
+          cliente.nome_fantasia.includes(filtros.nome_fantasia)) &&
+        (!filtros.tipo || cliente.tipo === filtros.tipo) &&
+        (!filtros.status || cliente.status === filtros.status) &&
+        (!filtros.vendedor ||
+          usuariosMap[cliente.id_usuario]?.nome === filtros.vendedor) &&
+        (!filtros.segmento ||
+          segmentosMap[cliente.id_segmento]?.nome === filtros.segmento)
+        && (!filtros.grupo_economico || gruposEconomicosMap[cliente.id_grupo_economico]?.nome === filtros.grupo_economico)
+        && (!filtros.pertence_grupo || ((cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
+        && (!filtros.vp || usuariosMap[cliente.vp]?.nome === filtros.vp)
+        && (!filtros.tipo_faturamento || contratosCliente.some((c) => c.tipo_faturamento === filtros.tipo_faturamento))
+      );
+    }
   );
 
   const dadosExportacao = clientesFiltrados.map((cliente) => {
@@ -62,8 +73,10 @@ export default function RelatorioClientes({
         "Desconhecido",
       Status: cliente.status,
       "Usuário Responsável": usuariosMap[cliente.id_usuario]?.nome || "Desconhecido",
+      "VP": usuariosMap[cliente.vp]?.nome || "Desconhecido",
       Segmento: segmentosMap[cliente.id_segmento]?.nome || "Desconhecido",
       "Valor Total dos Contratos": valorTotalContratos,
+      "Faturamento": Array.from(new Set(contratosCliente.map(c => c.tipo_faturamento).filter(Boolean))).join(", ") || "-",
       "Pertence Grupo Econômico": cliente.id_grupo_economico && gruposEconomicosMap[cliente.id_grupo_economico] ? "sim" : "não"
     };
   }).sort((a, b) => b["Valor Total dos Contratos"] - a["Valor Total dos Contratos"]);
@@ -158,6 +171,22 @@ export default function RelatorioClientes({
             </div>
 
             <div className="form-group">
+              <label>VP:</label>
+              <select
+                name="vp"
+                value={filtros.vp}
+                onChange={aoMudarFiltro}
+              >
+                <option value="">Selecione</option>
+                {Object.values(usuariosMap).map((usuario) => (
+                  <option key={usuario.id} value={usuario.nome}>
+                    {usuario.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
               <label>Segmento:</label>
               <select
                 name="segmento"
@@ -202,6 +231,19 @@ export default function RelatorioClientes({
               </select>
             </div>
 
+            <div className="form-group">
+              <label>Tipo Faturamento:</label>
+              <select
+                name="tipo_faturamento"
+                value={filtros.tipo_faturamento}
+                onChange={aoMudarFiltro}
+              >
+                <option value="">Selecione</option>
+                <option value="mensal">Mensal</option>
+                <option value="anual">Anual</option>
+              </select>
+            </div>
+
             <button
               type="button"
               onClick={() => setMostrarFiltros(false)}
@@ -237,8 +279,10 @@ export default function RelatorioClientes({
             <th className="global-titulo-tabela">Tipo</th>
             <th className="global-titulo-tabela">Status</th>
             <th className="global-titulo-tabela">Vendedor</th>
+            <th className="global-titulo-tabela">VP</th>
             <th className="global-titulo-tabela">Segmento</th>
             <th className="global-titulo-tabela">Valor dos Contratos</th>
+            <th className="global-titulo-tabela">Faturamento</th>
             <th className="global-titulo-tabela">Pertence Grupo Econômico</th>
             <th className="global-titulo-tabela">Grupo Econômico</th>
           </tr>
@@ -255,12 +299,18 @@ export default function RelatorioClientes({
               <td className="global-conteudo-tabela">
                 {cliente["Usuário Responsável"]}
               </td>
+              <td className="global-conteudo-tabela">
+                {cliente["VP"]}
+              </td>
               <td className="global-conteudo-tabela">{cliente["Segmento"]}</td>
               <td className="global-conteudo-tabela">
                 {cliente["Valor Total dos Contratos"].toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
+              </td>
+              <td className="global-conteudo-tabela global-conteudo-captalize">
+                {cliente["Faturamento"]}
               </td>
               <td className="global-conteudo-tabela">
                 {cliente["Pertence Grupo Econômico"]}
