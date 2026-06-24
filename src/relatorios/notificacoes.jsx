@@ -4,7 +4,7 @@ import Popup from "../componentes/pop-up";
 
 export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap = {}, contratos = [], clientes = [], produtos = [] }) {
   const excel = new Excel("Relatório de Notificações");
-  const [filtros, setFiltros] = useState({ usuario: "", modulo: "", confirmado: "", cliente: "", solucao: "" });
+  const [filtros, setFiltros] = useState({ usuario: "", modulo: "", confirmado: "", cliente: "", solucao: "", indiceReajuste: "", renovacaoAutomatica: "" });
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [abrirPopup, setAbrirPopup] = useState(false);
 
@@ -13,6 +13,12 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
     (notificacoes || []).forEach((n) => n.modulo && s.add(n.modulo));
     return Array.from(s);
   }, [notificacoes]);
+
+  const indicesReajuste = useMemo(() => {
+    const s = new Set();
+    (contratos || []).forEach((c) => c.nome_indice && s.add(c.nome_indice.toUpperCase()));
+    return Array.from(s);
+  }, [contratos]);
 
   const contratosMap = useMemo(() => {
     const m = {};
@@ -43,12 +49,17 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
     const cliente = contrato ? clientesMap[contrato.id_cliente] : null;
     const produto = contrato ? produtosMap[contrato.id_produto] : null;
 
+    const indiceReajusteVal = contrato?.nome_indice ? contrato.nome_indice.toUpperCase() : "";
+    const renovacaoAutomaticaVal = contrato ? (contrato.renovacao_automatica ? "sim" : "não") : "não";
+
     return (
       (!filtros.usuario || nomeUsuario === filtros.usuario) &&
       (!filtros.modulo || n.modulo === filtros.modulo) &&
       (!filtros.confirmado || confirmadoStr === filtros.confirmado) &&
       (!filtros.cliente || (cliente && cliente.razao_social === filtros.cliente)) &&
-      (!filtros.solucao || (produto && produto.nome === filtros.solucao))
+      (!filtros.solucao || (produto && produto.nome === filtros.solucao)) &&
+      (!filtros.indiceReajuste || indiceReajusteVal === filtros.indiceReajuste) &&
+      (!filtros.renovacaoAutomatica || renovacaoAutomaticaVal === filtros.renovacaoAutomatica)
     );
   });
 
@@ -64,6 +75,8 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
       Descricao: n.descricao || "",
       Modulo: n.modulo || "",
       Confirmado: n.confirmado_sn ? "Sim" : "Não",
+      "Índice de Reajuste": contrato ? (contrato.nome_indice ? contrato.nome_indice.toUpperCase() : "N/A") : "N/A",
+      "Renovação Automática": contrato ? (contrato.renovacao_automatica ? "Sim" : "Não") : "Não",
       "ID Contrato": n.id_contrato || "",
     };
   });
@@ -149,6 +162,27 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
               </select>
             </div>
 
+            <div className="form-group">
+              <label>Índice de Reajuste:</label>
+              <select name="indiceReajuste" value={filtros.indiceReajuste} onChange={aoMudarFiltro}>
+                <option value="">Selecione</option>
+                {indicesReajuste.map((idx) => (
+                  <option key={idx} value={idx}>
+                    {idx}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Renovação Automática:</label>
+              <select name="renovacaoAutomatica" value={filtros.renovacaoAutomatica} onChange={aoMudarFiltro}>
+                <option value="">Selecione</option>
+                <option value="sim">Sim</option>
+                <option value="não">Não</option>
+              </select>
+            </div>
+
             <button type="button" onClick={() => setMostrarFiltros(false)} id="filter-close-button" className="filter-button">
               Fechar
             </button>
@@ -172,6 +206,8 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
             <th className="global-titulo-tabela">Descrição</th>
             <th className="global-titulo-tabela">Módulo</th>
             <th className="global-titulo-tabela">Confirmado</th>
+            <th className="global-titulo-tabela">Índice de Reajuste</th>
+            <th className="global-titulo-tabela">Renovação Automática</th>
             <th className="global-titulo-tabela">ID Contrato</th>
           </tr>
         </thead>
@@ -184,6 +220,8 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
               <td className="global-conteudo-tabela">{row["Descricao"]}</td>
               <td className="global-conteudo-tabela">{row["Modulo"]}</td>
               <td className="global-conteudo-tabela">{row["Confirmado"]}</td>
+              <td className="global-conteudo-tabela">{row["Índice de Reajuste"]}</td>
+              <td className="global-conteudo-tabela">{row["Renovação Automática"]}</td>
               <td className="global-conteudo-tabela">{row["ID Contrato"]}</td>
             </tr>
           ))}
