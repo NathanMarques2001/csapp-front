@@ -69,7 +69,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
     const produto = contrato ? produtosMap[contrato.id_produto] : null;
 
     return {
-      Usuario: usuariosMap[n.id_usuario]?.nome || "Desconhecido",
+      Vendedor: usuariosMap[n.id_usuario]?.nome || "Desconhecido",
       Cliente: cliente ? cliente.razao_social : "Desconhecido",
       Solucao: produto ? produto.nome : "Desconhecido",
       Descricao: n.descricao || "",
@@ -106,7 +106,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
         <div id="filter-container">
           <form onSubmit={(e) => e.preventDefault()} className="filter-form">
             <div className="form-group">
-              <label>Usuário:</label>
+              <label>Vendedor:</label>
               <select name="usuario" value={filtros.usuario} onChange={aoMudarFiltro}>
                 <option value="">Selecione</option>
                 {Object.values(usuariosMap).map((u) => (
@@ -200,7 +200,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
       <table className="global-tabela">
         <thead>
           <tr>
-            <th className="global-titulo-tabela">Usuário</th>
+            <th className="global-titulo-tabela">Vendedor</th>
             <th className="global-titulo-tabela">Cliente</th>
             <th className="global-titulo-tabela">Solução</th>
             <th className="global-titulo-tabela">Descrição</th>
@@ -214,7 +214,7 @@ export default function RelatorioNotificacoes({ notificacoes = [], usuariosMap =
         <tbody>
           {dadosExportacao.map((row, i) => (
             <tr key={i}>
-              <td className="global-conteudo-tabela">{row["Usuario"]}</td>
+              <td className="global-conteudo-tabela">{row["Vendedor"]}</td>
               <td className="global-conteudo-tabela">{row["Cliente"]}</td>
               <td className="global-conteudo-tabela">{row["Solucao"]}</td>
               <td className="global-conteudo-tabela">{row["Descricao"]}</td>
