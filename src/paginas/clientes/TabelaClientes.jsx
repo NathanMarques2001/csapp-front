@@ -77,6 +77,9 @@ export default function TabelaClientes({
                             {vendedores[matriz?.id_usuario] || "-"}
                         </td>
                         <td className="clientes-conteudo-tabela">
+                            {vendedores[matriz?.vp] || "-"}
+                        </td>
+                        <td className="clientes-conteudo-tabela">
                             <FaUsers />
                         </td>
                     </tr>
@@ -101,6 +104,9 @@ export default function TabelaClientes({
                                 </td>
                                 <td className="clientes-conteudo-tabela">
                                     {vendedores[cliente.id_usuario] || "-"}
+                                </td>
+                                <td className="clientes-conteudo-tabela">
+                                    {vendedores[cliente.vp] || "-"}
                                 </td>
                                 <td className="clientes-conteudo-tabela">
                                     <FaUser />
@@ -132,6 +138,9 @@ export default function TabelaClientes({
                         {vendedores[cliente.id_usuario] || "-"}
                     </td>
                     <td className="clientes-conteudo-tabela">
+                        {vendedores[cliente.vp] || "-"}
+                    </td>
+                    <td className="clientes-conteudo-tabela">
                         <FaUser />
                     </td>
                 </tr>
@@ -152,6 +161,7 @@ export default function TabelaClientes({
                     <th className="clientes-titulo-tabela">Categoria</th>
                     <th className="clientes-titulo-tabela">Valor Contratos</th>
                     <th className="clientes-titulo-tabela">Vendedor</th>
+                    <th className="clientes-titulo-tabela">VP</th>
                     <th className="clientes-titulo-tabela">Tipo</th>
                 </tr>
             </thead>
@@ -165,7 +175,7 @@ export default function TabelaClientes({
             <tfoot>
                 {/* Paginação */}
                 <tr>
-                    <td colSpan="6" style={{ padding: "1rem" }}>
+                    <td colSpan="7" style={{ padding: "1rem" }}>
                         <div style={{ display: "flex", justifyContent: "center", gap: "1rem", alignItems: "center" }}>
                             <button
                                 onClick={() => irParaPagina(paginaAtual - 1)}
@@ -190,7 +200,7 @@ export default function TabelaClientes({
 
                 {/* Totais Gerais */}
                 <tr className="clientes-total-geral-linha">
-                    <td className="clientes-total-label" colSpan={4}>
+                    <td className="clientes-total-label" colSpan={5}>
                         TOTAL DE CONTRATOS ATIVOS:
                     </td>
                     <td className="clientes-total-valor">
@@ -204,7 +214,7 @@ export default function TabelaClientes({
                     .sort(([a], [b]) => a.localeCompare(b))
                     .map(([categoria, valor]) => (
                         <tr key={categoria} className="clientes-total-categoria-linha">
-                            <td className="clientes-total-label" colSpan={4}>
+                            <td className="clientes-total-label" colSpan={5}>
                                 Total Categoria: {categoria}
                             </td>
                             <td className="clientes-total-valor">{Formatadores.formatarMoeda(valor)}</td>

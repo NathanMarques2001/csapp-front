@@ -10,6 +10,7 @@ export default function PopUpFiltroClientes({
 }) {
   const [classificacao, setClassificacao] = useState(filtrosAtuais.classificacao_cliente || "");
   const [vendedor, setVendedor] = useState(filtrosAtuais.nome_vendedor || "");
+  const [vp, setVp] = useState(filtrosAtuais.vp || "");
   const [status, setStatus] = useState(filtrosAtuais.status || "");
 
   const handleSubmit = (e) => {
@@ -17,6 +18,7 @@ export default function PopUpFiltroClientes({
     onFilter({
       classificacao_cliente: classificacao,
       nome_vendedor: vendedor,
+      vp,
       status,
     });
     closeModal();
@@ -41,6 +43,17 @@ export default function PopUpFiltroClientes({
           <label>Vendedor:</label>
           <select value={vendedor} onChange={(e) => setVendedor(e.target.value)}>
             <option value="">Todos os Vendedores</option>
+            {Object.entries(vendedores).map(([id, nome]) => (
+              <option key={id} value={id}>{nome}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* VP */}
+        <div className="form-group">
+          <label>VP:</label>
+          <select value={vp} onChange={(e) => setVp(e.target.value)}>
+            <option value="">Todos os VPs</option>
             {Object.entries(vendedores).map(([id, nome]) => (
               <option key={id} value={id}>{nome}</option>
             ))}

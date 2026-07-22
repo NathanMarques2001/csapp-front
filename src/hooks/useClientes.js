@@ -178,13 +178,16 @@ export function useClientes() {
     };
 
     const verificarCriterios = (cliente) => {
-        const { classificacao_cliente, nome_vendedor, status } = filtros;
+        const { classificacao_cliente, nome_vendedor, vp, status } = filtros;
 
         const passaClassificacao = !classificacao_cliente ||
             cliente.id_classificacao_cliente === parseInt(classificacao_cliente);
 
         const passaVendedor = !nome_vendedor ||
             cliente.id_usuario === parseInt(nome_vendedor);
+
+        const passaVp = !vp ||
+            cliente.vp === parseInt(vp);
 
         const passaStatus = !status || cliente.status === status;
 
@@ -195,7 +198,7 @@ export function useClientes() {
             cliente.nome_fantasia.toLowerCase().includes(busca.toLowerCase()) ||
             cnpjNormalizado.includes(buscaNormalizada);
 
-        return passaClassificacao && passaVendedor && passaStatus && passaBusca;
+        return passaClassificacao && passaVendedor && passaVp && passaStatus && passaBusca;
     };
 
     // Dados para a Tabela (Flat List para paginação)

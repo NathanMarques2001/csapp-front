@@ -94,10 +94,16 @@ export default function Clientes() {
                   let valorExibido = valor;
                   if (chave === "classificacao_cliente") valorExibido = classificacoes[valor]?.nome || valor;
                   if (chave === "nome_vendedor") valorExibido = vendedores[valor] || valor;
+                  if (chave === "vp") valorExibido = vendedores[valor] || valor;
+
+                  let chaveExibida = chave;
+                  if (chave === "classificacao_cliente") chaveExibida = "Classificação";
+                  if (chave === "nome_vendedor") chaveExibida = "Vendedor";
+                  if (chave === "vp") chaveExibida = "VP";
 
                   return (
                     <span className="active-filters-current" key={chave}>
-                      {`${chave.replace(/_/g, " ")}: ${valorExibido}`}
+                      {`${chaveExibida}: ${valorExibido}`}
                     </span>
                   );
                 })}

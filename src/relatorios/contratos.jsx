@@ -8,6 +8,7 @@ export default function RelatorioContratos({
   produtos,
   clientes,
   gruposEconomicosMap = {},
+  usuariosMap = {},
 }) {
 
   const excel = new Excel("Relatório de Contratos");
@@ -22,6 +23,8 @@ export default function RelatorioContratos({
     ano_vencimento: "",
     grupo_economico: "",
     pertence_grupo: "",
+    vendedor: "",
+    vp: "",
   });
 
   const produtosMap = useMemo(() => produtos.reduce((map, p) => ((map[p.id] = p), map), {}), [produtos]);
@@ -120,7 +123,9 @@ export default function RelatorioContratos({
       (!filtros.status || contrato.status === filtros.status) &&
       (!filtros.tipo_faturamento || contrato.tipo_faturamento === filtros.tipo_faturamento) &&
       (!filtros.grupo_economico || gruposEconomicosMap[cliente?.id_grupo_economico]?.nome === filtros.grupo_economico) &&
-      (!filtros.pertence_grupo || ((cliente?.id_grupo_economico && gruposEconomicosMap[cliente?.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo)
+      (!filtros.pertence_grupo || ((cliente?.id_grupo_economico && gruposEconomicosMap[cliente?.id_grupo_economico]) ? 'sim' : 'não') === filtros.pertence_grupo) &&
+      (!filtros.vendedor || usuariosMap[cliente?.id_usuario]?.nome === filtros.vendedor) &&
+      (!filtros.vp || usuariosMap[cliente?.vp]?.nome === filtros.vp)
     );
   }).sort((a, b) => parseFloat(b.valor_mensal) - parseFloat(a.valor_mensal));
 
@@ -143,6 +148,8 @@ export default function RelatorioContratos({
     return {
       Solução: produto?.nome || "Desconhecido",
       Cliente: cliente?.nome_fantasia || "Desconhecido",
+      Vendedor: usuariosMap[cliente?.id_usuario]?.nome || "Desconhecido",
+      VP: usuariosMap[cliente?.vp]?.nome || "Desconhecido",
       "Pertence Grupo Econômico": (cliente?.id_grupo_economico && gruposEconomicosMap[cliente?.id_grupo_economico]) ? "sim" : "não",
       "Grupo Econômico": gruposEconomicosMap[cliente?.id_grupo_economico]?.nome || "",
       Status: contrato.status,
@@ -220,6 +227,38 @@ export default function RelatorioContratos({
                 {clientes.map((c) => (
                   <option key={c.id} value={c.nome_fantasia}>
                     {c.nome_fantasia}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Vendedor:</label>
+              <select
+                name="vendedor"
+                value={filtros.vendedor}
+                onChange={aoMudarFiltro}
+              >
+                <option value="">Selecione</option>
+                {Object.values(usuariosMap || {}).map((usuario) => (
+                  <option key={usuario.id} value={usuario.nome}>
+                    {usuario.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>VP:</label>
+              <select
+                name="vp"
+                value={filtros.vp}
+                onChange={aoMudarFiltro}
+              >
+                <option value="">Selecione</option>
+                {Object.values(usuariosMap || {}).map((usuario) => (
+                  <option key={usuario.id} value={usuario.nome}>
+                    {usuario.nome}
                   </option>
                 ))}
               </select>
@@ -341,6 +380,8 @@ export default function RelatorioContratos({
           <tr>
             <th className="global-titulo-tabela">Solução</th>
             <th className="global-titulo-tabela">Cliente</th>
+            <th className="global-titulo-tabela">Vendedor</th>
+            <th className="global-titulo-tabela">VP</th>
             <th className="global-titulo-tabela">Pertence Grupo Econômico</th>
             <th className="global-titulo-tabela">Grupo Econômico</th>
             <th className="global-titulo-tabela">Status</th>
@@ -356,6 +397,8 @@ export default function RelatorioContratos({
             <tr key={i}>
               <td className="global-conteudo-tabela">{c["Solução"]}</td>
               <td className="global-conteudo-tabela">{c["Cliente"]}</td>
+              <td className="global-conteudo-tabela">{c["Vendedor"]}</td>
+              <td className="global-conteudo-tabela">{c["VP"]}</td>
               <td className="global-conteudo-tabela">{c["Pertence Grupo Econômico"]}</td>
               <td className="global-conteudo-tabela">{c["Grupo Econômico"]}</td>
               <td className="global-conteudo-tabela">{c["Status"]}</td>
